@@ -15,7 +15,8 @@ SHA1 = {
 	"xview2_geotiff.tgz.part-af": "2ccbd04c4b2e27f8d948de734f661ec0c9d81152"
 }
 
-def pick_disaster_to_dir(disaster: str) -> None:
+
+def pick_disaster_to_dir(disaster: str = "hurricane") -> None:
 	xbd_dir = get_xbd_dir()
 
 
