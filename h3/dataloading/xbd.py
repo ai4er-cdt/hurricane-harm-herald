@@ -1,4 +1,6 @@
 import os
+import shutil
+import tarfile
 from glob import glob
 
 from tqdm import tqdm
@@ -30,5 +32,36 @@ def get_xbd():
 	pass
 
 
-def unpack_xbd():
-	pass
+def combine_xbd(output_filename: str = "xview2_geotiff.tgz", xbd_part_glob: str = "xview2_geotiff.tgz.part-*") -> None:
+	xbd_dir = get_xbd_dir()
+	output_filepath = os.path.join(xbd_dir, output_filename)
+
+	current_files = glob(xbd_part_glob, root_dir=xbd_dir)
+
+	if not current_files:
+		raise IOError("No files found\nMake sure you specified the correct glob name or have downloaded the files")
+
+	with open(output_filepath, "wb") as wfb:
+		for file in tqdm(current_files, desc=f"File"):
+			filepath = os.path.join(xbd_dir, file)
+			with open(filepath, "rb") as fd:
+				shutil.copyfileobj(fd, wfb)
+
+
+def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
+	# TODO: too slow
+	xbd_dir = get_xbd_dir()
+	filepath = os.path.join(xbd_dir, filename)
+
+	print(f"Unpacking {filename}\nThis can take some time")
+	with tarfile.open(filepath, "r:gz") as tar:
+		for member in tqdm(tar.getmembers()):
+			tar.extract(member=member, path=xbd_dir)
+
+
+def main():
+	unpack_xbd()
+
+
+if __name__ == '__main__':
+	main()
