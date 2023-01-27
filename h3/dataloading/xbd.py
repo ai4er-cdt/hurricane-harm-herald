@@ -42,7 +42,7 @@ def combine_xbd(output_filename: str = "xview2_geotiff.tgz", xbd_part_glob: str 
 		raise IOError("No files found\nMake sure you specified the correct glob name or have downloaded the files")
 
 	with open(output_filepath, "wb") as wfb:
-		for file in tqdm(current_files, desc=f"File"):
+		for file in tqdm(current_files, desc="File"):
 			filepath = os.path.join(xbd_dir, file)
 			with open(filepath, "rb") as fd:
 				shutil.copyfileobj(fd, wfb)
