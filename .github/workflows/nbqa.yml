@@ -1,0 +1,26 @@
+name: nbqa
+
+on:
+  push:
+    branches:
+      - notebooks
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: action/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: | 
+          python -m pip install --upgrade pip
+          pip install -U nbqa pylint
+      - name: Analysing the notebooks with nbQA
+        run: | 
+          nbqa pylint $(git ls-files '*.ipynb) --disable=C0103,C0114,C0116,C0301,C0413,W0104,W0106,W0311,W0511,E0401,E1123
