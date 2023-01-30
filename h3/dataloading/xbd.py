@@ -28,11 +28,22 @@ def check_xbd(filename: str, checksum: bool = False) -> None:
 		assert get_sha1(filepath) == SHA1[filename], f"{filename} failed sha1 checksum"
 
 
-def get_xbd():
-	pass
+def combine_xbd(
+		output_filename: str = "xview2_geotiff.tgz",
+		xbd_part_glob: str = "xview2_geotiff.tgz.part-*",
+		delete_if_check: bool = False
+) -> None:
+	"""
 
+	Parameters
+	----------
+	output_filename : str, optional
+	xbd_part_glob : str, optional
+	delete_if_check : bool, optional
+		Option to delete the part file after combining. As a safety, it will only delete them if the checksum of
+		the combined file matches the one expected. The default is False.
 
-def combine_xbd(output_filename: str = "xview2_geotiff.tgz", xbd_part_glob: str = "xview2_geotiff.tgz.part-*") -> None:
+	"""
 	xbd_dir = get_xbd_dir()
 	output_filepath = os.path.join(xbd_dir, output_filename)
 
@@ -45,7 +56,11 @@ def combine_xbd(output_filename: str = "xview2_geotiff.tgz", xbd_part_glob: str 
 		for file in tqdm(current_files, desc="File"):
 			filepath = os.path.join(xbd_dir, file)
 			with open(filepath, "rb") as fd:
-				shutil.copyfileobj(fd, wfb)
+				shutil.copyfileobj(fd, wfb)     # similar to `cat FILE > NEW_FILE`
+
+	if delete_if_check and check_xbd(output_filename, checksum=True):
+		for file in tqdm(current_files, desc="Deleting"):
+			os.remove(os.path.join(xbd_dir, file))
 
 
 def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
@@ -57,6 +72,10 @@ def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 	with tarfile.open(filepath, "r:gz") as tar:
 		for member in tqdm(tar.getmembers()):
 			tar.extract(member=member, path=xbd_dir)
+
+
+def get_xbd():
+	pass
 
 
 def main():
