@@ -4,6 +4,6 @@ def convert_bytes(size):
 	"""
 	for x in ['bytes', 'KiB', 'MiB', 'GiB', 'TiB']:
 		if size < 1024.0:
-			return "%3.1f %s" % (size, x)
+			return f"{size:3.1f} {x}"
 		size /= 1024.0
 	return size
