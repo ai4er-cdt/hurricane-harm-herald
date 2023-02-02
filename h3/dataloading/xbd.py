@@ -21,6 +21,16 @@ SHA1 = {
 
 
 def sort_disaster_to_dir(disaster: str = "hurricane") -> None:
+	"""
+	Sort on disaster from the xBD_data into a folder of the name of the disaster.
+	It keeps the same structure as the xBD dataset but with only one disaster.
+
+	Parameters
+	----------
+	disaster : str, optional
+		disaster to sort. The default is "hurricane"
+
+	"""
 	xbd_dir = get_xbd_dir()
 	disaster_dir = get_xbd_disaster_dir(disaster)
 	all_disaster = glob(f"**/{disaster}-*", root_dir=xbd_dir, recursive=True)
@@ -44,10 +54,32 @@ def sort_disaster_to_dir(disaster: str = "hurricane") -> None:
 	print(f"Copied {convert_bytes(total_size)}")
 
 
-def check_xbd(filename: str, checksum: bool = False) -> bool:
-	filepath = filename
+def check_xbd(filepath: str, checksum: bool = False) -> bool:
+	"""
+	Check if a file exists, with the option to check its checksum.
+
+	Parameters
+	----------
+	filepath : str
+		The path of the file to check.
+	checksum : bool, optional
+		If True check the checksum of the file.
+		The default is False.
+
+	Notes
+	-----
+	The checksum only checks for the downloadable compressed parts and the combined compresse file.
+	Will raise an error otherwise.
+
+	Returns
+	-------
+	bool
+		Returns False if the file does not exist.
+		Returns True if the file does exist and if checksum is checked and matches.
+	"""
+	filename = os.path.basename(filepath)
 	if not os.path.exists(filepath):
-		raise IOError(f"{filename} does not exist")
+		return False
 	if checksum:
 		assert get_sha1(filepath) == SHA1[filename], f"{filename} failed sha1 checksum"
 	return True
@@ -59,15 +91,19 @@ def combine_xbd(
 		delete_if_check: bool = False
 ) -> None:
 	"""
+	Combine the different parts of xbd to one file (compressed).
 
 	Parameters
 	----------
 	output_filename : str, optional
+		The output of the combined file present in the xbd_dir. The file can already exist.
+		The default is "xview2_geotiff.tgz".
 	xbd_part_glob : str, optional
+		glob name of the parts to merge present in the xbd_dir. Use * as a wild-card.
+		The default is "xview2_geotiff.tgz.part-*".
 	delete_if_check : bool, optional
 		Option to delete the part file after combining. As a safety, it will only delete them if the checksum of
 		the combined file matches the one expected. The default is False.
-
 	"""
 	xbd_dir = get_xbd_dir()
 	output_filepath = os.path.join(xbd_dir, output_filename)
@@ -89,6 +125,15 @@ def combine_xbd(
 
 
 def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
+	"""
+	Unpack a tar file.
+	It is quite slow for big files
+
+	Parameters
+	----------
+	filename : str, optional
+		The filename in the xbd_dir to unpack. The default is "xview2_geotiff.tgz"
+	"""
 	# TODO: too slow
 	xbd_dir = get_xbd_dir()
 	filepath = os.path.join(xbd_dir, filename)
