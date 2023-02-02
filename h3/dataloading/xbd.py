@@ -95,8 +95,7 @@ def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 
 	print(f"Unpacking {filename}\nThis can take some time")
 	with tarfile.open(filepath, "r:gz") as tar:
-		for member in tqdm(tar.getmembers()):
-			tar.extract(member=member, path=xbd_dir)
+		tar.extractall(path=xbd_dir)
 
 
 def get_xbd():
