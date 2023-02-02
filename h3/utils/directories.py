@@ -9,6 +9,11 @@ def get_data_dir() -> str:
 	return guarantee_existence(os.path.join(get_h3_dir(), "data"))
 
 
+def get_download_dir() -> str:
+	"""./data/downloads"""
+	return guarantee_existence(os.path.join(get_data_dir(), "downloads"))
+
+
 def get_xbd_dir() -> str:
 	# ./data/xBD_data
 	return guarantee_existence(os.path.join(get_data_dir(), "xBD_data"))
