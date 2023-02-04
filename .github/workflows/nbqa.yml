@@ -23,4 +23,4 @@ jobs:
           pip install -U nbqa pylint
       - name: Analysing the notebooks with nbQA
         run: | 
-          nbqa pylint $(git ls-files '*.ipynb) --disable=C0103,C0114,C0116,C0301,C0413,W0104,W0106,W0311,W0511,E0401,E1123
+          nbqa pylint $(git ls-files '*.ipynb') --disable=C0103,C0114,C0116,C0301,C0413,W0104,W0106,W0311,W0511,E0401,E1123
