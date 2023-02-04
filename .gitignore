@@ -146,7 +146,8 @@ cython_debug/
 *.iml
 out
 gen
-/datasets/
-/notebook/lightning_logs/
-/notebook/MNIST/
-/projection/
+
+
+# Local project files
+data/xBD_data
+data/downloads
