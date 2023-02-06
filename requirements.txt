@@ -1,7 +1,10 @@
+cmocean
 ipython
-numpy
+geopandas
 matplotlib
+numpy
 pandas
-tqdm
+rasterio
 rich
 shapely
+tqdm
