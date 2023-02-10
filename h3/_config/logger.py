@@ -10,7 +10,7 @@ import logging
 from rich.logging import RichHandler
 
 
-def make_logger(level: str = "DEBUG") -> logging.Logger:
+def make_logger(level: str = "INFO") -> logging.Logger:
 	FORMAT = "%(message)s"
 	logging.basicConfig(
 		level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
