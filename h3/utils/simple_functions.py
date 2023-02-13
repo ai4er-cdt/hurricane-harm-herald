@@ -14,6 +14,6 @@ def convert_bytes(size: float) -> str:
 	"""
 	for x in ['bytes', 'KiB', 'MiB', 'GiB', 'TiB']:
 		if size < 1024.0:
-			return f"{size:3.1f} {x}"
+			return f"{size:3.2f} {x}"
 		size /= 1024.0
 	return str(size)
