@@ -5,10 +5,10 @@ import urllib.request
 import urllib.error
 
 # from concurrent.futures import ThreadPoolExecutor
-from typing import Iterable, Generator
-
-from tqdm.auto import tqdm
 from http.client import HTTPResponse
+from tqdm.auto import tqdm
+
+from typing import Iterable, Generator
 
 from h3 import logger
 from h3.utils.directories import get_download_dir
