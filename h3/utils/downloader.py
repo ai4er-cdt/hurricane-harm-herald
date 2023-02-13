@@ -5,9 +5,9 @@ import urllib.request
 import urllib.error
 
 # from concurrent.futures import ThreadPoolExecutor
-from tqdm.auto import tqdm
-
 from typing import Iterable, Generator
+
+from tqdm.auto import tqdm
 from http.client import HTTPResponse
 
 from h3 import logger
@@ -40,7 +40,7 @@ def _get_chunks(resp: HTTPResponse) -> Generator[bytes, None]:
 
 def url_download(url: str, path: str) -> None:
 	"""
-	Download a url to a local file
+	Download an url to a local file
 	"""
 	response = urllib.request.urlopen(url)
 	chunks = _get_chunks(response)
@@ -51,7 +51,7 @@ def url_download(url: str, path: str) -> None:
 		unit_scale=True,
 		# format to have current/total size with the full unit, e.g. 60kB/6MB
 		# https://github.com/tqdm/tqdm/issues/952
-		bar_format="{l_bar}{bar}| {n_fmt}{unit}/{total_fmt}{unit}"  
+		bar_format="{l_bar}{bar}| {n_fmt}{unit}/{total_fmt}{unit}"
 		" [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
 	)
 	with pbar as t:
