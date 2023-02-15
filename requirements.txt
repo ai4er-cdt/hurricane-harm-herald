@@ -8,3 +8,5 @@ rasterio
 rich
 shapely
 tqdm
+torchvision
+pytorch
