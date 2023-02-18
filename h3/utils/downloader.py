@@ -3,9 +3,11 @@ from __future__ import annotations
 import os.path
 import urllib.request
 import urllib.error
+# import signal
 
-# from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from http.client import HTTPResponse
+# from threading import Event
 from tqdm.auto import tqdm
 
 from typing import Iterable, Generator
@@ -15,6 +17,14 @@ from h3.utils.directories import get_download_dir
 
 
 CHUNK_SIZE = 1024
+# done_event = Event()
+#
+#
+# def handle_signals(signum, handle):
+# 	done_event.set()
+#
+#
+# signal.signal(signal.SIGINT, handle_signals)
 
 
 def _get_response_size(resp: HTTPResponse) -> None | int:
@@ -59,6 +69,8 @@ def url_download(url: str, path: str) -> None:
 			for chunk in chunks:
 				file.write(chunk)
 				t.update(len(chunk))
+				# if done_event.is_set():
+				# 	return
 	logger.info(f"Downloaded in {path}")
 
 
@@ -66,12 +78,12 @@ def downloader(urls: Iterable[str], target_dir: str = get_download_dir()):
 	"""
 	Downloader to download multiple files
 	"""
-	# with ThreadPoolExecutor(max_workers=4) as pool:
-	target_dir = os.path.abspath(target_dir)
-	for url in urls:
-		filename = url.split("/")[-1]
-		target_path = os.path.join(target_dir, filename)
-		url_download(url, target_path)
+	with ThreadPoolExecutor(max_workers=4) as pool:
+		target_dir = os.path.abspath(target_dir)
+		for url in urls:
+			filename = url.split("/")[-1]
+			target_path = os.path.join(target_dir, filename)
+			pool.submit(url_download, url, target_path)
 
 # future update:
 # using rich
@@ -82,7 +94,11 @@ def downloader(urls: Iterable[str], target_dir: str = get_download_dir()):
 
 
 def main():
-	url = ["https://www.nhc.noaa.gov/gis/hazardmaps/PR_SLOSH_MOM_Inundation.zip"]
+	url = [
+		"https://www.nhc.noaa.gov/gis/hazardmaps/PR_SLOSH_MOM_Inundation.zip",
+		"https://imgs.xkcd.com/comics/data_quality.png",
+		"https://imgs.xkcd.com/comics/omniknot.png"
+	]
 	target_dist = get_download_dir()
 	downloader(url, target_dist)
 
