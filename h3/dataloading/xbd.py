@@ -116,6 +116,8 @@ def _combine_xbd(
 	xbd_dir = get_xbd_dir()
 	output_filepath = os.path.join(xbd_dir, output_filename)
 
+	# Note: sorted(Path(xbd_dir).glob(xbd_part_glob)) could be a solution for python<3.10
+	# but it x2 slower than the current method
 	current_files = glob(xbd_part_glob, root_dir=xbd_dir)
 
 	if not current_files:
