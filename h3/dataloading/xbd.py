@@ -85,7 +85,7 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 	return True
 
 
-def combine_xbd(
+def _combine_xbd(
 		output_filename: str = "xview2_geotiff.tgz",
 		xbd_part_glob: str = "xview2_geotiff.tgz.part-*",
 		delete_if_check: bool = False
@@ -124,7 +124,7 @@ def combine_xbd(
 			os.remove(os.path.join(xbd_dir, file))
 
 
-def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
+def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 	"""
 	Unpack a tar file.
 	It is quite slow for big files
