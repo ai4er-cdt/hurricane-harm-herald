@@ -155,8 +155,18 @@ def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 		tar.extractall(path=xbd_dir)
 
 
-def get_xbd():
-	pass
+def get_xbd(checksum: bool = False, clean_after_merge: bool = True, unpack_tar: bool = True, **kwargs) -> None:
+	"""Wrapper function to check part files, combine and unpack them."""
+	xbd_dir = get_xbd_dir()
+	all_part_name = list(SHA1.keys())[1:]
+	combined_name = kwargs["combined_name"]
+
+	for name in all_part_name:
+		filepath = os.path.join(xbd_dir, name)
+		check_xbd(filepath=filepath, checksum=checksum)
+	_combine_xbd(output_filename=combined_name, delete_if_check=clean_after_merge)
+	if unpack_tar:
+		_unpack_xbd(filename=combined_name)
 
 
 def main():
