@@ -5,6 +5,8 @@ from pathlib import Path
 from glob import glob
 
 from tqdm import tqdm
+
+from h3 import logger
 from h3.utils.directories import get_xbd_dir, get_xbd_disaster_dir
 from h3.utils.file_ops import get_sha1, guarantee_existence
 from h3.utils.simple_functions import convert_bytes
@@ -79,6 +81,7 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 	"""
 	filename = os.path.basename(filepath)
 	if not os.path.exists(filepath):
+		logger.info(f"{filepath} does not exist.")
 		return False
 	if checksum:
 		assert get_sha1(filepath) == SHA1[filename], f"{filename} failed sha1 checksum"
@@ -118,10 +121,12 @@ def _combine_xbd(
 			filepath = os.path.join(xbd_dir, file)
 			with open(filepath, "rb") as fd:
 				shutil.copyfileobj(fd, wfb)     # similar to `cat FILE > NEW_FILE`
+	logger.info(f"{len(current_files)} files merged into {output_filename}")
 
 	if delete_if_check and check_xbd(output_filename, checksum=True):
 		for file in tqdm(current_files, desc="Deleting"):
 			os.remove(os.path.join(xbd_dir, file))
+		logger.info("Combined file's checksum matches. Deleted the part files after merging.")
 
 
 def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
