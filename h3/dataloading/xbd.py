@@ -78,6 +78,11 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 	bool
 		Returns False if the file does not exist.
 		Returns True if the file does exist and if checksum is checked and matches.
+
+	Raises
+	------
+	AssertionError
+		If checksum is True and does not match.
 	"""
 	filename = os.path.basename(filepath)
 	if not os.path.exists(filepath):
