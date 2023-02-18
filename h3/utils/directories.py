@@ -9,9 +9,14 @@ def get_data_dir() -> str:
 	return guarantee_existence(os.path.join(get_h3_dir(), "data"))
 
 
+def get_datasets_dir() -> str:
+	"""./data/datasets"""
+	return guarantee_existence(os.path.join(get_data_dir(), "datasets"))
+
+
 def get_pickle_dir() -> str:
 	"""./data/pickles"""
-	return guarantee_existence(os.path.join(get_data_dir(), "pickles"))
+	return guarantee_existence(os.path.join(get_datasets_dir(), "pickles"))
 
 
 def get_download_dir() -> str:
@@ -20,15 +25,15 @@ def get_download_dir() -> str:
 
 
 def get_xbd_dir() -> str:
-	"""./data/xBD_data"""
-	return guarantee_existence(os.path.join(get_data_dir(), "xBD_data"))
+	"""./data/datasets/xBD_data"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "xBD_data"))
 
 
 def get_xbd_disaster_dir(disaster: str) -> str:
-	"""/data/xBD_data/"disaster"""""
+	"""/data/datasets/xBD_data/{disaster}"""
 	return guarantee_existence(os.path.join(get_xbd_dir(), disaster))
 
 
 def get_xbd_hurricane_dir() -> str:
-	"""./data/xBD_data/hurricane"""
+	"""./data/datasets/xBD_data/hurricane"""
 	return get_xbd_disaster_dir("hurricane")
