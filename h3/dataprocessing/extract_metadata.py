@@ -7,17 +7,10 @@ from shapely import wkt
 import os
 import fnmatch
 
-import rasterio as rio
-from rasterio.plot import show
-from rasterio.warp import transform_bounds
-from rasterio.crs import CRS
-from rasterio.mask import mask
 import geopandas as gpd
 
-# from h3.utils.directories import get_xbd_dir
-
-path_to_folder = "/Users/Lisanne/Library/CloudStorage/GoogleDrive-\
-lisanneblok@gmail.com/My Drive/ai4er/python/hurricane/hurricane-harm-herald/"
+from h3.utils.directories import get_xbd_dir
+from h3.utils.directories import get_data_dir
 
 # Convert different damage classes (Joint Damage Scale) into integers
 # NEED TO CONVERT TO INMUTABLE DICTIONARY
@@ -31,7 +24,7 @@ CLASSES_DICT = {
 
 
 # extract pre-event hurricane imagery
-def filter_files(files: list, search_criteria: str):
+def filter_files(files: list, filepath: str, search_criteria: str):
     """Filter all json label files and returns a list of post-event files for
      hurricanes.
 
@@ -44,8 +37,10 @@ def filter_files(files: list, search_criteria: str):
         list: list of filtered files for corresponding criteria.
     """
     list_of_files = []
+    search_path = filepath + search_criteria
+
     for f in files:
-        if fnmatch.fnmatch(f, search_criteria):
+        if fnmatch.fnmatch(f, search_path):
             list_of_files.append(f)
     return list_of_files
 
@@ -78,7 +73,7 @@ def extract_polygon(building):
     return building_polygon
 
 
-def extract_metadata(json_link, CLASSES_DICT):
+def extract_metadata(json_link, CLASSES_DICT, crs):
     """
     Extracts location in xy and long-lat format, gives damage name, class and
     date.
@@ -93,6 +88,7 @@ def extract_metadata(json_link, CLASSES_DICT):
     json_data = json.load(json_file)
     meta_data = json_data["metadata"]
     disaster_type = meta_data["disaster"]
+    image_name = meta_data["img_name"]
     capture_date = meta_data["capture_date"]
 
     # for plotting on maps and finding environmental factors, use lng lat
@@ -114,17 +110,24 @@ def extract_metadata(json_link, CLASSES_DICT):
 
         damage_location.append([
             lnglat_point, lnglat_polygon, xy_point,
-            xy_polygon, damage_num, disaster_type, capture_date])
-    df = gpd.GeoDataFrame(
+            xy_polygon, damage_num, disaster_type, image_name, capture_date])
+    if crs == "xy":
+        df = gpd.GeoDataFrame(damage_location,
+        columns=["point_lnglat", "polygon_lnglat", "point_xy", "geometry",
+                 "damage_class", "disaster_name", "image_name",
+                 "capture_date"])
+    
+    else: df = gpd.GeoDataFrame(
         damage_location,
         columns=["geometry", "polygon_lnglat", "point_xy", "polygon_xy",
-                 "damage_class", "disaster_name", "capture_date"])
+                 "damage_class", "disaster_name", "image_name",
+                 "capture_date"])
     df["capture_date"] = pd.to_datetime(df["capture_date"])
     df["geometry"] = df["geometry"].apply(wkt.loads)
     return df
 
 
-def extract_damage_allfiles(directory_files):
+def extract_damage_allfiles(directory_files, filepath, crs):
     """
     Filters all label files for hurricanes, extracts the metadata,
     concatenates all files.
@@ -136,16 +139,18 @@ def extract_damage_allfiles(directory_files):
         geodataframe: summary of metadata for all hurricane events with labels.
     """
     dataframes_list = []
-    full_post_hurr_json_files = filter_files(directory_files,
+    full_post_hurr_json_files = filter_files(directory_files, filepath,
                                              "hurricane*post*.json")
-    for file in full_post_hurr_json_files:
-        loc_and_damage_df = extract_metadata(file, CLASSES_DICT)
-        dataframes_list.append(loc_and_damage_df)
-        rdf = gpd.GeoDataFrame(pd.concat(dataframes_list, ignore_index=True))
-    return rdf
+    if len(full_post_hurr_json_files) > 0:
+        for file in full_post_hurr_json_files:
+            loc_and_damage_df = extract_metadata(file, CLASSES_DICT, crs)
+            dataframes_list.append(loc_and_damage_df)
+            rdf = gpd.GeoDataFrame(pd.concat(dataframes_list,
+                                             ignore_index=True))
+        return rdf
 
 
-def load_and_save_df() -> None:
+def load_and_save_df():
     """
     Loads the json label files for all hurricanes in the "hold" section of the
     xBD data, extracts the points and polygons in both xy coordinates,
@@ -159,21 +164,24 @@ def load_and_save_df() -> None:
         saved in the data/datasets/EFs directory.
     """
 
-    # xbd_dir = get_xbd_dir()
-    # os.path.join(xbd_dir)
+    xbd_dir = get_xbd_dir()
+    data_dir = get_data_dir()
+    labels_path = "geotiffs.old/hold/labels/"
+    filepath = os.path.join(xbd_dir, labels_path, "")
+    fulldirectory_files = [os.path.join(filepath, file)
+                           for file in os.listdir(filepath)]
 
-    os.chdir(path_to_folder +
-             "data/datasets/xbd_data/geotiffs.old/hold/labels")
-    files = os.listdir()
-    print(files)
+    df_points_post_hurr = extract_damage_allfiles(fulldirectory_files,
+                                                  filepath, "xy")
 
-    df_points_post_hurr = extract_damage_allfiles(files)
+    print(df_points_post_hurr)
 
-    # path_save = os.path.join(
-    #    path_to_folder,
-    #    "data/datasets/EFs/",
-    #    "metadata_posthurr_points_polygons_lnglat_xy.pkl")
-    # df_points_post_hurr.to_pickle(path_save)
+    path_save = os.path.join(data_dir,
+                             "datasets/processed_data/metadata_pickle",
+                             "metadata_posthurr_points_polygons_xy_lnglat.pkl")
+    df_points_post_hurr.to_pickle(path_save)
+
+    return df_points_post_hurr
 
 
 def main():
