@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import torch
 
 from torchvision.models import ViT_L_16_Weights, vit_l_16
+from torchvision.models import swin_v2_b, Swin_V2_B_Weights
 from h3.utils.directories import get_xbd_hurricane_dir
 
 
@@ -18,8 +19,10 @@ def load_image() -> np.ndarray:
 
 
 def load_model():
-	model = vit_l_16(weights=ViT_L_16_Weights.DEFAULT)
+	# model = vit_l_16(weights=ViT_L_16_Weights.DEFAULT)
+	model = swin_v2_b(weights=Swin_V2_B_Weights.DEFAULT)
 	print(type(model))
+
 	model.eval()
 	return model
 
@@ -35,7 +38,8 @@ def main():
 
 	image = torch.as_tensor(image)
 
-	preprocess = ViT_L_16_Weights.IMAGENET1K_V1.transforms()
+	# preprocess = ViT_L_16_Weights.IMAGENET1K_V1.transforms()
+	preprocess = Swin_V2_B_Weights.IMAGENET1K_V1.transforms()
 
 	batch = preprocess(image).unsqueeze(0)
 
