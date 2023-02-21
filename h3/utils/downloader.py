@@ -48,14 +48,14 @@ def _get_chunks(resp: HTTPResponse) -> Generator[bytes, None]:
 		yield chunk
 
 
-def url_download(url: str, path: str) -> None:
+def url_download(url: str, path: str, task: int = 1, total: int = 1) -> None:
 	"""
 	Download an url to a local file
 	"""
 	response = urllib.request.urlopen(url)
 	chunks = _get_chunks(response)
 	pbar = tqdm(
-		desc=f"Requesting {os.path.basename(url)}",
+		desc=f"[{task}/{total}] Requesting {os.path.basename(url)}",
 		unit="B",
 		total=_get_response_size(response),
 		unit_scale=True,
@@ -80,10 +80,10 @@ def downloader(urls: Iterable[str], target_dir: str = get_download_dir()):
 	"""
 	with ThreadPoolExecutor(max_workers=4) as pool:
 		target_dir = os.path.abspath(target_dir)
-		for url in urls:
+		for task, url in enumerate(urls):
 			filename = url.split("/")[-1]
 			target_path = os.path.join(target_dir, filename)
-			pool.submit(url_download, url, target_path)
+			pool.submit(url_download, url, target_path, task, total=len(urls))
 
 # future update:
 # using rich
