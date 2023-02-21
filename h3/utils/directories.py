@@ -37,3 +37,13 @@ def get_xbd_disaster_dir(disaster: str) -> str:
 def get_xbd_hurricane_dir() -> str:
 	"""./data/datasets/xBD_data/hurricane"""
 	return get_xbd_disaster_dir("hurricane")
+
+
+def get_weather_data_dir() -> str:
+	"""./data/datasets/weather"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "weather"))
+
+
+def get_cmorph_dir() -> str:
+	"""./data/datasets/weather/cmorph"""
+	return guarantee_existence(os.path.join(get_weather_data_dir(), "cmorph"))
