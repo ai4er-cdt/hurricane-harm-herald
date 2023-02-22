@@ -1,6 +1,8 @@
 cmocean
+dask
 ipython
 geopandas
+h5netcdf
 matplotlib
 numpy
 pandas
@@ -8,3 +10,4 @@ rasterio
 rich
 shapely
 tqdm
+xarray
