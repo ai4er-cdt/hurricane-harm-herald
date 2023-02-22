@@ -47,3 +47,8 @@ def get_weather_data_dir() -> str:
 def get_cmorph_dir() -> str:
 	"""./data/datasets/weather/cmorph"""
 	return guarantee_existence(os.path.join(get_weather_data_dir(), "cmorph"))
+
+
+def get_flood_dir() -> str:
+	"""./data/datasets/flood"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "flood"))
