@@ -10,3 +10,5 @@ shapely
 tqdm
 torchvision
 pytorch
+seaborn
+scikit-learn
