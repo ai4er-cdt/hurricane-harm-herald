@@ -6,15 +6,22 @@ import rasterio
 
 from typing import Container, Sequence, Iterable, Literal
 
+from h3 import logger
 from h3.utils.downloader import downloader
 from h3.utils.directories import get_storm_dir
 from h3.constants import HAITI_LAT_MAX, HAITI_LAT_MIN, HAITI_LON_MAX, HAITI_LON_MIN
 from h3.constants import TEXAS_TO_MAINE_LAT_MAX, TEXAS_TO_MAINE_LAT_MIN, TEXAS_TO_MAINE_LON_MAX, TEXAS_TO_MAINE_LON_MIN
 
 
-def _download_storm():
+def _download_storm() -> None:
+	"""Private wrapper function around downloader() from h3.utils.downloader for the storm surge files
+	downloading the files in the `storm_dir`.
+
+	See Also
+	--------
+	h3.utils.downloader.downloader()
+	"""
 	url = [
-		# "https://www.nhc.noaa.gov/gis/hazardmaps/PR_SLOSH_MOM_Inundation.zip",
 		"https://www.nhc.noaa.gov/gis/hazardmaps/US_SLOSH_MOM_Inundation_v3.zip",
 		"https://www.nhc.noaa.gov/gis/hazardmaps/Hispaniola_SLOSH_MOM_Inundation.zip"
 	]
@@ -32,7 +39,44 @@ def _unpack_storm(clean: bool = False):
 			os.remove(p)
 
 
-def _get_location_box(location: Literal["us", "haiti"]) -> None | tuple:
+def check_storm(clean_after_unpack: bool = False, reload: bool = False) -> None:
+	"""Helper function to check if files are present in storm_dir
+	It is quite naive function, as it will not check what files are present, but only if any files are present.
+	If no files are present, it will download and unpack them.
+
+	Parameters
+	----------
+	clean_after_unpack : bool, optional
+		If True, will delete the zip downloaded files after unpacking them. The default is False.
+	reload : bool, optional
+		If True, force the re-download and unpack,
+	"""
+	storm_dir = get_storm_dir()
+	all_files = os.listdir(storm_dir)
+	# TODO: reload would delete existing file to prevent unexpected behaviour with overwriting
+	if len(all_files) == 0 or reload:
+		logger.debug("Storm surge files are not present.\nDownloading them.")
+		_download_storm()
+		# TODO: check this with the unpacking helper function
+		logger.debug("unpacking the files")
+		_unpack_storm(clean=clean_after_unpack)
+
+
+def get_location_box(location: Literal["us", "haiti"]) -> None | tuple:
+	"""Get the location box.
+
+	Parameters
+	----------
+	location : str, {"us", "haiti"}
+		location to get the box coordinate in lat lon
+
+
+	Returns
+	-------
+	tuple, optional
+		a tuple of the coordinates of the location, as follows:
+		LON_MIN, LON_MAX, LAT_MIN, LAT_MAX
+	"""
 	if location == "us":
 		return TEXAS_TO_MAINE_LON_MIN, TEXAS_TO_MAINE_LON_MAX, TEXAS_TO_MAINE_LAT_MIN, TEXAS_TO_MAINE_LAT_MAX
 	elif location == "haiti":
@@ -40,15 +84,55 @@ def _get_location_box(location: Literal["us", "haiti"]) -> None | tuple:
 
 
 def is_in_area(point: Sequence[float], area_box: Container[float]) -> bool:
+	"""Check if point is in an area bounding box.
+
+	Parameters
+	----------
+	point : tuple_like
+		A tuple_like of the lat, lon of the point to check.
+	area_box : tuple_like
+		A tuple_like of the bounding box of the area to check.
+		It needs to be as follows:
+		LON_MIN, LON_MAX, LAT_MIN, LAT_MAX
+		Usually this bounding box is given by the get_location_box function.
+
+	Returns
+	-------
+	bool
+		True if the point is in the bounding box
+	"""
 	# TODO: check the types
 	lon_min, lon_max, lat_min, lat_max = area_box
 	return (lat_min <= point[0] <= lat_max) and (lon_min <= point[1] <= lon_max)
 
 
 def point_locations(lat: float, lon: float, locations: Iterable[str]) -> None | str:
+	"""Get the location name of a point given its latitude and longitude
+
+	Parameters
+	----------
+	lat : float
+		latitude of the point to check
+	lon : float
+		longitude of the point to check
+	locations : Iterable of str
+		Iterable-like of the name of the different locations to check.
+
+	Returns
+	-------
+	str, optional
+		Name of the location areas of the point.
+
+	Examples
+	--------
+	>>> lat, lon = 18, -72  # this point is in Haiti
+	>>> point_locations(lat, lon, ["us", "haiti"])
+	haiti
+	"""
 	point = (lat, lon)
+	location: Literal["us", "haiti"]    # Prevent PyCharm to be annoying with the Literal type
 	for location in locations:
-		location_box = _get_location_box(location)
+		location_box = get_location_box(location)
 		if is_in_area(point, location_box):
 			return location
 
