@@ -9,6 +9,7 @@ from typing import Container, Sequence, Iterable, Literal
 from h3 import logger
 from h3.utils.downloader import downloader
 from h3.utils.directories import get_storm_dir
+from h3.utils.file_ops import unpack_file
 from h3.constants import HAITI_LAT_MAX, HAITI_LAT_MIN, HAITI_LON_MAX, HAITI_LON_MIN
 from h3.constants import TEXAS_TO_MAINE_LAT_MAX, TEXAS_TO_MAINE_LAT_MIN, TEXAS_TO_MAINE_LON_MAX, TEXAS_TO_MAINE_LON_MIN
 
@@ -29,14 +30,10 @@ def _download_storm() -> None:
 
 
 def _unpack_storm(clean: bool = False):
-	# TODO: change this with the helper function
-	import shutil
 	storm_dir = get_storm_dir()
 	abs_list = [os.path.join(storm_dir, file) for file in os.listdir(storm_dir) if os.path.splitext(file)[1] == ".zip"]
 	for p in abs_list:
-		shutil.unpack_archive(p, extract_dir=get_storm_dir())
-		if clean:
-			os.remove(p)
+		unpack_file(p, clean=clean)
 
 
 def check_storm(clean_after_unpack: bool = False, reload: bool = False) -> None:
