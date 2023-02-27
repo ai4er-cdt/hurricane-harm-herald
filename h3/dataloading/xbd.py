@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from h3 import logger
 from h3.utils.directories import get_xbd_dir, get_xbd_disaster_dir
-from h3.utils.file_ops import get_sha1, guarantee_existence
+from h3.utils.file_ops import get_sha1, guarantee_existence, unpack_file
 from h3.utils.simple_functions import convert_bytes
 
 SHA1 = {
@@ -137,22 +137,12 @@ def _combine_xbd(
 
 
 def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
-	"""
-	Unpack a tar file.
-	It is quite slow for big files
 
-	Parameters
-	----------
-	filename : str, optional
-		The filename in the xbd_dir to unpack. The default is "xview2_geotiff.tgz"
-	"""
 	# TODO: too slow
 	xbd_dir = get_xbd_dir()
 	filepath = os.path.join(xbd_dir, filename)
-
-	print(f"Unpacking {filename}\nThis can take some time")
-	with tarfile.open(filepath, "r:gz") as tar:
-		tar.extractall(path=xbd_dir)
+	mode = "r:gz"
+	unpack_file(filepath, mode)
 
 
 def get_xbd(checksum: bool = False, clean_after_merge: bool = True, unpack_tar: bool = True, **kwargs) -> None:
