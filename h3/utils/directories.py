@@ -52,3 +52,8 @@ def get_cmorph_dir() -> str:
 def get_flood_dir() -> str:
 	"""./data/datasets/flood"""
 	return guarantee_existence(os.path.join(get_datasets_dir(), "flood"))
+
+
+def get_storm_dir() -> str:
+	"""./data/datasets/storm"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "storm"))
