@@ -137,12 +137,10 @@ def _combine_xbd(
 
 
 def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
-
 	# TODO: too slow
 	xbd_dir = get_xbd_dir()
 	filepath = os.path.join(xbd_dir, filename)
-	mode = "r:gz"
-	unpack_file(filepath, mode)
+	unpack_file(filepath)
 
 
 def get_xbd(checksum: bool = False, clean_after_merge: bool = True, unpack_tar: bool = True, **kwargs) -> None:
