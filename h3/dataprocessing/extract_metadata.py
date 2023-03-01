@@ -11,6 +11,7 @@ import geopandas as gpd
 
 from h3.utils.directories import get_xbd_dir
 from h3.utils.directories import get_data_dir
+from h3.utils.directories import get_xbd_hlabel_dir
 
 # Convert different damage classes (Joint Damage Scale) into integers
 # NEED TO CONVERT TO INMUTABLE DICTIONARY
@@ -42,7 +43,7 @@ def filter_files(files: list, filepath: str, search_criteria: str):
             list of filtered files for corresponding criteria.
     """
     list_of_files = []
-    search_path = filepath + search_criteria
+    search_path = os.path.join(filepath, search_criteria)
 
     for f in files:
         if fnmatch.fnmatch(f, search_path):
@@ -315,9 +316,10 @@ def load_and_save_df():
             as this is most useful for choosing the EFs.
     """
     data_dir = get_data_dir()
-    xbd_dir = get_xbd_dir()
-    labels_path = "geotiffs.old/hold/labels/"
-    filepath = os.path.join(xbd_dir, labels_path, "")
+    # xbd_dir = get_xbd_dir()
+    # label path
+    filepath = get_xbd_hlabel_dir()  # TODO: look/fix the geotiffs.old and all
+    # filepath = os.path.join(xbd_dir, labels_path, "")
     fulldirectory_files = [os.path.join(filepath, file)
                            for file in os.listdir(filepath)]
 
