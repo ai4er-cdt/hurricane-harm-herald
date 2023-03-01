@@ -11,9 +11,7 @@ import fnmatch
 
 import geopandas as gpd
 
-from h3.utils.directories import get_xbd_dir
-from h3.utils.directories import get_data_dir
-from h3.utils.directories import get_xbd_hlabel_dir
+from h3.utils.directories import get_data_dir, get_metadata_pickle_dir, get_xbd_hlabel_dir
 
 # Convert different damage classes (Joint Damage Scale) into integers
 # NEED TO CONVERT TO INMUTABLE DICTIONARY
@@ -332,8 +330,7 @@ def load_and_save_df():
         event="pre"
     )
     path_save_post = os.path.join(
-        data_dir,
-        "datasets/processed_data/metadata_pickle",
+        get_metadata_pickle_dir(),
         "pre_polygon.pkl")
     df_points_post_hurr.to_pickle(path_save_post)
 
@@ -343,8 +340,7 @@ def load_and_save_df():
         crs="xy"
     )
     path_save_pre = os.path.join(
-        data_dir,
-        "datasets/processed_data/metadata_pickle",
+        get_metadata_pickle_dir(),
         "xy_pre_pol_post_damage.pkl")
     df_pre_post_hurr_xy.to_pickle(path_save_pre)
 
@@ -354,8 +350,7 @@ def load_and_save_df():
         crs="lng_lat"
     )
     path_save_pre_longlat = os.path.join(
-        data_dir,
-        "datasets/processed_data/metadata_pickle",
+        get_metadata_pickle_dir(),
         "lnglat_pre_pol_post_damage.pkl")
     df_pre_post_hurr_ll.to_pickle(path_save_pre_longlat)
 
