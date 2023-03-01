@@ -13,7 +13,7 @@ from rich.logging import RichHandler
 def make_logger(level: str = "INFO") -> logging.Logger:
 	FORMAT = "%(message)s"
 	logging.basicConfig(
-		level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+		level=logging.WARNING, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
 	)
 
 	logger = logging.getLogger("h3")
