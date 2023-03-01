@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import pandas as pd
 import json
@@ -25,7 +27,7 @@ CLASSES_DICT = {
 
 
 # extract pre-event hurricane imagery
-def filter_files(files: list, filepath: str, search_criteria: str):
+def filter_files(files: list, filepath: str, search_criteria: str) -> list:
     """Filter all json label files and returns a list of post-event files for
      hurricanes.
 
