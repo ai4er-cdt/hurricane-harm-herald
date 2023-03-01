@@ -326,7 +326,11 @@ def load_and_save_df():
                            for file in os.listdir(filepath)]
 
     df_points_post_hurr = extract_damage_allfiles_separate(
-        fulldirectory_files, filepath, "xy", "pre")
+        directory_files=fulldirectory_files,
+        filepath=filepath,
+        crs="xy",
+        event="pre"
+    )
     path_save_post = os.path.join(
         data_dir,
         "datasets/processed_data/metadata_pickle",
@@ -334,7 +338,10 @@ def load_and_save_df():
     df_points_post_hurr.to_pickle(path_save_post)
 
     df_pre_post_hurr_xy = extract_damage_allfiles_ensemble(
-        fulldirectory_files, filepath, "xy")
+        directory_files=fulldirectory_files,
+        filepath=filepath,
+        crs="xy"
+    )
     path_save_pre = os.path.join(
         data_dir,
         "datasets/processed_data/metadata_pickle",
@@ -342,7 +349,10 @@ def load_and_save_df():
     df_pre_post_hurr_xy.to_pickle(path_save_pre)
 
     df_pre_post_hurr_ll = extract_damage_allfiles_ensemble(
-        fulldirectory_files, filepath, "lng_lat")
+        directory_files=fulldirectory_files,
+        filepath=filepath,
+        crs="lng_lat"
+    )
     path_save_pre_longlat = os.path.join(
         data_dir,
         "datasets/processed_data/metadata_pickle",
