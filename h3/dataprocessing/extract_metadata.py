@@ -1,17 +1,19 @@
 from __future__ import annotations
 
-import numpy as np
-import pandas as pd
+import os
+import fnmatch
 import json
+
+import numpy as np
+import geopandas as gpd
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from shapely import wkt
-import os
-import fnmatch
-
-import geopandas as gpd
+from tqdm import tqdm
 
 from h3.utils.directories import get_data_dir, get_metadata_pickle_dir, get_xbd_hlabel_dir
+
 
 # Convert different damage classes (Joint Damage Scale) into integers
 # NEED TO CONVERT TO INMUTABLE DICTIONARY
@@ -213,7 +215,7 @@ def extract_damage_allfiles_separate(directory_files: list, filepath: str,
     dataframes_list = []
 
     if len(full_hurr_json_files) > 0:
-        for file in full_hurr_json_files:
+        for file in tqdm(full_hurr_json_files, desc=f"Extracting metadata for {event} hurricane"):
             loc_and_damage_df = extract_metadata(file, CLASSES_DICT,
                                                  crs, event)
             dataframes_list.append(loc_and_damage_df)
