@@ -38,7 +38,7 @@ def filter_files(files: list, filepath: str, search_criteria: str):
 
     Returns
     ------
-        list 
+        list:
             list of filtered files for corresponding criteria.
     """
     list_of_files = []
@@ -108,8 +108,11 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
         Geodataframe
             contains polygons of json file, corresponding metadata.
     """
-    json_file = open(json_link)
-    json_data = json.load(json_file)
+    # json_file = open(json_link)
+    # json_data = json.load(json_file)
+    with open(json_link, 'r') as j:
+        json_data = json.loads(j.read())
+
     meta_data = json_data["metadata"]
     disaster_type = meta_data["disaster"]
     image_name = meta_data["img_name"]
@@ -316,18 +319,18 @@ def load_and_save_df():
     """
     data_dir = get_data_dir()
     xbd_dir = get_xbd_dir()
-    labels_path = "geotiffs.old/hold/labels/"
+    labels_path = "geotiffs/hold/labels/"
     filepath = os.path.join(xbd_dir, labels_path, "")
     fulldirectory_files = [os.path.join(filepath, file)
                            for file in os.listdir(filepath)]
 
-    df_points_post_hurr = extract_damage_allfiles_separate(
-        fulldirectory_files, filepath, "xy", "pre")
-    path_save_post = os.path.join(
-        data_dir,
-        "datasets/processed_data/metadata_pickle",
-        "pre_polygon.pkl")
-    df_points_post_hurr.to_pickle(path_save_post)
+    # df_points_post_hurr = extract_damage_allfiles_separate(
+    #    fulldirectory_files, filepath, "xy", "pre")
+    # path_save_post = os.path.join(
+    #    data_dir,
+    #    "datasets/processed_data/metadata_pickle",
+    #    "pre_polygon.pkl")
+    # df_points_post_hurr.to_pickle(path_save_post)
 
     df_pre_post_hurr_xy = extract_damage_allfiles_ensemble(
         fulldirectory_files, filepath, "xy")
