@@ -1,19 +1,16 @@
-from __future__ import annotations
-
-import os
-import fnmatch
-import json
-
 import numpy as np
-import geopandas as gpd
 import pandas as pd
+import json
 import matplotlib.pyplot as plt
 
 from shapely import wkt
-from tqdm import tqdm
+import os
+import fnmatch
 
-from h3.utils.directories import get_data_dir, get_metadata_pickle_dir, get_xbd_hlabel_dir
+import geopandas as gpd
 
+from h3.utils.directories import get_xbd_dir
+from h3.utils.directories import get_data_dir
 
 # Convert different damage classes (Joint Damage Scale) into integers
 # NEED TO CONVERT TO INMUTABLE DICTIONARY
@@ -27,7 +24,7 @@ CLASSES_DICT = {
 
 
 # extract pre-event hurricane imagery
-def filter_files(files: list, filepath: str, search_criteria: str) -> list:
+def filter_files(files: list, filepath: str, search_criteria: str):
     """Filter all json label files and returns a list of post-event files for
      hurricanes.
 
@@ -45,7 +42,7 @@ def filter_files(files: list, filepath: str, search_criteria: str) -> list:
             list of filtered files for corresponding criteria.
     """
     list_of_files = []
-    search_path = os.path.join(filepath, search_criteria)
+    search_path = filepath + search_criteria
 
     for f in files:
         if fnmatch.fnmatch(f, search_path):
@@ -218,7 +215,7 @@ def extract_damage_allfiles_separate(directory_files: list, filepath: str,
     dataframes_list = []
 
     if len(full_hurr_json_files) > 0:
-        for file in tqdm(full_hurr_json_files, desc=f"Extracting metadata for {event} hurricane"):
+        for file in full_hurr_json_files:
             loc_and_damage_df = extract_metadata(file, CLASSES_DICT,
                                                  crs, event)
             dataframes_list.append(loc_and_damage_df)
@@ -321,37 +318,34 @@ def load_and_save_df():
             as this is most useful for choosing the EFs.
     """
     data_dir = get_data_dir()
+<<<<<<< HEAD
     xbd_dir = get_xbd_dir()
     labels_path = "geotiffs.old/hold/labels/"
     filepath = os.path.join(xbd_dir, labels_path, "")
     fulldirectory_files = [os.path.join(filepath, file)
                            for file in os.listdir(filepath)]
 
-    df_points_post_hurr = extract_damage_allfiles_separate(
-        fulldirectory_files, filepath, "xy", "pre")
-    path_save_post = os.path.join(
-        data_dir,
-        "datasets/processed_data/metadata_pickle",
-        "pre_polygon.pkl")
-    df_points_post_hurr.to_pickle(path_save_post)
+    # df_points_post_hurr = extract_damage_allfiles_separate(
+    #    fulldirectory_files, filepath, "xy", "pre")
+    # path_save_post = os.path.join(
+    #    data_dir,
+    #    "datasets/processed_data/metadata_pickle",
+    #    "pre_polygon.pkl")
+    # df_points_post_hurr.to_pickle(path_save_post)
 
     df_pre_post_hurr_xy = extract_damage_allfiles_ensemble(
-        directory_files=fulldirectory_files,
-        filepath=filepath,
-        crs="xy"
-    )
+        fulldirectory_files, filepath, "xy")
     path_save_pre = os.path.join(
-        get_metadata_pickle_dir(),
+        data_dir,
+        "datasets/processed_data/metadata_pickle",
         "xy_pre_pol_post_damage.pkl")
     df_pre_post_hurr_xy.to_pickle(path_save_pre)
 
     df_pre_post_hurr_ll = extract_damage_allfiles_ensemble(
-        directory_files=fulldirectory_files,
-        filepath=filepath,
-        crs="lng_lat"
-    )
+        fulldirectory_files, filepath, "lng_lat")
     path_save_pre_longlat = os.path.join(
-        get_metadata_pickle_dir(),
+        data_dir,
+        "datasets/processed_data/metadata_pickle",
         "lnglat_pre_pol_post_damage.pkl")
     df_pre_post_hurr_ll.to_pickle(path_save_pre_longlat)
 

@@ -108,7 +108,6 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
         the image.
     """
     crop_size = int(pixel_num//zoom_level)
-    red_flag = 0
 
     polygon_grid = polygon_mask(img, polygon_df, im_size)
     bounding_box = mask_to_bb(polygon_grid)
@@ -124,15 +123,17 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
     y_min = 0
     y_max = img.width - crop_size
 
+    # UNHASH if cropped houses should be exluded
     # find out if house is on the edge and potentially cut off
     # we will not be using incomplete houses. Allow for some margin
     # as polygons will not always exactly lie on the edge
     # check for first zoom level and then break loop for that image
-    margin = 1
-    if (zoom_level == 1 and (x1-margin) <= x_min or (x2+margin) >= img.width or
-            (y1-margin) <= y_min or (y2+margin) >= img.width):
-        red_flag = 1
-        return red_flag
+    # margin = 1
+    # red_flag = 0
+    # if (zoom_level == 1 and (x1-margin) <= x_min or (x2+margin) >= img.width
+    # or (y1-margin) <= y_min or (y2+margin) >= img.width):
+    #    red_flag = 1
+    #    return red_flag
 
     # also return if house is larger than the box
     # if (y2-y1) > crop_size or (x2-x1) > crop_size:
@@ -149,7 +150,6 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
             x_offset + size_limit > x_max or x_offset - size_limit < x_min):
 
         image_array = img.read()
-
         # padding around image, add dimensions around offset to all sides
         pad = ((0, 0), (size_limit, size_limit), (size_limit, size_limit))
         padded = np.pad(image_array, pad_width=pad)
@@ -174,18 +174,19 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
     # order 1 = nearest, order 2= bilinear, order 3 = cubic interpolation
     resized_img = scipy.ndimage.zoom(roi, (1, scaling_factor, scaling_factor),
                                      order=1)
-
     # preserve image metadata
     img_bands = img.meta["count"]
     img_crs = img.meta["crs"]
-    metadata_profile = img.profile
-    metadata_profile.update({
+    img_metadata = img.meta
+    img_metadata.update({
+        "driver": "png",
         "height": pixel_num,
         "width": pixel_num,
         "count": img_bands,
-        "crs": img_crs})
+        "crs": img_crs,
+        "dtype": "uint8"})
 
-    with rio.open(output_path, "w", **metadata_profile) as src:
+    with rio.open(output_path, "w", **img_metadata) as src:
         # Read the data from the window and write it to the output raster
         src.write(resized_img)
 
@@ -208,7 +209,8 @@ def image_processing(zoom_levels: list, pixel_num: int):
     filepath = os.path.join(xbd_dir, labels_path, "")
 
     # where to save zoomed and cropped images
-    save_dir_path = "datasets/processed_data/geotiffs_zoom/hold/images"
+    save_dir_path = "datasets/processed_data/processed_xbd/geotiffs_zoom/" \
+        "hold/images"
     zoomdir_dict = {}
     for zoom_num in zoom_levels:
         zoom_dir = "zoom_" + str(zoom_num)
@@ -228,7 +230,7 @@ def image_processing(zoom_levels: list, pixel_num: int):
                                for file in os.listdir(filepath)]
         polygons_df = extract_damage_allfiles_ensemble(fulldirectory_files,
                                                        filepath,
-                                                       "lng_lat")
+                                                       "xy")
     for building_num in range(len(polygons_df)):
         building_geometry = (polygons_df.iloc[building_num]["geometry"])
         # find image name
@@ -243,14 +245,17 @@ def image_processing(zoom_levels: list, pixel_num: int):
             for zoom_level in zoom_levels:
                 zoom_dir = zoomdir_dict[zoom_level]
                 img_num = str(building_num) + ".png"
-                output_path = os.path.join(
-                    zoom_dir,
-                    (img_name.strip(".png")+"_zoom"+img_num))
-                zoom1_redflag = crop_images(img, building_geometry, zoom_level,
-                                            pixel_num, image_size, output_path)
+
+                # output_path = os.path.join(
+                #    zoom_dir,
+                #    (img_name.strip(".png")+"_zoom" + str(zoom_level) +
+                #     "_" + img_num))
+                output_path = os.path.join(zoom_dir, img_num)
+                crop_images(img, building_geometry, zoom_level,
+                            pixel_num, image_size, output_path)
                 # if house is on the edge, ignore it for all zoom_levels
-                if zoom1_redflag == 1:
-                    break
+                # if zoom1_redflag == 1:
+                # break
 
 
 def main():
