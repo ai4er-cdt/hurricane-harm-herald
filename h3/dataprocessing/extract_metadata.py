@@ -11,6 +11,7 @@ import pandas as pd
 from shapely import wkt
 from tqdm import tqdm
 
+from typing import Literal
 from h3.constants import DMG_CLASSES_DICT
 from h3.utils.directories import get_data_dir, get_metadata_pickle_dir, get_xbd_hlabel_dir
 
@@ -157,7 +158,7 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
 
 
 def extract_damage_allfiles_separate(directory_files: list, filepath: str,
-                                     crs: str, event: str):
+                                     crs: str, event: Literal["pre", "post"]):
     """
     Filters all label files for hurricanes, extracts the metadata,
     concatenates all files for post and pre images separately.
