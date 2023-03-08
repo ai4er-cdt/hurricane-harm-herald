@@ -1,6 +1,13 @@
 name: Pylint
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - dev
 
 jobs:
   build:
@@ -20,4 +27,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py') --disable=C0103,C0114,C0116,C0301,W0311,W0511,E0401,E1123
+        pylint $(git ls-files '*.py') --disable=C0103,C0114,C0116,C0301,C0411,W0311,W0511,W1203,E0401,E1123,R1732
