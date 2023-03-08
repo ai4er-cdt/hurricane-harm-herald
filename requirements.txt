@@ -1,6 +1,8 @@
 cmocean
+dask
 ipython
 geopandas
+h5netcdf
 matplotlib
 numpy
 pandas
@@ -12,3 +14,4 @@ torchvision
 pytorch
 seaborn
 scikit-learn
+xarray

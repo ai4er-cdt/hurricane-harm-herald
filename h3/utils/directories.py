@@ -39,6 +39,26 @@ def get_xbd_hurricane_dir() -> str:
 	return get_xbd_disaster_dir("hurricane")
 
 
+def get_weather_data_dir() -> str:
+	"""./data/datasets/weather"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "weather"))
+
+
+def get_cmorph_dir() -> str:
+	"""./data/datasets/weather/cmorph"""
+	return guarantee_existence(os.path.join(get_weather_data_dir(), "cmorph"))
+
+
+def get_flood_dir() -> str:
+	"""./data/datasets/flood"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "flood"))
+
+
+def get_storm_dir() -> str:
+	"""./data/datasets/storm"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "storm"))
+
+
 def get_xbd_hlabel_dir(old: bool = False) -> str:
 	"""./data/datasets/xBD_data/geotiffs/hold/labels"""
 	geotiffs_name = "geotiffs.old" if old else "geotiffs"

@@ -5,8 +5,10 @@ from pathlib import Path
 from glob import glob
 
 from tqdm import tqdm
+
+from h3 import logger
 from h3.utils.directories import get_xbd_dir, get_xbd_disaster_dir
-from h3.utils.file_ops import get_sha1, guarantee_existence
+from h3.utils.file_ops import get_sha1, guarantee_existence, unpack_file
 from h3.utils.simple_functions import convert_bytes
 
 SHA1 = {
@@ -76,16 +78,22 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 	bool
 		Returns False if the file does not exist.
 		Returns True if the file does exist and if checksum is checked and matches.
+
+	Raises
+	------
+	AssertionError
+		If checksum is True and does not match.
 	"""
 	filename = os.path.basename(filepath)
 	if not os.path.exists(filepath):
+		logger.info(f"{filepath} does not exist.")
 		return False
 	if checksum:
 		assert get_sha1(filepath) == SHA1[filename], f"{filename} failed sha1 checksum"
 	return True
 
 
-def combine_xbd(
+def _combine_xbd(
 		output_filename: str = "xview2_geotiff.tgz",
 		xbd_part_glob: str = "xview2_geotiff.tgz.part-*",
 		delete_if_check: bool = False
@@ -108,6 +116,8 @@ def combine_xbd(
 	xbd_dir = get_xbd_dir()
 	output_filepath = os.path.join(xbd_dir, output_filename)
 
+	# Note: sorted(Path(xbd_dir).glob(xbd_part_glob)) could be a solution for python<3.10
+	# but it x2 slower than the current method
 	current_files = glob(xbd_part_glob, root_dir=xbd_dir)
 
 	if not current_files:
@@ -118,33 +128,33 @@ def combine_xbd(
 			filepath = os.path.join(xbd_dir, file)
 			with open(filepath, "rb") as fd:
 				shutil.copyfileobj(fd, wfb)     # similar to `cat FILE > NEW_FILE`
+	logger.info(f"{len(current_files)} files merged into {output_filename}")
 
 	if delete_if_check and check_xbd(output_filename, checksum=True):
 		for file in tqdm(current_files, desc="Deleting"):
 			os.remove(os.path.join(xbd_dir, file))
+		logger.info("Combined file's checksum matches. Deleted the part files after merging.")
 
 
-def unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
-	"""
-	Unpack a tar file.
-	It is quite slow for big files
-
-	Parameters
-	----------
-	filename : str, optional
-		The filename in the xbd_dir to unpack. The default is "xview2_geotiff.tgz"
-	"""
+def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 	# TODO: too slow
 	xbd_dir = get_xbd_dir()
 	filepath = os.path.join(xbd_dir, filename)
-
-	print(f"Unpacking {filename}\nThis can take some time")
-	with tarfile.open(filepath, "r:gz") as tar:
-		tar.extractall(path=xbd_dir)
+	unpack_file(filepath)
 
 
-def get_xbd():
-	pass
+def get_xbd(checksum: bool = False, clean_after_merge: bool = True, unpack_tar: bool = True, **kwargs) -> None:
+	"""Wrapper function to check part files, combine and unpack them."""
+	xbd_dir = get_xbd_dir()
+	all_part_name = list(SHA1.keys())[1:]
+	combined_name = kwargs["combined_name"]
+
+	for name in all_part_name:
+		filepath = os.path.join(xbd_dir, name)
+		check_xbd(filepath=filepath, checksum=checksum)
+	_combine_xbd(output_filename=combined_name, delete_if_check=clean_after_merge)
+	if unpack_tar:
+		_unpack_xbd(filename=combined_name)
 
 
 def main():
