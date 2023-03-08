@@ -119,32 +119,6 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
 
     damage_location = []
 
-    def damage(building_coordinates, event_type: str):
-        """Extract damage class and maps it to a damage number according to the
-        joint damage scale which is layed out in the classes dictionary. It
-        returns a damage number. This only works for post-event json files.
-
-        Parameters
-        -----
-        building_coordinates : object
-            polygon coordinates of the building
-        event_type : str
-            pre-event or post-event tells you whether the geodataframe contains
-            a column for damage class.
-
-        Returns
-        -------
-        int
-            damage number, based on the damage class from the json files. From
-            CLASSES_DICT.
-        """
-        if event_type == "pre":
-            damage_num = float('NaN')
-        else:
-            damage_class = building_coordinates["properties"]["subtype"]
-            damage_num = CLASSES_DICT[damage_class]
-        return damage_num
-
     for (building_lnglat, building_xy) in zip(coordinates_lnlat,
                                               coordinates_xy):
         lnglat_point = extract_point(building_lnglat)
@@ -153,7 +127,11 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
         xy_polygon = extract_polygon(building_xy)
 
         # arbitrary if taking from xy or long lat features
-        damage_num = damage(building_lnglat, event_type)
+        if event_type == "pre":
+            damage_num = float('NaN')
+        else:
+            damage_class = building_lnglat["properties"]["subtype"]
+            damage_num = CLASSES_DICT[damage_class]
 
         damage_location.append([
             lnglat_point, lnglat_polygon, xy_point,
