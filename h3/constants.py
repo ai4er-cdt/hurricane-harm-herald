@@ -12,3 +12,12 @@ TEXAS_TO_MAINE_LON_MIN: float = -98.05986540280205
 TEXAS_TO_MAINE_LON_MAX: float = -75.39402341548211
 TEXAS_TO_MAINE_LAT_MIN: float = 24.491674407495886
 TEXAS_TO_MAINE_LAT_MAX: float = 36.75816955589585
+
+
+DMG_CLASSES_DICT = {
+    "no-damage": 0,
+    "minor-damage": 1,
+    "major-damage": 2,
+    "destroyed": 3,
+    "un-classified": 4
+}

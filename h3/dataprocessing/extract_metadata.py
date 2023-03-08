@@ -4,25 +4,17 @@ import os
 import fnmatch
 import json
 
-import numpy as np
 import geopandas as gpd
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from shapely import wkt
 from tqdm import tqdm
 
+from h3.constants import DMG_CLASSES_DICT
 from h3.utils.directories import get_data_dir, get_metadata_pickle_dir, get_xbd_hlabel_dir
 
 # Convert different damage classes (Joint Damage Scale) into integers
 # NEED TO CONVERT TO INMUTABLE DICTIONARY
-CLASSES_DICT = {
-    "no-damage": 0,
-    "minor-damage": 1,
-    "major-damage": 2,
-    "destroyed": 3,
-    "un-classified": 4
-}
 
 
 # extract pre-event hurricane imagery
@@ -218,7 +210,7 @@ def extract_damage_allfiles_separate(directory_files: list, filepath: str,
 
     if len(full_hurr_json_files) > 0:
         for file in tqdm(full_hurr_json_files, desc=f"Extracting metadata for {event} hurricane"):
-            loc_and_damage_df = extract_metadata(file, CLASSES_DICT,
+            loc_and_damage_df = extract_metadata(file, DMG_CLASSES_DICT,
                                                  crs, event)
             dataframes_list.append(loc_and_damage_df)
             rdf = gpd.GeoDataFrame(pd.concat(dataframes_list,
@@ -278,9 +270,9 @@ def extract_damage_allfiles_ensemble(directory_files: list, filepath: str,
         post_json_name = pre_json_name.replace("pre", "post")
 
         pre_metadata = extract_metadata(
-            pre_json_name, CLASSES_DICT, crs, "pre")
+            pre_json_name, DMG_CLASSES_DICT, crs, "pre")
         post_metadata = extract_metadata(
-            post_json_name, CLASSES_DICT, crs, "post")
+            post_json_name, DMG_CLASSES_DICT, crs, "post")
 
         # which row matches with which?
         # post_metadata["match_num"] = pre_metadata.geometry.apply(
