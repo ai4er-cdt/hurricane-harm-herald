@@ -25,17 +25,17 @@ def filter_files(files: list, filepath: str, search_criteria: str) -> list:
      hurricanes.
 
     Parameters
-    -----
-        files : list
-            list of json files in the label directory
-        search_criteria : str
-            filter out hurricanes, post-event imagery in json format
-            i.e. input "hurricane*pre*json", with *'s as wildcard.
+    ----------
+    files : list
+        list of json files in the label directory
+    search_criteria : str
+        filter out hurricanes, post-event imagery in json format
+        i.e. input "hurricane*pre*json", with *'s as wildcard.
 
     Returns
-    ------
-        list:
-            list of filtered files for corresponding criteria.
+    -------
+    list:
+        list of filtered files for corresponding criteria.
     """
     list_of_files = []
     search_path = os.path.join(filepath, search_criteria)
@@ -51,14 +51,14 @@ def extract_point(building):
     point.
 
     Parameters
-    ------
-        building : object
-            polygon information in shapely coordinates.
+    ----------
+    building : object
+        polygon information in shapely coordinates.
 
     Returns
-    -----
-        object
-            centroid point of polygon.
+    -------
+    object
+        centroid point of polygon.
     """
     building_polygon = building["wkt"]
     building_coordinates = wkt.loads(building_polygon).centroid.wkt
@@ -69,14 +69,14 @@ def extract_polygon(building):
     """Extract polygon coordinate reference system information.
 
     Parameters
-    -----
-        building : object
-            polygon shapely coordinates.
+    ----------
+    building : object
+        polygon shapely coordinates.
 
     Returns
-    -----
-        object
-            polygon with spatial coordinate information.
+    -------
+    object
+        polygon with spatial coordinate information.
     """
     building_polygon = building["wkt"]
     return building_polygon
@@ -89,20 +89,21 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
     date.
 
     Parameters
-    -----
-        json_link : path
-            path to json file containing location and metadata.
-        classes_dict : dict
-            dictionary mapping between damage classes (str) and
-            damage numbers (int).
-        crs : str
-            coordinate reference system to put as geometry in geodataframe.
-        event_type : str
-            post or pre event json files to filter out.
+    ----------
+    json_link : path
+        path to json file containing location and metadata.
+    classes_dict : dict
+        dictionary mapping between damage classes (str) and
+        damage numbers (int).
+    crs : str
+        coordinate reference system to put as geometry in geodataframe.
+    event_type : str
+        post or pre event json files to filter out.
 
-    Return:
-        Geodataframe
-            contains polygons of json file, corresponding metadata.
+    Returns
+    -------
+    Geodataframe
+        contains polygons of json file, corresponding metadata.
     """
     # json_file = open(json_link)
     # json_data = json.load(json_file)
@@ -164,19 +165,20 @@ def extract_damage_allfiles_separate(directory_files: list, filepath: str,
     concatenates all files for post and pre images separately.
 
     Parameters
-    ------
-        directory_files : list
-            .json files in xBD data hold folder to filter.
-        filepath : str
-            file path to the image files.
-        crs : str
-            coordinate reference system to put as geometry in geodataframe.
-        event : str
-            post or pre event json files to filter out.
+    ----------
+    directory_files : list
+        .json files in xBD data hold folder to filter.
+    filepath : str
+        file path to the image files.
+    crs : str
+        coordinate reference system to put as geometry in geodataframe.
+    event : str
+        post or pre event json files to filter out.
 
     Returns
-    -----
-        geodataframe: two geodataframes with a summary of metadata for all
+    -------
+    geodataframe
+        two geodataframes with a summary of metadata for all
         hurricane events with labels.
     """
     if event == "pre":
@@ -206,20 +208,20 @@ def extract_damage_allfiles_ensemble(directory_files: list, filepath: str,
     adds that to the pre-event metadata dataframe.
 
     Parameters
-    -----
-        directory_files : list
-            .json files in xBD data hold folder to filter.
-        filepath : str
-            file path to the image files.
-        crs : str
-            coordinate reference system to put as geometry in
-            geodataframe.
+    ----------
+    directory_files : list
+        .json files in xBD data hold folder to filter.
+    filepath : str
+        file path to the image files.
+    crs : str
+        coordinate reference system to put as geometry in
+        geodataframe.
 
     Returns
-    -----
-        geodataframe:
-            geodataframes with a summary of metadata for all
-            pre-event hurricane events with post-event labels.
+    -------
+    geodataframe
+        geodataframes with a summary of metadata for all
+        pre-event hurricane events with post-event labels.
     """
     # check if polygons from pre and post overlap
     def overlapping_polygons(geoms, p):
@@ -279,17 +281,13 @@ def load_and_save_df():
     referring to the corresponding imagery file, and the longitude and
     latitude.
 
-    Parameters
-    -----
-    -
-
     Returns
-    -----
-        Geodataframe
-            all metadata and locations in a geodataframe that is
-            saved in the data/datasets/EFs directory. Choose to return the gdf
-            with long-lat coordinate system and pre polygons with post damage
-            as this is most useful for choosing the EFs.
+    -------
+    Geodataframe
+        all metadata and locations in a geodataframe that is
+        saved in the data/datasets/EFs directory. Choose to return the gdf
+        with long-lat coordinate system and pre polygons with post damage
+        as this is most useful for choosing the EFs.
     """
     data_dir = get_data_dir()
     # xbd_dir = get_xbd_dir()
