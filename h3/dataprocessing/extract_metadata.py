@@ -5,6 +5,7 @@ import fnmatch
 import json
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 
 from shapely import wkt
@@ -128,7 +129,7 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
 
         # arbitrary if taking from xy or long lat features
         if event_type == "pre":
-            damage_num = float('NaN')
+            damage_num = np.NaN
         else:
             damage_class = building_lnglat["properties"]["subtype"]
             damage_num = CLASSES_DICT[damage_class]
