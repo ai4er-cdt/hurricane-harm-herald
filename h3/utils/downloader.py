@@ -52,6 +52,7 @@ def url_download(url: str, path: str, task: int = 1, total: int = 1) -> None:
 	"""
 	Download an url to a local file
 	"""
+	logger.info(f"Downloading: '{url}' to {path}")
 	response = urllib.request.urlopen(url)
 	chunks = _get_chunks(response)
 	pbar = tqdm(
@@ -71,7 +72,7 @@ def url_download(url: str, path: str, task: int = 1, total: int = 1) -> None:
 				t.update(len(chunk))
 				# if done_event.is_set():
 				# 	return
-	logger.info(f"Downloaded in {path}")
+	logger.debug(f"Downloaded in {path}")
 
 
 def downloader(urls: Iterable[str], target_dir: str = get_download_dir()):
