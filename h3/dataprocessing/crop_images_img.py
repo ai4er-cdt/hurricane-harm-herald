@@ -7,6 +7,10 @@ import cv2
 import scipy.ndimage
 from os.path import exists
 
+from tqdm import tqdm
+from threading import Thread
+
+from h3 import logger
 from h3.utils.directories import get_xbd_dir
 from h3.utils.directories import get_data_dir
 from h3.dataprocessing.extract_metadata import extract_damage_allfiles_ensemble
@@ -186,9 +190,18 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
         "crs": img_crs,
         "dtype": "uint8"})
 
+    thread = Thread(target=save_image, args=(output_path, resized_img, img_metadata))
+    thread.start()
+    # with rio.open(output_path, "w", **img_metadata) as src:
+    #     # Read the data from the window and write it to the output raster
+    #     src.write(resized_img)
+
+
+def save_image(output_path, resized_img, img_metadata):
     with rio.open(output_path, "w", **img_metadata) as src:
         # Read the data from the window and write it to the output raster
         src.write(resized_img)
+    logger.debug(f"saved {output_path}")
 
 
 def image_processing(zoom_levels: list, pixel_num: int):
@@ -236,13 +249,13 @@ def image_processing(zoom_levels: list, pixel_num: int):
     filtered_df = polygons_df[["image_name"]].drop_duplicates(
         subset=['image_name'])
 
-    for name_img in filtered_df.iloc[6:]["image_name"]:
+    for name_img in tqdm(filtered_df.iloc[6:]["image_name"]):
         tif_name = name_img.replace("png", "tif")
         image_path = os.path.join(filepath, tif_name).replace("labels",
                                                               "images")
         image_pol_df = polygons_df.query('image_name == @name_img')
         polygons_image = image_pol_df[["geometry", "index"]]
-        print(polygons_image)
+        # print(polygons_image)
         with rio.open(image_path) as img:
             image_size = 1024
             for building in range(len(polygons_image)):
