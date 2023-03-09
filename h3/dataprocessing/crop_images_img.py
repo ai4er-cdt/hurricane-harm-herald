@@ -249,13 +249,12 @@ def image_processing(zoom_levels: list, pixel_num: int):
     filtered_df = polygons_df[["image_name"]].drop_duplicates(
         subset=['image_name'])
 
-    for name_img in tqdm(filtered_df.iloc[6:]["image_name"]):
+    for name_img in tqdm(filtered_df["image_name"]):
         tif_name = name_img.replace("png", "tif")
         image_path = os.path.join(filepath, tif_name).replace("labels",
                                                               "images")
         image_pol_df = polygons_df.query('image_name == @name_img')
         polygons_image = image_pol_df[["geometry", "index"]]
-        # print(polygons_image)
         with rio.open(image_path) as img:
             image_size = 1024
             for building in range(len(polygons_image)):
