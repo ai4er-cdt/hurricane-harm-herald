@@ -268,6 +268,7 @@ def extract_damage_allfiles_ensemble(directory_files: list, filepath: str,
         # otherwise, use the overlapping_polygons function which indicates
         # polygonsare overlapping and are therefore pre and post pairs
         polygons_pre = pre_metadata.merge(merge_post_metadata, on="match_num")
+        polygons_pre.drop(["match_num"], axis=1)
         pre_dataframes_list.append(polygons_pre)
     pre_rdf = gpd.GeoDataFrame(pd.concat(pre_dataframes_list,
                                          ignore_index=True))
@@ -289,7 +290,7 @@ def load_and_save_df():
         with long-lat coordinate system and pre polygons with post damage
         as this is most useful for choosing the EFs.
     """
-    data_dir = get_data_dir()
+    # data_dir = get_data_dir()
     # xbd_dir = get_xbd_dir()
     # label path
     filepath = get_xbd_hlabel_dir()  # TODO: look/fix the geotiffs.old and all
