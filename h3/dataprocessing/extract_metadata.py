@@ -13,10 +13,8 @@ from tqdm import tqdm
 
 from typing import Literal
 from h3.constants import DMG_CLASSES_DICT
-from h3.utils.directories import get_data_dir, get_metadata_pickle_dir, get_xbd_hlabel_dir
-
-# Convert different damage classes (Joint Damage Scale) into integers
-# NEED TO CONVERT TO INMUTABLE DICTIONARY
+from h3.utils.directories import get_metadata_pickle_dir, get_xbd_hlabel_dir, \
+    get_xbd_dir
 
 
 # extract pre-event hurricane imagery
@@ -28,6 +26,8 @@ def filter_files(files: list, filepath: str, search_criteria: str) -> list:
     ----------
     files : list
         list of json files in the label directory
+    filepath: str
+        path to file, assisting in search criteria process
     search_criteria : str
         filter out hurricanes, post-event imagery in json format
         i.e. input "hurricane*pre*json", with *'s as wildcard.
@@ -138,14 +138,15 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
 
         damage_location.append([
             lnglat_point, lnglat_polygon, xy_point,
-            xy_polygon, damage_num, disaster_type, image_name, capture_date])
+            xy_polygon, damage_num, disaster_type, image_name, capture_date,
+            json_link])
 
     if crs == "xy":
         df = gpd.GeoDataFrame(
             damage_location,
             columns=["point_lnglat", "polygon_lnglat", "point_xy", "geometry",
                      "damage_class", "disaster_name", "image_name",
-                     "capture_date"])
+                     "capture_date", "json_link"])
 
     else:
         df = gpd.GeoDataFrame(
@@ -158,7 +159,7 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
     return df
 
 
-def extract_damage_allfiles_separate(directory_files: list, filepath: str,
+def extract_damage_allfiles_separate(filepaths_dict: dict,
                                      crs: str, event: Literal["pre", "post"]):
     """
     Filters all label files for hurricanes, extracts the metadata,
@@ -166,10 +167,10 @@ def extract_damage_allfiles_separate(directory_files: list, filepath: str,
 
     Parameters
     ----------
-    directory_files : list
-        .json files in xBD data hold folder to filter.
-    filepath : str
-        file path to the image files.
+    directory_files : dict
+        .json files in xBD data folder to filter organised by their folder.
+        These files are a value for the holdout, tier1, tier3 and test folder
+        as a key.
     crs : str
         coordinate reference system to put as geometry in geodataframe.
     event : str
@@ -182,25 +183,52 @@ def extract_damage_allfiles_separate(directory_files: list, filepath: str,
         hurricane events with labels.
     """
     if event == "pre":
-        full_hurr_json_files = filter_files(directory_files, filepath,
-                                            "hurricane*pre*.json")
+        search_criterium = "hurricane*pre*.json"
     if event == "post":
-        full_hurr_json_files = filter_files(directory_files, filepath,
-                                            "hurricane*post*.json")
+        search_criterium = "hurricane*post*.json"
 
     dataframes_list = []
-
-    if len(full_hurr_json_files) > 0:
-        for file in tqdm(full_hurr_json_files, desc=f"Extracting metadata for {event} hurricane"):
-            loc_and_damage_df = extract_metadata(file, DMG_CLASSES_DICT,
-                                                 crs, event)
-            dataframes_list.append(loc_and_damage_df)
-            rdf = gpd.GeoDataFrame(pd.concat(dataframes_list,
-                                             ignore_index=True))
+    for directory in filepaths_dict:
+        filepath_list = (filepaths_dict[directory])
+        full_hurr_json_files = filter_files(filepath_list,
+                                            directory,
+                                            search_criterium)
+        if len(full_hurr_json_files) > 0:
+            for file in tqdm(full_hurr_json_files,
+                             desc=f"Extracting metadata for {event}"
+                             "hurricane"):
+                loc_and_damage_df = extract_metadata(file, DMG_CLASSES_DICT,
+                                                     crs, event)
+                dataframes_list.append(loc_and_damage_df)
+    rdf = gpd.GeoDataFrame(pd.concat(dataframes_list,
+                                     ignore_index=True))
     return rdf
 
 
-def extract_damage_allfiles_ensemble(directory_files: list, filepath: str,
+# check if polygons from pre and post overlap
+def overlapping_polygons(geoms, p):
+    """Checks if polygons from pre- and post-event imagery overlap.
+    If they do, the damage class from post-event dataframe can be allocated
+    to the pre-event polygon.
+
+    Parameters
+    ----------
+    geoms : series
+        post-event geodataframe geometry column containing the polygon
+    p : object
+        pre-event polygon extracted from geodataframe
+
+    Returns
+    -------
+    series
+        column in post-event dataframe containing which row number the
+        post-event polygon matches with in the pre-event dataframe.
+    """
+    overlap = (geoms.intersection(p).area / p.area) > 0.7
+    return pd.Series(overlap.index[overlap])
+
+
+def extract_damage_allfiles_ensemble(filepaths_dict: dict,
                                      crs: str):
     """
     Filters all pre and post label files for hurricanes, extracts the metadata
@@ -209,13 +237,12 @@ def extract_damage_allfiles_ensemble(directory_files: list, filepath: str,
 
     Parameters
     ----------
-    directory_files : list
-        .json files in xBD data hold folder to filter.
-    filepath : str
-        file path to the image files.
+     directory_files : dict
+        .json files in xBD data folder to filter organised by their folder.
+        These files are a value for the holdout, tier1, tier3 and test folder
+        as a key.
     crs : str
-        coordinate reference system to put as geometry in
-        geodataframe.
+        coordinate reference system to put as geometry in geodataframe.
 
     Returns
     -------
@@ -223,64 +250,54 @@ def extract_damage_allfiles_ensemble(directory_files: list, filepath: str,
         geodataframes with a summary of metadata for all
         pre-event hurricane events with post-event labels.
     """
-    # check if polygons from pre and post overlap
-    def overlapping_polygons(geoms, p):
-        """Checks if polygons from pre- and post-event imagery overlap.
-        If they do, the damage class from post-event dataframe can be allocated
-        to the pre-event polygon.
+    full_pre_dataframes_list = []
+    for directory in filepaths_dict:
+        full_pre_hurr_json_files = filter_files(filepaths_dict[directory],
+                                                directory,
+                                                "hurricane*pre*.json")
+        # pre_dataframes_list = []
+        for pre_json_name in tqdm(full_pre_hurr_json_files,
+                                  desc=f"Extracting metadata for pre event" /
+                                  "and post damage label hurricane"):
+            post_json_name = pre_json_name.replace("pre", "post")
 
-        Parameters
-        ----------
-        geoms : series
-            post-event geodataframe geometry column containing the polygon
-        p : object
-            pre-event polygon extracted from geodataframe
+            pre_metadata = extract_metadata(
+                pre_json_name, DMG_CLASSES_DICT, crs, "pre")
+            post_metadata = extract_metadata(
+                post_json_name, DMG_CLASSES_DICT, crs, "post")
 
-        Returns
-        -------
-        series
-            column in post-event dataframe containing which row number the
-            post-event polygon matches with in the pre-event dataframe.
-        """
-        overlap = (geoms.intersection(p).area / p.area) > 0.7
-        return pd.Series(overlap.index[overlap])
+            # which row matches with which?
+            # post_metadata["match_num"] = pre_metadata.geometry.apply(
+            # lambda x: overlapping_polygons(post_metadata, x))
+            post_metadata["match_num"] = post_metadata.index
+            merge_post_metadata = post_metadata[["damage_class", "match_num"]]
+            pre_metadata["match_num"] = pre_metadata.index
+            pre_metadata = pre_metadata.drop("damage_class", axis=1)
 
-    full_pre_hurr_json_files = filter_files(directory_files, filepath,
-                                            "hurricane*pre*.json")
-    pre_dataframes_list = []
-    for pre_json_name in full_pre_hurr_json_files:
-        post_json_name = pre_json_name.replace("pre", "post")
-
-        pre_metadata = extract_metadata(
-            pre_json_name, DMG_CLASSES_DICT, crs, "pre")
-        post_metadata = extract_metadata(
-            post_json_name, DMG_CLASSES_DICT, crs, "post")
-
-        # which row matches with which?
-        # post_metadata["match_num"] = pre_metadata.geometry.apply(
-        # lambda x: overlapping_polygons(post_metadata, x))
-        post_metadata["match_num"] = post_metadata.index
-        merge_post_metadata = post_metadata[["damage_class", "match_num"]]
-        pre_metadata["match_num"] = pre_metadata.index
-        pre_metadata = pre_metadata.drop("damage_class", axis=1)
-
-        # Assume order of polygons in pre and post json data is same
-        # otherwise, use the overlapping_polygons function which indicates
-        # polygonsare overlapping and are therefore pre and post pairs
-        polygons_pre = pre_metadata.merge(merge_post_metadata, on="match_num")
-        polygons_pre.drop(["match_num"], axis=1)
-        pre_dataframes_list.append(polygons_pre)
-    pre_rdf = gpd.GeoDataFrame(pd.concat(pre_dataframes_list,
+            # Assume order of polygons in pre and post json data is same
+            # otherwise, use the overlapping_polygons function which indicates
+            # polygonsare overlapping and are therefore pre and post pairs
+            polygons_pre = pre_metadata.merge(merge_post_metadata,
+                                              on="match_num")
+            polygons_pre.drop(["match_num"], axis=1)
+            full_pre_dataframes_list.append(polygons_pre)
+    pre_rdf = gpd.GeoDataFrame(pd.concat(full_pre_dataframes_list,
                                          ignore_index=True))
     return pre_rdf
 
 
-def load_and_save_df():
+def load_and_save_df(filepaths_dict: dict, output_dir: str):
     """
     Loads the json label files for all hurricanes in the "hold" section of the
     xBD data, extracts the points and polygons in both xy coordinates,
     referring to the corresponding imagery file, and the longitude and
     latitude.
+    Parameters
+    ----------
+    directory_files : dict
+        pathnames in a dictionary for the holdout, tier1, tier3 and test
+        folder.
+    output_dir : str
 
     Returns
     -------
@@ -290,50 +307,58 @@ def load_and_save_df():
         with long-lat coordinate system and pre polygons with post damage
         as this is most useful for choosing the EFs.
     """
-    # data_dir = get_data_dir()
-    # xbd_dir = get_xbd_dir()
-    # label path
-    filepath = get_xbd_hlabel_dir()  # TODO: look/fix the geotiffs.old and all
-    # filepath = os.path.join(xbd_dir, labels_path, "")
-    fulldirectory_files = [os.path.join(filepath, file)
+    # update filepaths_dictionary
+    for filepath in filepaths_dict:
+        directory_files = [os.path.join(filepath, file)
                            for file in os.listdir(filepath)]
+        filepaths_dict[filepath] = directory_files
 
     df_points_post_hurr = extract_damage_allfiles_separate(
-        directory_files=fulldirectory_files,
-        filepath=filepath,
+        filepaths_dict=filepaths_dict,
         crs="xy",
         event="pre"
     )
+
     path_save_post = os.path.join(
-        get_metadata_pickle_dir(),
+        output_dir,
         "pre_polygon.pkl")
     df_points_post_hurr.to_pickle(path_save_post)
 
     df_pre_post_hurr_xy = extract_damage_allfiles_ensemble(
-        directory_files=fulldirectory_files,
-        filepath=filepath,
+        filepaths_dict=filepaths_dict,
         crs="xy"
     )
     path_save_pre = os.path.join(
-        get_metadata_pickle_dir(),
+        output_dir,
         "xy_pre_pol_post_damage.pkl")
     df_pre_post_hurr_xy.to_pickle(path_save_pre)
 
     df_pre_post_hurr_ll = extract_damage_allfiles_ensemble(
-        directory_files=fulldirectory_files,
-        filepath=filepath,
+        filepaths_dict=filepaths_dict,
         crs="lng_lat"
     )
     path_save_pre_longlat = os.path.join(
-        get_metadata_pickle_dir(),
+        output_dir,
         "lnglat_pre_pol_post_damage.pkl")
     df_pre_post_hurr_ll.to_pickle(path_save_pre_longlat)
 
-    return df_pre_post_hurr_ll
+    return df_pre_post_hurr_xy, df_pre_post_hurr_ll
 
 
 def main():
-    load_and_save_df()
+    # data_dir = get_data_dir()
+    xbd_dir = get_xbd_dir()
+    # label path
+    # TODO: look/fix the geotiffs.old and all
+    hold_filepath = get_xbd_hlabel_dir()
+    output_dir = get_metadata_pickle_dir()
+    tier1_filepath = os.path.join(xbd_dir, "geotiffs/tier1/labels")
+    tier3_filepath = os.path.join(xbd_dir, "geotiffs/tier3/labels")
+    test_filepath = os.path.join(xbd_dir, "geotiffs/test/labels")
+    # filepath = os.path.join(xbd_dir, labels_path, "")
+    filepaths_dict = dict.fromkeys([hold_filepath, tier1_filepath,
+                                    tier3_filepath, test_filepath])
+    load_and_save_df(filepaths_dict, output_dir)
 
 
 if __name__ == "__main__":

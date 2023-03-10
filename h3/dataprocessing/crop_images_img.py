@@ -16,15 +16,6 @@ from h3.utils.directories import get_data_dir
 from h3.dataprocessing.extract_metadata import extract_damage_allfiles_ensemble
 
 
-CLASSES_DICT = {
-    "no-damage": 0,
-    "minor-damage": 1,
-    "major-damage": 2,
-    "destroyed": 3,
-    "un-classified": 4
-}
-
-
 def extract_coords(row):
     return np.array(row).astype(np.int32)
 
@@ -190,7 +181,8 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
         "crs": img_crs,
         "dtype": "uint8"})
 
-    thread = Thread(target=save_image, args=(output_path, resized_img, img_metadata))
+    thread = Thread(target=save_image, args=(output_path, resized_img,
+                                             img_metadata))
     thread.start()
     # with rio.open(output_path, "w", **img_metadata) as src:
     #     # Read the data from the window and write it to the output raster
@@ -207,7 +199,6 @@ def save_image(output_path, resized_img, img_metadata):
 def image_processing(zoom_levels: list, pixel_num: int):
     """Loads images and crops them based on the required zoom levels
     and the required imagery input pixel size for the model.
-
     Parameters
     ----------
     zoom_levels : list
