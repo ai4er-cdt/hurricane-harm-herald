@@ -366,11 +366,11 @@ def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:  # This 
 	return cols, rows
 
 
-def get_height(df, dem):  # get the height of the given location (given by lon and lat)
-	coord_list = [(x, y) for x, y in zip(df["lon"], df["lat"])]
-	data = [x for x in dem.sample(coord_list, 1)]
-	df["elevation"] = np.array(data)
-	return df
+def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarray:  # get the height of the given location (given by lon and lat)
+	coord_list = np.array((lon, lat)).T
+	elevation = np.fromiter(dem.sample(coord_list, 1), dtype=np.int16)
+	# df["elevation"] = np.array(data)
+	return elevation
 
 
 # def get_height_v2(cols,rows,dem_array): # get the height of the given location (given by lon and lat)
