@@ -188,72 +188,73 @@ def geoddist(p1, p2):
 	return Geodesic.WGS84.Inverse(p1[1], p1[0], p2[1], p2[0])["s12"]
 
 
-n_groups = len(building_groups)  #
-n_cols = 3
-n_rows = math.ceil(n_groups / n_cols)
-fig, axs = plt.subplots(n_rows, n_cols, figsize=(12, 12), dpi=300,
-                        subplot_kw={"projection": ccrs.PlateCarree()})
+def another_plot():
+	n_groups = len(building_groups)  #
+	n_cols = 3
+	n_rows = math.ceil(n_groups / n_cols)
+	fig, axs = plt.subplots(n_rows, n_cols, figsize=(12, 12), dpi=300,
+	                        subplot_kw={"projection": ccrs.PlateCarree()})
 
-for i, (group_name, group_data) in enumerate(building_groups):
-	west = int(np.floor(group_data["lon"].min()))
-	east = int(np.ceil(group_data["lon"].max()))
-	south = int(np.floor(group_data["lat"].min()))
-	north = int(np.ceil(group_data["lat"].max()))
+	for i, (group_name, group_data) in enumerate(building_groups):
+		west = int(np.floor(group_data["lon"].min()))
+		east = int(np.ceil(group_data["lon"].max()))
+		south = int(np.floor(group_data["lat"].min()))
+		north = int(np.ceil(group_data["lat"].max()))
 
 	dis_threshold = 2  # assuming the building is not more than dis_threshold latitude and longitude away from the coast, please change it according to your case
 
-	# chop the coastline data
-	mask = (coast_points["coast_lon"] >= west - dis_threshold) & (coast_points["coast_lon"] <= east + dis_threshold) & \
-	       (coast_points["coast_lat"] >= south - dis_threshold) & (coast_points["coast_lat"] <= north + dis_threshold)
-	points_within_range = coast_points[mask]
+		# chop the coastline data
+		mask = (coast_points["coast_lon"] >= west - dis_threshold) & (coast_points["coast_lon"] <= east + dis_threshold) & \
+		       (coast_points["coast_lat"] >= south - dis_threshold) & (coast_points["coast_lat"] <= north + dis_threshold)
+		points_within_range = coast_points[mask]
 
-	# plot the buildings and the coastline data that been choped
-	row = i // n_cols
-	col = i % n_cols
-	ax = axs[row, col]
-	ax.set_xlim(west - dis_threshold, east + dis_threshold)
-	ax.set_ylim(south - dis_threshold, north + dis_threshold)
-	ax.add_feature(cfeature.LAND.with_scale("10m"))
-	ax.add_feature(cfeature.OCEAN.with_scale("10m"))
-	# Plot the coast points
-	ax.scatter(points_within_range["coast_lon"], points_within_range["coast_lat"], s=5, transform=ccrs.PlateCarree())
-	ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree())
-	# Set x-label and y-label
-	ax.set_xlabel("Longitude (°)", fontsize=12)
-	ax.set_ylabel("Latitude (°)", fontsize=12)
-	# Set x-ticks and y-ticks
-	xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
-	yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
+		# plot the buildings and the coastline data that been choped
+		row = i // n_cols
+		col = i % n_cols
+		ax = axs[row, col]
+		ax.set_xlim(west - dis_threshold, east + dis_threshold)
+		ax.set_ylim(south - dis_threshold, north + dis_threshold)
+		ax.add_feature(cfeature.LAND.with_scale("10m"))
+		ax.add_feature(cfeature.OCEAN.with_scale("10m"))
+		# Plot the coast points
+		ax.scatter(points_within_range["coast_lon"], points_within_range["coast_lat"], s=5, transform=ccrs.PlateCarree())
+		ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree())
+		# Set x-label and y-label
+		ax.set_xlabel("Longitude (°)", fontsize=12)
+		ax.set_ylabel("Latitude (°)", fontsize=12)
+		# Set x-ticks and y-ticks
+		xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
+		yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
 
-	ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-	ax.set_yticks(yticks, crs=ccrs.PlateCarree())
+		ax.set_xticks(xticks, crs=ccrs.PlateCarree())
+		ax.set_yticks(yticks, crs=ccrs.PlateCarree())
 
-	points_within_range = np.column_stack((points_within_range["coast_lon"], points_within_range["coast_lat"]))
-	buildings = np.column_stack((group_data["lon"], group_data["lat"]))
+		points_within_range = np.column_stack((points_within_range["coast_lon"], points_within_range["coast_lat"]))
+		buildings = np.column_stack((group_data["lon"], group_data["lat"]))
 
-	calculate_dis_to_coast = True  # the switch for whether or not to calculate the distance to the coast
-	if calculate_dis_to_coast:
-		closestp = np.zeros([len(buildings), 2])  # to store the closest point in the coast to a given building
-		distance = np.zeros([len(buildings), 1])  # to store the building"s distance to the coast
-		coast_vp = vptree.VPTree(points_within_range, geoddist)  # build the lookup table
+		calculate_dis_to_coast = True  # the switch for whether or not to calculate the distance to the coast
+		if calculate_dis_to_coast:
+			closestp = np.zeros([len(buildings), 2])  # to store the closest point in the coast to a given building
+			distance = np.zeros([len(buildings), 1])  # to store the building"s distance to the coast
+			coast_vp = vptree.VPTree(points_within_range, geoddist)  # build the lookup table
 
-		for i in range(0, len(buildings)):
-			data = coast_vp.get_nearest_neighbor(
-				buildings[i, :])  # find buildings" closest point on the coast line and get the distance
-			closestp[i, :] = data[1]
-			distance[i] = data[0]  # distance in unit of meter
+			for i in range(0, len(buildings)):
+				data = coast_vp.get_nearest_neighbor(
+					buildings[i, :])  # find buildings" closest point on the coast line and get the distance
+				closestp[i, :] = data[1]
+				distance[i] = data[0]  # distance in unit of meter
 
-		building_locs.loc[group_data.index, "closestp_lon"] = closestp[:,
-		                                                      0]  # store the calculated data into "building_locs" dataframe
-		building_locs.loc[group_data.index, "closestp_lat"] = closestp[:, 1]
-		building_locs.loc[group_data.index, "dis2coast"] = distance[:, 0]
+			building_locs.loc[group_data.index, "closestp_lon"] = closestp[:,
+			                                                      0]  # store the calculated data into "building_locs" dataframe
+			building_locs.loc[group_data.index, "closestp_lat"] = closestp[:, 1]
+			building_locs.loc[group_data.index, "dis2coast"] = distance[:, 0]
 
-		ax.scatter(closestp[:, 0], closestp[:, 1], s=5, transform=ccrs.PlateCarree(), c="yellow")
-		ax.plot([buildings[:, 0], closestp[:, 0]], [buildings[:, 1], closestp[:, 1]], "k", linewidth=0.1)
-while i < n_cols * n_rows - 1:
-	fig.delaxes(axs.flatten()[i + 1])
-	i += 1
-plt.show()
+			ax.scatter(closestp[:, 0], closestp[:, 1], s=5, transform=ccrs.PlateCarree(), c="yellow")
+			ax.plot([buildings[:, 0], closestp[:, 0]], [buildings[:, 1], closestp[:, 1]], "k", linewidth=0.1)
+	while i < n_cols * n_rows - 1:
+		fig.delaxes(axs.flatten()[i + 1])
+		i += 1
+	plt.show()
 
 # check the data
 building_locs
