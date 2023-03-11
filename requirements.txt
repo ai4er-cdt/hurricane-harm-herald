@@ -5,6 +5,7 @@ geopandas
 h5netcdf
 matplotlib
 numpy
+opencv-python # opencv if conda
 pandas
 rasterio
 rich
@@ -14,4 +15,5 @@ torchvision
 pytorch
 seaborn
 scikit-learn
+scipy
 xarray
