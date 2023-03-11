@@ -307,35 +307,42 @@ for name, group in building_groups:
 			print("DEM file Not found, please download: ", dem_zip_name)
 
 # This cell plot DEM files
+def plot_dem():
+	# Set the number of columns and rows for the plot
+	num_cols = 3
+	num_rows = -(-len(dem_tif_path_list) // num_cols)
 
-# Set the number of columns and rows for the plot
-num_cols = 3
-num_rows = -(-len(dem_tif_path_list) // num_cols)
+	# Create a new figure with the appropriate number of subplots
+	fig, axs = plt.subplots(num_rows, num_cols, figsize=(20, 20), dpi=300)
 
-# Create a new figure with the appropriate number of subplots
-fig, axs = plt.subplots(num_rows, num_cols, figsize=(20, 20), dpi=300)
+	# Iterate over the files and plot each one in a subplot
+	for i, file in enumerate(dem_tif_path_list):
+		row, col = divmod(i, num_cols)
+		ax = axs[row, col]
+		with rio.open(file) as dem:
+			dem_array = dem.read(1).astype("float64")
+			handle = rio.plot.show(
+				dem_array,
+				transform=dem.transform,
+				ax=ax,
+				title=f"{dem_tif_short_name_list[i]}",
+				cmap="gist_earth",
+				vmin=0,
+				vmax=np.percentile(dem_array, 99)
+			)  # plot DEM map
 
-# Iterate over the files and plot each one in a subplot
-for i, file in enumerate(dem_tif_path_list):
-	row, col = divmod(i, num_cols)
-	ax = axs[row, col]
-	with rio.open(file) as dem:
-		dem_array = dem.read(1).astype("float64")
-		handle = rio.plot.show(dem_array, transform=dem.transform, ax=ax, title=f"{dem_tif_short_name_list[i]}",
-		                       cmap="gist_earth", vmin=0, vmax=np.percentile(dem_array, 99))  # plot DEM map
+			im = handle.get_images()[0]
+			cbar = fig.colorbar(im, ax=ax)
+			cbar.set_label("Elevation (m)")
+			ax.set_xlabel("Longitude(°)")
+			ax.set_ylabel("Latitude(°)")
 
-		im = handle.get_images()[0]
-		cbar = fig.colorbar(im, ax=ax)
-		cbar.set_label("Elevation (m)")
-		ax.set_xlabel("Longitude(°)")
-		ax.set_ylabel("Latitude(°)")
+	# Remove any unused subplots
+	for i in range(len(axs.flat)):
+		if i >= len(dem_tif_path_list):
+			fig.delaxes(axs.flat[i])
 
-# Remove any unused subplots
-for i in range(len(axs.flat)):
-	if i >= len(dem_tif_path_list):
-		fig.delaxes(axs.flat[i])
-
-plt.show()
+	plt.show()
 
 
 # This cell define functions to get the height, slope and aspect for buildings
