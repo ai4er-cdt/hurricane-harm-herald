@@ -358,49 +358,73 @@ def get_height(df, dem):  # get the height of the given location (given by lon a
 #      H_all[i]=height
 #   return H_all
 
-def get_slope(cols, rows, slope):  # get the slope of the given location (given by lon and lat)
-	x = np.arange(0, np.size(slope, 1), 1)
-	y = np.arange(0, np.size(slope, 0), 1)
-	f = interp2d(x, y, slope, kind="linear")  # interploate
-	S_all = np.zeros([len(cols), 1])
-	for i in range(0, len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
-		s = f(cols[i], rows[i])
-		S_all[i] = s
-	return S_all
+def get_slope_aspect(cols, rows, terrain_attribute):  # get the slope of the given location (given by lon and lat)
+	x = np.arange(0, np.size(terrain_attribute, 1), 1)
+	y = np.arange(0, np.size(terrain_attribute, 0), 1)
+	interp = RegularGridInterpolator(
+		points=(x, y),
+		values=np.array(terrain_attribute).astype("float64"),
+		method="linear",
+		bounds_error=False,
+		fill_value=None
+	)
+	s_all = interp((rows, cols))
+	# f = interp2d(x, y, slope, kind="linear",)  # interploate
+	# s_all = [f(c, r) for c, r in zip(cols, rows)]
+	#
+	# S_all = np.zeros([len(cols), 1])
+	# for i in range(0, len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
+	# 	s = f(cols[i], rows[i])
+	# 	S_all[i] = s
+	return s_all
 
 
-def get_aspect(cols, lat, aspect):  # get the aspect of the given location (given by lon and lat)
-	x = np.arange(0, np.size(aspect, 1), 1)
-	y = np.arange(0, np.size(aspect, 0), 1)
-	f = interp2d(x, y, aspect, kind="linear")  # interploate
-	# f = RegularGridInterpolator((x,y),aspect) #interploate
-	A_all = np.zeros([len(cols), 1])
-	for i in range(0, len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
-		a = f(cols[i], rows[i])
-		A_all[i] = a
-	return A_all
+# def get_aspect(cols, rows, aspect):  # get the aspect of the given location (given by lon and lat)
+# 	x = np.arange(0, np.size(aspect, 1), 1)
+# 	y = np.arange(0, np.size(aspect, 0), 1)
+# 	f = interp2d(x, y, aspect, kind="linear")  # interploate
+# 	# f = RegularGridInterpolator((x,y),aspect) #interploate
+# 	a_all = [f(c, r) for c, r in zip(cols, rows)]
+# 	A_all = np.zeros([len(cols), 1])
+# 	for i in range(0, len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
+# 		a = f(cols[i], rows[i])
+# 		A_all[i] = a
+# 	return a_all
 
 
 # The following code call corresponding functions and calculate the elevation, slope and aspect for buildings
 
-esa_df = pd.DataFrame()  # to store the calculated elevation, slope and aspect
-for i, (group_name, group_data) in enumerate(building_groups):
-	with rio.open(dem_tif_path_list[i]) as dem:
-		dem_array = dem.read(1).astype("float64")
+def calculate_esa(building_groups, dem_urls):
+	esa_df = pd.DataFrame()  # to store the calculated elevation, slope and aspect
+	dem_tif_path_list = [os.path.basename(os.path.splitext(dem_file)[0]) for dem_file in dem_urls]
+
+	for i, (group_name, group_data) in enumerate(building_groups):
+		tif_path = os.path.join(get_dem_dir(), f"{dem_tif_path_list[i]}_dem.tif")
+		lon, lat = group_data["lon"].values, group_data["lat"].values
+
+		with rio.open(tif_path) as dem:
+			dem_array = dem.read(1).astype("float64")
+			transform = dem.transform
+			elevation = get_elevation(lon, lat, dem)
+
+		cols, rows = lonlat2xy(lon, lat, transform)
+
 		dem4slope = rd.rdarray(dem_array, no_data=-9999)
-		dem4slope.geotransform = [0, 1, 0, 0, 0, 1,
-		                          0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
-		slope = rd.TerrainAttribute(dem4slope, attrib="slope_riserun", zscale=1)  # calculate slope
-		aspect = rd.TerrainAttribute(dem4slope, attrib="aspect")  # calculate aspect
+		dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
+		slope_dem = rd.TerrainAttribute(dem4slope, attrib="slope_riserun", zscale=1)  # calculate slope
+		aspect_dem = rd.TerrainAttribute(dem4slope, attrib="aspect")  # calculate aspect
 
-		temp_df = group_data
-		temp_df = get_height(temp_df, dem)  # calculate height
-		cols, rows = lonlat2xy(temp_df["lon"].values, temp_df["lat"].values, dem)
-		temp_df["slope"] = get_slope(cols, rows, slope)  # calculate slope
-		temp_df["aspect"] = get_aspect(cols, rows, aspect)  # calculate aspect
-		esa_df = pd.concat([esa_df, temp_df], ignore_index=False)
+		# temp_df = group_data
+		# temp_df = get_height(group_data, dem)  # calculate height
+		#
+		# slope = get_slope(cols, rows, slope_dem)  # calculate slope
+		# aspect = get_aspect(cols, rows, aspect_dem)  # calculate aspect
+		slope = get_slope_aspect(cols, rows, terrain_attribute=slope_dem)  # calculate slope
+		aspect = get_slope_aspect(cols, rows, terrain_attribute=aspect_dem)  # calculate aspect
 
-esa_df = esa_df.sort_index()
+		esa_df = pd.concat([esa_df, group_data], ignore_index=False)
+
+	esa_df = esa_df.sort_index()
 
 # Explore the data to a local path
 
