@@ -1,27 +1,37 @@
+from __future__ import annotations
+
+import os
+import math
 import pickle
 import zipfile
-import math
 
+import affine
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import numpy as np
+import rasterio
 import rasterio as rio
 from rasterio.plot import show
 
 import richdem as rd
+
 from scipy.interpolate import interp2d
 from scipy.interpolate import RegularGridInterpolator
 
-import geopandas as gpd
 import pandas as pd
+import geopandas as gpd
 from shapely.geometry import Point, Polygon
 
 import vptree
 from geographiclib.geodesic import Geodesic
+
 from affine import Affine
 import shapefile
 import cartopy.feature as cfeature
 
+from h3.utils.downloader import downloader
+from h3.utils.file_ops import unpack_file
+from h3.utils.directories import get_terrain_dir, get_processed_data_dir, get_coastline_dir, get_dem_dir, get_metadata_pickle_dir
 
 # load the data of the locations (lon, lat) of buildings
 building_locs_path = "./data/datasets/processed_data/metadata_pickle/lnglat_pre_pol_post_damage.pkl"
