@@ -104,16 +104,25 @@ def building_plot(building_groups):
 
 
 def _download_coastlines() -> None:
+	# This cell check whether coastline data has been downloaded
+	# You can download coastline data from Nature Earth (https://www.naturalearthdata.com/downloads/10m-physical-vectors/),
+	# and store the .zip coastline data to "zip_path" (please change it according to your setting)
+
+	# zip_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline.zip"
+	# shp_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline/ne_10m_coastline.shp"
+	# coast_extracted_floder = "/data/datasets/EFs/terrain_data/ne_10m_coastline/"
+	# pkl_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline/ne_10m_coastline.pkl"
+
 	# This is a weird url, but it is the correct one
 	# TODO: look more into this to make sure it works
 	url = ["https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_coastline.zip"]
 	downloader(url, target_dir=get_terrain_dir())
 
 
-	def _unpack_coastlines(clean: bool = False):
-		terrain_dir = get_terrain_dir()
-		filepath = os.path.join(terrain_dir, "ne_10m_coastline.zip")
-		unpack_file(filepath, clean=clean)
+def _unpack_coastlines(clean: bool = False):
+	coastline_dir = get_coastline_dir()
+	filepath = os.path.join(coastline_dir, "ne_10m_coastline.zip")
+	unpack_file(filepath, clean=clean)
 
 # check whether the .shp or .zip coastline data exist
 # if os.path.isfile(shp_path):
@@ -126,16 +135,30 @@ def _download_coastlines() -> None:
 # 		print(".zip coastline file not found, please download it from ", url, " manually")
 
 
-# Load the .shp coastline data
-# Convert the .shp coast line data into points and store in a dataframe
-shp_path = os.path.join(get_terrain_dir(), "ne_10m_coastline.shp")
-shapefile = gpd.read_file(shp_path)                                 # Read the shapefile
+def get_coastlines():
+	# Load the .shp coastline data
+	# Convert the .shp coast line data into points and store in a dataframe
+	shp_path = os.path.join(get_terrain_dir(), "ne_10m_coastline.shp")
+	shapefile = gpd.read_file(shp_path)                                 # Read the shapefile
 
-coast_points = pd.DataFrame(columns=["coast_lon", "coast_lat"])     # Initialize the coast_points DataFrame
-temp_array = []      # Initialize the temp_array as a list
+	geometry_coast = shapefile[shapefile["geometry"].geom_type == "LineString"]["geometry"].to_numpy()
+	coast_points = [(lon, lat) for point in geometry_coast for (lon, lat) in point.coords]
+	# 234 ms ± 4.66 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-
-all_coast = shapefile[shapefile["geometry"].geom_type == "LineString"]["geometry"].to_numpy()
+	# coast_points = pd.DataFrame(columns=["coast_lon", "coast_lat"])     # Initialize the coast_points DataFrame
+	# temp_array = []      # Initialize the temp_array as  a list
+	#
+	# for i, row in shapefile.iterrows():
+	# 	if row["geometry"].geom_type == "LineString":
+	# 		for point in row["geometry"].coords:
+	# 			x, y = point
+	# 			p = [x, y]                                                          # Create a list with two elements
+	# 			temp_array.append(p)                                                # Append the point to the list
+	# 		temp_df = pd.DataFrame(temp_array, columns=["coast_lon", "coast_lat"])  # Create a DataFrame from the temp_array
+	# 		coast_points = pd.concat([coast_points, temp_df],
+	# 		                         ignore_index=True)  # Append the temp_df to the coast_points DataFrame
+	# 		temp_array = []  # Reset the temp_array to an empty list
+	# 9.39 s ± 31.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
 for i, row in shapefile.iterrows():
