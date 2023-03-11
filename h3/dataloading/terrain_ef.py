@@ -47,11 +47,9 @@ def get_building_group():
 		"damage_class": df_pre_post_hurr["damage_class"],
 	})
 
-# building_locs["lat"],building_locs["lon"]=building_locs["geometry"].y,building_locs["geometry"].x
-
-# divide the building locations into groups that cover 1 degree latitude and longitude
-lon_bins = pd.cut(building_locs["lon"], bins=range(-180, 181, 1))
-lat_bins = pd.cut(building_locs["lat"], bins=range(-90, 91, 1))
+	# divide the building locations into groups that cover 1 degree latitude and longitude
+	lon_bins = pd.cut(building_locs["lon"], bins=range(-180, 181, 1))
+	lat_bins = pd.cut(building_locs["lat"], bins=range(-90, 91, 1))
 
 	building_groups = building_locs.groupby([lon_bins, lat_bins])
 	return building_groups
