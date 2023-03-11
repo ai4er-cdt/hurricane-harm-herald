@@ -259,43 +259,54 @@ def another_plot():
 # check the data
 building_locs
 
-# The following code check whether DEM data has been downloaded
-# If it is not, the DEM files can be downloaded from Land Processes Distributed Active Archive Center (LP DAAC) manually
-# The link to download DEM files: https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/
-# If you have not download, please run this cell first to print the list of DEM files to download.
-# Then, put DEM files in a local floder and update the "dem_zip_path"
-# and run the code, DEM files will ben extracted to "extracted_path" (please change it according to your setting)
+def get_dem_urls(building_groups):
+	# https://urs.earthdata.nasa.gov/users/new/
+	# The following code check whether DEM data has been downloaded
+	# If it is not, the DEM files can be downloaded from Land Processes Distributed Active Archive Center (LP DAAC) manually
+	# The link to download DEM files: https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/
+	# If you have not download, please run this cell first to print the list of DEM files to download.
+	# Then, put DEM files in a local floder and update the "dem_zip_path"
+	# and run the code, DEM files will ben extracted to "extracted_path" (please change it according to your setting)
+	dem_tif_name_list = []
+	dem_tif_path_list = []
+	dem_tif_short_name_list = []
 
-dem_tif_name_list = []
-dem_tif_path_list = []
-dem_tif_short_name_list = []
-for name, group in building_groups:
-	lon_floor = int(np.floor(group["lon"].min()))
-	lat_floor = int(np.floor(group["lat"].min()))
-	# creating a string to download satelite data
-	if lon_floor > 0 and lat_floor > 0:
-		coordinate_str = f"N{lat_floor}E{abs(lon_floor):03}"
-	if lon_floor < 0 and lat_floor > 0:
-		coordinate_str = f"N{lat_floor}W{abs(lon_floor):03}"
-	if lon_floor > 0 and lat_floor < 0:
-		coordinate_str = f"S{lat_floor}E{abs(lon_floor):03}"
-	if lon_floor < 0 and lat_floor < 0:
-		coordinate_str = f"S{lat_floor}W{abs(lon_floor):03}"
-	dem_zip_name = f"ASTGTMV003_{coordinate_str}.zip"
-	# PLEASE MAUALLY DOWNLOAD THE DEM FILE SPECIFIED BY "dem_zip_name" AND PUT IT INTO THE "DEM_ZIP_PATH"
-	dem_zip_path = f"/content/drive/MyDrive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/EFs/terrain_data/DEM_data/{dem_zip_name}"  # path to store the downloaded data, please change it accordingly
+	dem_urls = []
 
-	dem_tif_name = f"ASTGTMV003_{coordinate_str}_dem.tif"
-	dem_tif_short_name = f"{coordinate_str}"
-	extracted_path = "/content/drive/MyDrive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/EFs/terrain_data/DEM_data/DEM_extracted"  # path to store the extracted data, please change it accordingly
+	for name, group in building_groups:
+		lon_floor = int(np.floor(group["lon"].min()))
+		lat_floor = int(np.floor(group["lat"].min()))
 
-	dem_tif_path = f"{extracted_path}/{dem_tif_name}"
+		ns_str = "N" if lat_floor > 0 else "S"
+		ew_str = "E" if lon_floor > 0 else "W"
+		coordinate_str = f"{ns_str}{abs(lat_floor)}{ew_str}{abs(lon_floor):03}"
 
-	dem_tif_name_list.append(dem_tif_name)
-	dem_tif_short_name_list.append(dem_tif_short_name)
-	dem_tif_path_list.append(dem_tif_path)
+		dem_zip_name = f"ASTGTMV003_{coordinate_str}.zip"
+		url_name = f"https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/{dem_zip_name}"
+		dem_urls.append(url_name)
 
-	# Check if the .tif file already exists in the specified directory
+		# PLEASE MAUALLY DOWNLOAD THE DEM FILE SPECIFIED BY "dem_zip_name" AND PUT IT INTO THE "DEM_ZIP_PATH"
+		# dem_zip_path = f"./data/datasets/EFs/terrain_data/DEM_data/{dem_zip_name}"  # path to store the downloaded data, please change it accordingly
+		# dem_tif_name = f"ASTGTMV003_{coordinate_str}_dem.tif"
+		# dem_tif_short_name = f"{coordinate_str}"
+		# # extracted_path = "./data/datasets/EFs/terrain_data/DEM_data/DEM_extracted"  # path to store the extracted data, please change it accordingly
+		# # dem_tif_path = f"{extracted_path}/{dem_tif_name}"
+		#
+		# dem_tif_name_list.append(dem_tif_name)
+		# dem_tif_short_name_list.append(dem_tif_short_name)
+		# dem_tif_path_list.append(dem_tif_path)
+
+		# Check if the .tif file already exists in the specified directory
+		# if os.path.isfile(dem_tif_path):
+		# 	continue
+		# else:
+		# 	if os.path.isfile(dem_zip_path):
+		# 		with zipfile.ZipFile(dem_zip_path, "r") as zip_ref:
+		# 			zip_ref.extract(dem_tif_name, extracted_path)
+		# 	else:
+		# 		print("DEM file Not found, please download: ", dem_zip_name)
+
+	return dem_urls
 
 	if os.path.isfile(dem_tif_path):
 		continue
