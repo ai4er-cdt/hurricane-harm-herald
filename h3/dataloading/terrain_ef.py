@@ -373,50 +373,6 @@ def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarr
 	return elevation
 
 
-# def get_height_v2(cols,rows,dem_array): # get the height of the given location (given by lon and lat)
-#   x=np.arange(0,np.size(dem_array,1),1)
-#   y=np.arange(0,np.size(dem_array,0),1)
-#   f = interp2d(x,y,dem_array, kind="linear") #interploate
-#   H_all=np.zeros([len(cols),1])
-#   for i in range(0,len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
-#      height=f(cols[i],rows[i])
-#      H_all[i]=height
-#   return H_all
-
-def get_slope_aspect(cols, rows, terrain_attribute):  # get the slope of the given location (given by lon and lat)
-	x = np.arange(0, np.size(terrain_attribute, 1), 1)
-	y = np.arange(0, np.size(terrain_attribute, 0), 1)
-	interp = RegularGridInterpolator(
-		points=(x, y),
-		values=np.array(terrain_attribute).astype("float64"),
-		method="linear",
-		bounds_error=False,
-		fill_value=None
-	)
-	s_all = interp((rows, cols))
-	# f = interp2d(x, y, slope, kind="linear",)  # interploate
-	# s_all = [f(c, r) for c, r in zip(cols, rows)]
-	#
-	# S_all = np.zeros([len(cols), 1])
-	# for i in range(0, len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
-	# 	s = f(cols[i], rows[i])
-	# 	S_all[i] = s
-	return s_all
-
-
-# def get_aspect(cols, rows, aspect):  # get the aspect of the given location (given by lon and lat)
-# 	x = np.arange(0, np.size(aspect, 1), 1)
-# 	y = np.arange(0, np.size(aspect, 0), 1)
-# 	f = interp2d(x, y, aspect, kind="linear")  # interploate
-# 	# f = RegularGridInterpolator((x,y),aspect) #interploate
-# 	a_all = [f(c, r) for c, r in zip(cols, rows)]
-# 	A_all = np.zeros([len(cols), 1])
-# 	for i in range(0, len(cols)):  # do the interplotation one by one, otherwise the interp2d will sort the data
-# 		a = f(cols[i], rows[i])
-# 		A_all[i] = a
-# 	return a_all
-
-
 # The following code call corresponding functions and calculate the elevation, slope and aspect for buildings
 
 def calculate_esa(building_groups, dem_urls):
@@ -444,8 +400,8 @@ def calculate_esa(building_groups, dem_urls):
 		#
 		# slope = get_slope(cols, rows, slope_dem)  # calculate slope
 		# aspect = get_aspect(cols, rows, aspect_dem)  # calculate aspect
-		slope = get_slope_aspect(cols, rows, terrain_attribute=slope_dem)  # calculate slope
-		aspect = get_slope_aspect(cols, rows, terrain_attribute=aspect_dem)  # calculate aspect
+		slope = np.array(slope_dem[rows, cols])
+		aspect = np.array(aspect_dem[rows, cols])
 
 		esa_df = pd.concat([esa_df, group_data], ignore_index=False)
 
