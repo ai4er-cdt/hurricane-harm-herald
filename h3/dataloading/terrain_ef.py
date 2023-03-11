@@ -430,20 +430,31 @@ def calculate_esa(building_groups, dem_urls):
 
 	esa_df = esa_df.sort_index()
 
-# Explore the data to a local path
+	return esa_df
 
-Terrian_EFs = pd.DataFrame({"xbd_observation_lat": esa_df["lat"], "xbd_observation_lon": esa_df["lon"],
-                            "elevation": esa_df["elevation"], "slope": esa_df["slope"], "aspect": esa_df["aspect"],
-                            "dis2coast": esa_df["dis2coast"], "disaster_name": esa_df["disaster_name"],
-                            "damage_class": esa_df["damage_class"]})
 
-# path to store Terrain_EFs
-path_Terrain_EFs = "/content/drive/MyDrive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/processed_data/Terrian_EFs.pkl"
+def get_terrain_ef(esa_df):
+	# Explore the data to a local path
 
-Terrian_EFs.to_pickle(path_Terrain_EFs)  # store the dataframe
-# read the stored data for test
-with open(path_Terrain_EFs, "rb") as f:
-	Terrian_EFs_test = pickle.load(f)
+	Terrian_EFs = pd.DataFrame({
+		"xbd_observation_lat": esa_df["lat"],
+		"xbd_observation_lon": esa_df["lon"],
+		"elevation": esa_df["elevation"],
+		"slope": esa_df["slope"],
+		"aspect": esa_df["aspect"],
+		"dis2coast": esa_df["dis2coast"],
+		"disaster_name": esa_df["disaster_name"],
+		"damage_class": esa_df["damage_class"]
+	})
+
+	# path to store Terrain_EFs
+	path_Terrain_EFs = os.path.join(get_processed_data_dir(), "Terrian_EFs.pkl")
+	Terrian_EFs.to_pickle(path_Terrain_EFs)  # store the dataframe
+
+
+	# read the stored data for test
+	with open(path_Terrain_EFs, "rb") as f:
+		Terrian_EFs_test = pickle.load(f)
 
 
 def other_plot():
