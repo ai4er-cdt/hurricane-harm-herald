@@ -257,8 +257,7 @@ def extract_damage_allfiles_ensemble(filepaths_dict: dict,
                                                 "hurricane*pre*.json")
         # pre_dataframes_list = []
         for pre_json_name in tqdm(full_pre_hurr_json_files,
-                                  desc=f"Extracting metadata for pre event" /
-                                  "and post damage label hurricane"):
+                                  desc=f"Extracting metadata for pre event and post damage label hurricane"):
             post_json_name = pre_json_name.replace("pre", "post")
 
             pre_metadata = extract_metadata(
