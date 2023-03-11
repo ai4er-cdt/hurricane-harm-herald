@@ -36,3 +36,8 @@ The team would like to thank Robert Muir-Wood for proposing the project, and Dom
 Download the dataset from https://xview2.org/ (you will need to create an account)
 and put the files in `./data/datasets/XBD_data`.  
 <i>Note: </i> The uncompressed data is about 130GB.
+
+#### DEM
+To download the DEM files, you need an account here: https://urs.earthdata.nasa.gov/users/new/  
+Once your account created, have your credential on hand to input them when needed  
+(The credentials will be stored in `./data/credentials.json`)
