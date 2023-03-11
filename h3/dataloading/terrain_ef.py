@@ -361,8 +361,8 @@ def plot_dem():
 
 # This cell define functions to get the height, slope and aspect for buildings
 
-def lonlat2xy(lon, lat, dem):  # This function convert longitude and latitude to x and y
-	rows, cols = rio.transform.rowcol(dem.transform, lon, lat)
+def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:  # This function convert longitude and latitude to x and y
+	rows, cols = rio.transform.rowcol(transform, lon, lat)
 	return cols, rows
 
 
