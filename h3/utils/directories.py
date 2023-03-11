@@ -73,3 +73,18 @@ def get_processed_data_dir() -> str:
 def get_metadata_pickle_dir() -> str:
 	"""./data/datasets/processed_data/metadata_pickle"""
 	return guarantee_existence(os.path.join(get_processed_data_dir(), "metadata_pickle"))
+
+
+def get_terrain_dir() -> str:
+	"""./data/datasets/terrain"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "terrain"))
+
+
+def get_coastline_dir() -> str:
+	"""./data/datasets/terrain/coastlines"""
+	return guarantee_existence(os.path.join(get_terrain_dir(), "coastlines"))
+
+
+def get_dem_dir() -> str:
+	"""./data/datasets/terrain/dem_data"""
+	return guarantee_existence(os.path.join(get_terrain_dir(), "dem_data"))
