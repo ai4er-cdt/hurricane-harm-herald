@@ -308,14 +308,17 @@ def get_dem_urls(building_groups):
 
 	return dem_urls
 
-	if os.path.isfile(dem_tif_path):
-		continue
-	else:
-		if os.path.isfile(dem_zip_path):
-			with zipfile.ZipFile(dem_zip_path, "r") as zip_ref:
-				zip_ref.extract(dem_tif_name, extracted_path)
-		else:
-			print("DEM file Not found, please download: ", dem_zip_name)
+
+def _download_dem(dem_urls) -> None:
+	downloader(dem_urls, target_dir=get_dem_dir())
+
+
+def _unpack_dem(clean: bool = False) -> None:
+	dem_dir = get_dem_dir()
+	abs_list = [os.path.join(dem_dir, file) for file in os.listdir(dem_dir) if os.path.splitext(file)[1] == ".zip"]
+	for file in abs_list:
+		unpack_file(file, clean=clean)
+
 
 # This cell plot DEM files
 def plot_dem():
