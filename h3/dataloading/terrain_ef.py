@@ -159,37 +159,26 @@ def get_coastlines():
 	# 9.39 s ± 31.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
 
-for i, row in shapefile.iterrows():
-	if row["geometry"].geom_type == "LineString":
-		for point in row["geometry"].coords:
-			x, y = point
-			p = [x, y]                                                          # Create a list with two elements
-			temp_array.append(p)                                                # Append the point to the list
-		temp_df = pd.DataFrame(temp_array, columns=["coast_lon", "coast_lat"])  # Create a DataFrame from the temp_array
-		coast_points = pd.concat([coast_points, temp_df],
-		                         ignore_index=True)  # Append the temp_df to the coast_points DataFrame
-		temp_array = []  # Reset the temp_array to an empty list
+def plot_coastline(coast_points):
+	# Plot the coastline data for verification
+	fig = plt.figure(figsize=(12, 6), dpi=300)
+	ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+	# Add a global map background
+	ax.stock_img()
+	# Plot the coast points
+	ax.scatter(coast_points["coast_lon"], coast_points["coast_lat"], s=5, transform=ccrs.PlateCarree())
+	# Set x-label and y-label
+	ax.set_xlabel("Longitude (°)", fontsize=12)
+	ax.set_ylabel("Latitude (°)", fontsize=12)
+	# Set x-ticks and y-ticks
+	xticks = np.arange(-180, 190, 20)
+	yticks = np.arange(-90, 100, 20)
+	ax.set_xticks(xticks, crs=ccrs.PlateCarree())
+	ax.set_yticks(yticks, crs=ccrs.PlateCarree())
 
+	plt.show()
 
-# Plot the coastline data for verification
-fig = plt.figure(figsize=(12, 6), dpi=300)
-ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-# Add a global map background
-ax.stock_img()
-# Plot the coast points
-ax.scatter(coast_points["coast_lon"], coast_points["coast_lat"], s=5, transform=ccrs.PlateCarree())
-# Set x-label and y-label
-ax.set_xlabel("Longitude (°)", fontsize=12)
-ax.set_ylabel("Latitude (°)", fontsize=12)
-# Set x-ticks and y-ticks
-xticks = np.arange(-180, 190, 20)
-yticks = np.arange(-90, 100, 20)
-ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-ax.set_yticks(yticks, crs=ccrs.PlateCarree())
-
-plt.show()
-
-
+###
 
 # Find the closest point on the coastline to the building and return the distance
 # NOTE! this cell is quite time consuming to run (dependding on the size of building location data and the coastline data)
