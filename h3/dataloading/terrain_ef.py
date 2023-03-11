@@ -33,17 +33,19 @@ from h3.utils.downloader import downloader
 from h3.utils.file_ops import unpack_file
 from h3.utils.directories import get_terrain_dir, get_processed_data_dir, get_coastline_dir, get_dem_dir, get_metadata_pickle_dir
 
-# load the data of the locations (lon, lat) of buildings
-building_locs_path = "./data/datasets/processed_data/metadata_pickle/lnglat_pre_pol_post_damage.pkl"
-# building_locs_path="/content/drive/MyDrive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/xBD_data/xbd_points_posthurr_reformatted.pkl"
-# with open(building_locs_path, "rb") as f:
-df_pre_post_hurr = pd.read_pickle(building_locs_path)
-building_locs = pd.DataFrame({
-	"lat": df_pre_post_hurr["geometry"].y,
-	"lon": df_pre_post_hurr["geometry"].x,
-	"disaster_name": df_pre_post_hurr["disaster_name"],
-	"damage_class": df_pre_post_hurr["damage_class"],
-})
+
+def get_building_group():
+	# load the data of the locations (lon, lat) of buildings
+	df_pre_post_hurr_path = os.path.join(get_metadata_pickle_dir(), "lnglat_pre_pol_post_damage.pkl")
+	# building_locs_path="/content/drive/MyDrive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/xBD_data/xbd_points_posthurr_reformatted.pkl"
+	df_pre_post_hurr = pd.read_pickle(df_pre_post_hurr_path)
+
+	building_locs = pd.DataFrame({
+		"lat": df_pre_post_hurr["geometry"].y,
+		"lon": df_pre_post_hurr["geometry"].x,
+		"disaster_name": df_pre_post_hurr["disaster_name"],
+		"damage_class": df_pre_post_hurr["damage_class"],
+	})
 
 # building_locs["lat"],building_locs["lon"]=building_locs["geometry"].y,building_locs["geometry"].x
 
@@ -51,63 +53,54 @@ building_locs = pd.DataFrame({
 lon_bins = pd.cut(building_locs["lon"], bins=range(-180, 181, 1))
 lat_bins = pd.cut(building_locs["lat"], bins=range(-90, 91, 1))
 
-building_groups = building_locs.groupby([lon_bins, lat_bins])
-# plot the building locations for verification
-# TODO: not sure what this is for
-n_groups = len(building_groups)  # group number
-n_cols = 3  # column number
-n_rows = math.ceil(n_groups / n_cols)  # raw number
+	building_groups = building_locs.groupby([lon_bins, lat_bins])
+	return building_groups
 
-fig, axs = plt.subplots(n_rows, n_cols, figsize=(12, 12), dpi=300, subplot_kw={"projection": ccrs.PlateCarree()})
 
-for i, (group_name, group_data) in enumerate(building_groups):
-	west = int(np.floor(group_data["lon"].min()))
-	east = int(np.ceil(group_data["lon"].max()))
-	south = int(np.floor(group_data["lat"].min()))
-	north = int(np.ceil(group_data["lat"].max()))
-	dis_threshold = 1
+def building_plot(building_groups):
+	# plot the building locations for verification
+	n_groups = len(building_groups)  # group number
+	n_cols = 3  # column number
+	n_rows = math.ceil(n_groups / n_cols)  # raw number
 
-	# plot the buildings and the coastline data that been choped
-	row = i // n_cols
-	col = i % n_cols
-	ax = axs[row, col]
-	ax.set_xlim(west - dis_threshold, east + dis_threshold)
-	ax.set_ylim(south - dis_threshold, north + dis_threshold)
+	fig, axs = plt.subplots(n_rows, n_cols, figsize=(12, 12), dpi=300, subplot_kw={"projection": ccrs.PlateCarree()})
 
-	ax.add_feature(cfeature.COASTLINE.with_scale("10m"), linewidth=0.5)
-	ax.add_feature(cfeature.LAND.with_scale("10m"))
-	ax.add_feature(cfeature.OCEAN.with_scale("10m"))
-	# plot the locations of buildings
-	ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree(), c="orange")
-	# Set x-label and y-label
-	ax.set_xlabel("Longitude (°)", fontsize=12)
-	ax.set_ylabel("Latitude (°)", fontsize=12)
-	# Set x-ticks and y-ticks
-	xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
-	yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
+	for i, (group_name, group_data) in enumerate(building_groups):
+		west = int(np.floor(group_data["lon"].min()))
+		east = int(np.ceil(group_data["lon"].max()))
+		south = int(np.floor(group_data["lat"].min()))
+		north = int(np.ceil(group_data["lat"].max()))
+		dis_threshold = 1
 
-	ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-	ax.set_yticks(yticks, crs=ccrs.PlateCarree())
+		# plot the buildings and the coastline data that been choped
+		row = i // n_cols
+		col = i % n_cols
+		ax = axs[row, col]
+		ax.set_xlim(west - dis_threshold, east + dis_threshold)
+		ax.set_ylim(south - dis_threshold, north + dis_threshold)
 
-# while i < n_cols * n_rows - 1:
-for i in range(n_cols * n_rows):
-	fig.delaxes(axs.flatten()[i + 1])
+		ax.add_feature(cfeature.COASTLINE.with_scale("10m"), linewidth=0.5)
+		ax.add_feature(cfeature.LAND.with_scale("10m"))
+		ax.add_feature(cfeature.OCEAN.with_scale("10m"))
 
-plt.show()
+		# plot the locations of buildings
+		ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree(), c="orange")
 
-# This cell check whether coastline data has been downloaded
-# You can download coastline data from Nature Earth (https://www.naturalearthdata.com/downloads/10m-physical-vectors/),
-# and store the .zip coastline data to "zip_path" (please change it according to your setting)
+		# Set x-label and y-label
+		ax.set_xlabel("Longitude (°)", fontsize=12)
+		ax.set_ylabel("Latitude (°)", fontsize=12)
 
-# zip_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline.zip"
-# shp_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline/ne_10m_coastline.shp"
-# coast_extracted_floder = "/data/datasets/EFs/terrain_data/ne_10m_coastline/"
-# pkl_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline/ne_10m_coastline.pkl"
+		# Set x-ticks and y-ticks
+		xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
+		yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
+		ax.set_xticks(xticks, crs=ccrs.PlateCarree())
+		ax.set_yticks(yticks, crs=ccrs.PlateCarree())
 
-import os
-from h3.utils.downloader import downloader
-from h3.utils.file_ops import unpack_file
-from h3.utils.directories import get_terrain_dir
+	# while i < n_cols * n_rows - 1:
+	for i in range(n_cols * n_rows):
+		fig.delaxes(axs.flatten()[i + 1])
+
+	plt.show()
 
 
 def _download_coastlines() -> None:
