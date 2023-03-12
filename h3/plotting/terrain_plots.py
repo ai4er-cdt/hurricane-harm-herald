@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio as rio
 from cartopy import crs as ccrs, feature as cfeature
+import richdem as rd
 
 import geopandas as gpd
 
@@ -145,15 +146,19 @@ def plot_map_location(map: Literal["dem", "slope", "aspect"]):
 		ax = axs[row, col]
 
 		if map == "dem":
-			data = 0
+			data = dem_array
 			cbar_label = "Elevation (m)"
 			cmap = "gist_earth"
 		elif map == "slope":
-			data = 0
+			dem4slope = rd.rdarray(dem_array, no_data=-9999)
+			dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]
+			data = rd.TerrainAttribute(dem4slope, attrib="slope_riserun")
 			cbar_label = "Slope (%)"
 			cmap = "PuBu"
 		elif map == "aspect":
-			data = 0
+			dem4slope = rd.rdarray(dem_array, no_data=-9999)
+			dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]
+			data = rd.TerrainAttribute(dem4slope, attrib="aspect")  # calculate aspect
 			cbar_label = "Aspect (°)"
 			cmap = "twilight_shifted"
 
@@ -167,7 +172,11 @@ def plot_map_location(map: Literal["dem", "slope", "aspect"]):
 			vmax=np.percentile(dem_array, 99)
 		)  # plot DEM map
 
-		gdf = gpd.GeoDataFrame(group_data.copy(), geometry=gpd.points_from_xy(group_data.lon, group_data.lat), crs=crs)
+		gdf = gpd.GeoDataFrame(
+			group_data.copy(),
+			geometry=gpd.points_from_xy(group_data.lon, group_data.lat),
+			crs=crs
+		)
 		gdf.plot(ax=handle, color="red")  # plot location of buildings
 		im = handle.get_images()[0]
 		cbar = fig.colorbar(im, ax=ax)
