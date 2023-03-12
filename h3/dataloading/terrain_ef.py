@@ -336,18 +336,28 @@ def other_plot():
 	for i, (group_name, group_data) in enumerate(building_groups):
 		with rio.open(dem_tif_path_list[i]) as dem:
 			dem_array = dem.read(1).astype("float64")
-			row, col = divmod(i, num_cols)
-			ax = axs[row, col]
-			handle = rio.plot.show(dem_array, transform=dem.transform, ax=ax, title=f"{dem_tif_short_name_list[i]}",
-			                       cmap="gist_earth", vmin=0, vmax=np.percentile(dem_array, 99))  # plot DEM map
-			temp_df = group_data
-			gdf = gpd.GeoDataFrame(temp_df, geometry=gpd.points_from_xy(temp_df.lon, temp_df.lat), crs=dem.crs)
-			gdf.plot(ax=handle, color="red")  # plot location of buildings
-			im = handle.get_images()[0]
-			cbar = fig.colorbar(im, ax=ax)
-			cbar.set_label("Elevation (m)")
-			ax.set_xlabel("Longitude(°)")
-			ax.set_ylabel("Latitude(°)")
+			crs = dem.crs
+			transform = dem.transform
+
+		row, col = divmod(i, num_cols)
+		ax = axs[row, col]
+		handle = rio.plot.show(
+			dem_array,
+			transform=transform,
+			ax=ax,
+			title=f"{dem_tif_short_name_list[i]}",
+			cmap="gist_earth",
+			vmin=0,
+			vmax=np.percentile(dem_array, 99)
+		)  # plot DEM map
+
+		gdf = gpd.GeoDataFrame(group_data.copy(), geometry=gpd.points_from_xy(group_data.lon, group_data.lat), crs=crs)
+		gdf.plot(ax=handle, color="red")  # plot location of buildings
+		im = handle.get_images()[0]
+		cbar = fig.colorbar(im, ax=ax)
+		cbar.set_label("Elevation (m)")
+		ax.set_xlabel("Longitude(°)")
+		ax.set_ylabel("Latitude(°)")
 
 	# Remove any unused subplots
 	for i in range(len(axs.flat)):
