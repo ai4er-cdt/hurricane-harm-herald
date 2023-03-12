@@ -135,7 +135,7 @@ def downloader(urls: Iterable[str], target_dir: str = get_download_dir()):
 	"""
 	with ThreadPoolExecutor(max_workers=4) as pool:
 		target_dir = os.path.abspath(target_dir)
-		for task, url in enumerate(urls):
+		for task, url in enumerate(urls, start=1):
 			filename = url.split("/")[-1]
 			target_path = os.path.join(target_dir, filename)
 			pool.submit(url_download, url, target_path, task, total=len(urls))
