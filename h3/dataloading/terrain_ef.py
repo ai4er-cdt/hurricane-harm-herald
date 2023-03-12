@@ -188,12 +188,20 @@ def geoddist(p1, p2):
 	return Geodesic.WGS84.Inverse(p1[1], p1[0], p2[1], p2[0])["s12"]
 
 
-def another_plot():
+def another_plot(building_groups, coast_points, dis_threshold: int = 2, calculate_dis_to_coast: bool = True):
+	# assuming the building is not more than dis_threshold latitude and longitude away from the coast,
+
+	coast_points = np.array(coast_points)
 	n_groups = len(building_groups)  #
 	n_cols = 3
 	n_rows = math.ceil(n_groups / n_cols)
-	fig, axs = plt.subplots(n_rows, n_cols, figsize=(12, 12), dpi=300,
-	                        subplot_kw={"projection": ccrs.PlateCarree()})
+	fig, axs = plt.subplots(
+		n_rows,
+		n_cols,
+		figsize=(12, 12),
+		dpi=300,
+		subplot_kw={"projection": ccrs.PlateCarree()}
+	)
 
 	for i, (group_name, group_data) in enumerate(building_groups):
 		west = int(np.floor(group_data["lon"].min()))
@@ -201,11 +209,13 @@ def another_plot():
 		south = int(np.floor(group_data["lat"].min()))
 		north = int(np.ceil(group_data["lat"].max()))
 
-	dis_threshold = 2  # assuming the building is not more than dis_threshold latitude and longitude away from the coast, please change it according to your case
-
 		# chop the coastline data
-		mask = (coast_points["coast_lon"] >= west - dis_threshold) & (coast_points["coast_lon"] <= east + dis_threshold) & \
-		       (coast_points["coast_lat"] >= south - dis_threshold) & (coast_points["coast_lat"] <= north + dis_threshold)
+		mask = (
+			(west - dis_threshold <= coast_points[:, 0]) &
+			(coast_points[:, 0] <= east + dis_threshold) &
+			(south - dis_threshold <= coast_points[:, 1]) &
+			(coast_points[:, 1] <= north + dis_threshold)
+		)
 		points_within_range = coast_points[mask]
 
 		# plot the buildings and the coastline data that been choped
@@ -216,12 +226,15 @@ def another_plot():
 		ax.set_ylim(south - dis_threshold, north + dis_threshold)
 		ax.add_feature(cfeature.LAND.with_scale("10m"))
 		ax.add_feature(cfeature.OCEAN.with_scale("10m"))
+
 		# Plot the coast points
-		ax.scatter(points_within_range["coast_lon"], points_within_range["coast_lat"], s=5, transform=ccrs.PlateCarree())
+		ax.scatter(points_within_range[:, 0], points_within_range[:, 1], s=5, transform=ccrs.PlateCarree())
 		ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree())
+
 		# Set x-label and y-label
 		ax.set_xlabel("Longitude (°)", fontsize=12)
 		ax.set_ylabel("Latitude (°)", fontsize=12)
+
 		# Set x-ticks and y-ticks
 		xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
 		yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
@@ -229,31 +242,29 @@ def another_plot():
 		ax.set_xticks(xticks, crs=ccrs.PlateCarree())
 		ax.set_yticks(yticks, crs=ccrs.PlateCarree())
 
-		points_within_range = np.column_stack((points_within_range["coast_lon"], points_within_range["coast_lat"]))
+		points_within_range = np.column_stack((points_within_range[:, 0], points_within_range[:, 1]))
 		buildings = np.column_stack((group_data["lon"], group_data["lat"]))
 
-		calculate_dis_to_coast = True  # the switch for whether or not to calculate the distance to the coast
 		if calculate_dis_to_coast:
 			closestp = np.zeros([len(buildings), 2])  # to store the closest point in the coast to a given building
-			distance = np.zeros([len(buildings), 1])  # to store the building"s distance to the coast
+			distance = np.zeros([len(buildings), 1])  # to store the building's distance to the coast
 			coast_vp = vptree.VPTree(points_within_range, geoddist)  # build the lookup table
 
-			for i in range(0, len(buildings)):
+			for j in range(len(buildings)):
 				data = coast_vp.get_nearest_neighbor(
-					buildings[i, :])  # find buildings" closest point on the coast line and get the distance
-				closestp[i, :] = data[1]
-				distance[i] = data[0]  # distance in unit of meter
+					buildings[j, :])  # find buildings' closest point on the coastline and get the distance
+				closestp[j, :] = data[1]
+				distance[j] = data[0]  # distance in unit of meter
 
-			building_locs.loc[group_data.index, "closestp_lon"] = closestp[:,
-			                                                      0]  # store the calculated data into "building_locs" dataframe
+			building_locs.loc[group_data.index, "closestp_lon"] = closestp[:, 0]  # store the calculated data into "building_locs" dataframe
 			building_locs.loc[group_data.index, "closestp_lat"] = closestp[:, 1]
 			building_locs.loc[group_data.index, "dis2coast"] = distance[:, 0]
 
 			ax.scatter(closestp[:, 0], closestp[:, 1], s=5, transform=ccrs.PlateCarree(), c="yellow")
 			ax.plot([buildings[:, 0], closestp[:, 0]], [buildings[:, 1], closestp[:, 1]], "k", linewidth=0.1)
-	while i < n_cols * n_rows - 1:
+
+	for i in range(n_cols * n_rows):
 		fig.delaxes(axs.flatten()[i + 1])
-		i += 1
 	plt.show()
 
 # check the data
@@ -467,7 +478,7 @@ def other_plot():
 	plt.show()
 
 
-def plot():
+def plot_slope():
 	# plot the slope and building locations
 	# Set the number of columns and rows for the plot
 	num_cols = 3
@@ -479,22 +490,34 @@ def plot():
 	for i, (group_name, group_data) in enumerate(building_groups):
 		with rio.open(dem_tif_path_list[i]) as dem:
 			dem_array = dem.read(1).astype("float64")
-			row, col = divmod(i, num_cols)
-			ax = axs[row, col]
-			dem4slope = rd.rdarray(dem_array, no_data=-9999)
-			dem4slope.geotransform = [0, 1, 0, 0, 0, 1,
-			                          0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
-			slope = rd.TerrainAttribute(dem4slope, attrib="slope_riserun")  # calculate slope
-			handle = rio.plot.show(slope, transform=dem.transform, ax=ax, title=f"{dem_tif_short_name_list[i]}",
-			                       cmap="PuBu", vmin=0, vmax=np.percentile(slope, 95))  # plot DEM map
-			temp_df = group_data
-			gdf = gpd.GeoDataFrame(temp_df, geometry=gpd.points_from_xy(temp_df.lon, temp_df.lat), crs=dem.crs)
-			gdf.plot(ax=handle, color="red")  # plot location of buildings
-			im = handle.get_images()[0]
-			cbar = fig.colorbar(im, ax=ax)
-			cbar.set_label("Slope (%)")
-			ax.set_xlabel("Longitude(°)")
-			ax.set_ylabel("Latitude(°)")
+			transform = dem.transform
+			crs = dem.crs
+
+		row, col = divmod(i, num_cols)
+		ax = axs[row, col]
+
+		dem4slope = rd.rdarray(dem_array, no_data=-9999)
+		dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
+
+		slope = rd.TerrainAttribute(dem4slope, attrib="slope_riserun")  # calculate slope
+
+		handle = rio.plot.show(
+			slope,
+			transform=transform,
+			ax=ax,
+			title=f"{dem_tif_short_name_list[i]}",
+			cmap="PuBu",
+			vmin=0,
+			vmax=np.percentile(slope, 95)
+		)  # plot DEM map
+		temp_df = group_data
+		gdf = gpd.GeoDataFrame(temp_df, geometry=gpd.points_from_xy(temp_df.lon, temp_df.lat), crs=crs)
+		gdf.plot(ax=handle, color="red")  # plot location of buildings
+		im = handle.get_images()[0]
+		cbar = fig.colorbar(im, ax=ax)
+		cbar.set_label("Slope (%)")
+		ax.set_xlabel("Longitude(°)")
+		ax.set_ylabel("Latitude(°)")
 
 	# Remove any unused subplots
 	for i in range(len(axs.flat)):
@@ -505,7 +528,7 @@ def plot():
 	plt.show()
 
 
-def p():
+def plot_aspect():
 	# plot the aspect and building locations
 	# Set the number of columns and rows for the plot
 	num_cols = 3
@@ -517,25 +540,35 @@ def p():
 	for i, (group_name, group_data) in enumerate(building_groups):
 		with rio.open(dem_tif_path_list[i]) as dem:
 			dem_array = dem.read(1).astype("float64")
-			row, col = divmod(i, num_cols)
-			ax = axs[row, col]
-			dem4slope = rd.rdarray(dem_array, no_data=-9999)
-			dem4slope.geotransform = [0, 1, 0, 0, 0, 1,
-			                          0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
-			# slope = rd.TerrainAttribute(dem4slope, attrib="slope_riserun") #calculate slope
-			aspect = rd.TerrainAttribute(dem4slope, attrib="aspect")  # calculate aspect
+			transform = dem.transform
+			crs = dem.crs
 
-			handle = rio.plot.show(aspect, transform=dem.transform, ax=ax, title=f"{dem_tif_short_name_list[i]}",
-			                       cmap="twilight_shifted", vmin=0, vmax=np.percentile(aspect, 95))  # plot DEM map
+		row, col = divmod(i, num_cols)
+		ax = axs[row, col]
 
-			temp_df = group_data
-			gdf = gpd.GeoDataFrame(temp_df, geometry=gpd.points_from_xy(temp_df.lon, temp_df.lat), crs=dem.crs)
-			gdf.plot(ax=handle, color="red")  # plot location of buildings
-			im = handle.get_images()[0]
-			cbar = fig.colorbar(im, ax=ax)
-			cbar.set_label("Aspect (°)")
-			ax.set_xlabel("Longitude(°)")
-			ax.set_ylabel("Latitude(°)")
+		dem4slope = rd.rdarray(dem_array, no_data=-9999)
+		dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
+
+		aspect = rd.TerrainAttribute(dem4slope, attrib="aspect")  # calculate aspect
+
+		handle = rio.plot.show(
+			aspect,
+			transform=transform,
+			ax=ax,
+			title=f"{dem_tif_short_name_list[i]}",
+			cmap="twilight_shifted",
+			vmin=0,
+			vmax=np.percentile(aspect, 95)
+		)  # plot DEM map
+
+		temp_df = group_data
+		gdf = gpd.GeoDataFrame(temp_df, geometry=gpd.points_from_xy(temp_df.lon, temp_df.lat), crs=crs)
+		gdf.plot(ax=handle, color="red")  # plot location of buildings
+		im = handle.get_images()[0]
+		cbar = fig.colorbar(im, ax=ax)
+		cbar.set_label("Aspect (°)")
+		ax.set_xlabel("Longitude(°)")
+		ax.set_ylabel("Latitude(°)")
 
 	# Remove any unused subplots
 	for i in range(len(axs.flat)):
