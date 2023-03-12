@@ -55,52 +55,6 @@ def get_building_group():
 	return building_groups
 
 
-def building_plot(building_groups):
-	# plot the building locations for verification
-	n_groups = len(building_groups)  # group number
-	n_cols = 3  # column number
-	n_rows = math.ceil(n_groups / n_cols)  # raw number
-
-	fig, axs = plt.subplots(n_rows, n_cols, figsize=(12, 12), dpi=300, subplot_kw={"projection": ccrs.PlateCarree()})
-
-	for i, (group_name, group_data) in enumerate(building_groups):
-		west = int(np.floor(group_data["lon"].min()))
-		east = int(np.ceil(group_data["lon"].max()))
-		south = int(np.floor(group_data["lat"].min()))
-		north = int(np.ceil(group_data["lat"].max()))
-		dis_threshold = 1
-
-		# plot the buildings and the coastline data that been choped
-		row = i // n_cols
-		col = i % n_cols
-		ax = axs[row, col]
-		ax.set_xlim(west - dis_threshold, east + dis_threshold)
-		ax.set_ylim(south - dis_threshold, north + dis_threshold)
-
-		ax.add_feature(cfeature.COASTLINE.with_scale("10m"), linewidth=0.5)
-		ax.add_feature(cfeature.LAND.with_scale("10m"))
-		ax.add_feature(cfeature.OCEAN.with_scale("10m"))
-
-		# plot the locations of buildings
-		ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree(), c="orange")
-
-		# Set x-label and y-label
-		ax.set_xlabel("Longitude (°)", fontsize=12)
-		ax.set_ylabel("Latitude (°)", fontsize=12)
-
-		# Set x-ticks and y-ticks
-		xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
-		yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
-		ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-		ax.set_yticks(yticks, crs=ccrs.PlateCarree())
-
-	# while i < n_cols * n_rows - 1:
-	for i in range(n_cols * n_rows):
-		fig.delaxes(axs.flatten()[i + 1])
-
-	plt.show()
-
-
 def _download_coastlines() -> None:
 	# This cell check whether coastline data has been downloaded
 	# You can download coastline data from Nature Earth (https://www.naturalearthdata.com/downloads/10m-physical-vectors/),
@@ -141,44 +95,8 @@ def get_coastlines():
 
 	geometry_coast = shapefile[shapefile["geometry"].geom_type == "LineString"]["geometry"].to_numpy()
 	coast_points = [(lon, lat) for point in geometry_coast for (lon, lat) in point.coords]
-	# 234 ms ± 4.66 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+	return coast_points
 
-	# coast_points = pd.DataFrame(columns=["coast_lon", "coast_lat"])     # Initialize the coast_points DataFrame
-	# temp_array = []      # Initialize the temp_array as  a list
-	#
-	# for i, row in shapefile.iterrows():
-	# 	if row["geometry"].geom_type == "LineString":
-	# 		for point in row["geometry"].coords:
-	# 			x, y = point
-	# 			p = [x, y]                                                          # Create a list with two elements
-	# 			temp_array.append(p)                                                # Append the point to the list
-	# 		temp_df = pd.DataFrame(temp_array, columns=["coast_lon", "coast_lat"])  # Create a DataFrame from the temp_array
-	# 		coast_points = pd.concat([coast_points, temp_df],
-	# 		                         ignore_index=True)  # Append the temp_df to the coast_points DataFrame
-	# 		temp_array = []  # Reset the temp_array to an empty list
-	# 9.39 s ± 31.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-
-
-def plot_coastline(coast_points):
-	# Plot the coastline data for verification
-	fig = plt.figure(figsize=(12, 6), dpi=300)
-	ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
-	# Add a global map background
-	ax.stock_img()
-	# Plot the coast points
-	ax.scatter(coast_points["coast_lon"], coast_points["coast_lat"], s=5, transform=ccrs.PlateCarree())
-	# Set x-label and y-label
-	ax.set_xlabel("Longitude (°)", fontsize=12)
-	ax.set_ylabel("Latitude (°)", fontsize=12)
-	# Set x-ticks and y-ticks
-	xticks = np.arange(-180, 190, 20)
-	yticks = np.arange(-90, 100, 20)
-	ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-	ax.set_yticks(yticks, crs=ccrs.PlateCarree())
-
-	plt.show()
-
-###
 
 # Find the closest point on the coastline to the building and return the distance
 # NOTE! this cell is quite time consuming to run (dependding on the size of building location data and the coastline data)
@@ -331,48 +249,9 @@ def _unpack_dem(clean: bool = False) -> None:
 		unpack_file(file, clean=clean)
 
 
-# This cell plot DEM files
-def plot_dem():
-	# Set the number of columns and rows for the plot
-	num_cols = 3
-	num_rows = -(-len(dem_tif_path_list) // num_cols)
-
-	# Create a new figure with the appropriate number of subplots
-	fig, axs = plt.subplots(num_rows, num_cols, figsize=(20, 20), dpi=300)
-
-	# Iterate over the files and plot each one in a subplot
-	for i, file in enumerate(dem_tif_path_list):
-		row, col = divmod(i, num_cols)
-		ax = axs[row, col]
-		with rio.open(file) as dem:
-			dem_array = dem.read(1).astype("float64")
-			handle = rio.plot.show(
-				dem_array,
-				transform=dem.transform,
-				ax=ax,
-				title=f"{dem_tif_short_name_list[i]}",
-				cmap="gist_earth",
-				vmin=0,
-				vmax=np.percentile(dem_array, 99)
-			)  # plot DEM map
-
-			im = handle.get_images()[0]
-			cbar = fig.colorbar(im, ax=ax)
-			cbar.set_label("Elevation (m)")
-			ax.set_xlabel("Longitude(°)")
-			ax.set_ylabel("Latitude(°)")
-
-	# Remove any unused subplots
-	for i in range(len(axs.flat)):
-		if i >= len(dem_tif_path_list):
-			fig.delaxes(axs.flat[i])
-
-	plt.show()
-
-
-# This cell define functions to get the height, slope and aspect for buildings
-
-def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:  # This function convert longitude and latitude to x and y
+def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:
+	# TODO: remove, to merge
+	# This function convert longitude and latitude to x and y
 	rows, cols = rio.transform.rowcol(transform, lon, lat)
 	return cols, rows
 
