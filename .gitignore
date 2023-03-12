@@ -151,3 +151,4 @@ gen
 # Local project files
 data/datasets
 data/downloads
+data/credentials.json

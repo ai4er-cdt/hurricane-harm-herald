@@ -29,7 +29,7 @@ def _download_storm() -> None:
 	downloader(url, target_dir=get_storm_dir())
 
 
-def _unpack_storm(clean: bool = False):
+def _unpack_storm(clean: bool = False) -> None:
 	storm_dir = get_storm_dir()
 	abs_list = [os.path.join(storm_dir, file) for file in os.listdir(storm_dir) if os.path.splitext(file)[1] == ".zip"]
 	for p in abs_list:
