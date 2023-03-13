@@ -70,25 +70,21 @@ def _unpack_coastlines(clean: bool = False) -> None:
 	filepath = os.path.join(coastline_dir, coastline_filename)
 	unpack_file(filepath, clean=clean)
 
-# check whether the .shp or .zip coastline data exist
-# if os.path.isfile(shp_path):
-# 	print(".shp coastline file found")
-# else:
-# 	if os.path.isfile(zip_path):
-# 		with zipfile.ZipFile(zip_path, "r") as zip_ref:
-# 			zip_ref.extractall(coast_extracted_floder)  # the coastline data is in 10m resolution
-# 	else:
-# 		print(".zip coastline file not found, please download it from ", url, " manually")
 
+def get_coastlines() -> list[tuple[float, float]]:
+	"""Load the coastline from the .shp data.
+	Converts the data from the file to a list of (lat, lon)
 
-def get_coastlines():
-	# Load the .shp coastline data
-	# Convert the .shp coast line data into points and store in a dataframe
-	shp_path = os.path.join(get_terrain_dir(), "ne_10m_coastline.shp")
-	shapefile = gpd.read_file(shp_path)                                 # Read the shapefile
-
+	Returns
+	-------
+	list of tuple of float,
+		List of tuple of the coordinates of the coastline
+	"""
+	shp_filename = "ne_10m_coastline.shp"
+	shp_path = os.path.join(get_coastline_dir(), shp_filename)
+	shapefile = gpd.read_file(shp_path)
 	geometry_coast = shapefile[shapefile["geometry"].geom_type == "LineString"]["geometry"].to_numpy()
-	coast_points = [(lon, lat) for point in geometry_coast for (lon, lat) in point.coords]
+	coast_points = [(lat, lon) for point in geometry_coast for (lon, lat) in point.coords]
 	return coast_points
 
 
