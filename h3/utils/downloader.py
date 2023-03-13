@@ -105,6 +105,10 @@ def _get_response(url: str) -> HTTPResponse:
 def url_download(url: str, path: str, task: int = 1, total: int = 1) -> None:
 	"""
 	Download an url to a local file
+
+	See Also
+	--------
+	downloader : Downloads multiple url in parallel.
 	"""
 	logger.info(f"Downloading: '{url}' to {path}")
 	response = _get_response(url)
@@ -131,7 +135,7 @@ def url_download(url: str, path: str, task: int = 1, total: int = 1) -> None:
 
 def downloader(urls: Iterable[str], target_dir: str = get_download_dir()):
 	"""
-	Downloader to download multiple files
+	Downloader to download multiple files.
 	"""
 	with ThreadPoolExecutor(max_workers=4) as pool:
 		target_dir = os.path.abspath(target_dir)
