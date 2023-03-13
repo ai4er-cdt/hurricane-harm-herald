@@ -283,7 +283,7 @@ def extract_damage_allfiles_ensemble(filepaths_dict: dict,
     return pre_rdf
 
 
-def load_and_save_df(filepaths_dict: dict, output_dir: str):
+def load_and_save_df(filepaths_dict: dict, output_dir: str, reload_pickle: bool = False):
     """
     Loads the json label files for all hurricanes in the "hold" section of the
     xBD data, extracts the points and polygons in both xy coordinates,
@@ -295,6 +295,8 @@ def load_and_save_df(filepaths_dict: dict, output_dir: str):
         pathnames in a dictionary for the holdout, tier1, tier3 and test
         folder.
     output_dir : str
+    reload_pickle : bool, optional
+        If True recreate the pickle files as if they did not exist. The default is False.
 
     Returns
     -------
@@ -310,34 +312,36 @@ def load_and_save_df(filepaths_dict: dict, output_dir: str):
                            for file in os.listdir(filepath)]
         filepaths_dict[filepath] = directory_files
 
-    df_points_post_hurr = extract_damage_allfiles_separate(
-        filepaths_dict=filepaths_dict,
-        crs="xy",
-        event="pre"
-    )
+    path_save_post = os.path.join(output_dir, "pre_polygon.pkl")
+    if not os.path.exists(path_save_post) or reload_pickle:
+        df_points_post_hurr = extract_damage_allfiles_separate(
+            filepaths_dict=filepaths_dict,
+            crs="xy",
+            event="pre"
+        )
+        df_points_post_hurr.to_pickle(path_save_post)
+    else:
+        df_points_post_hurr = pd.read_pickle(path_save_post)    # TODO: validate this
 
-    path_save_post = os.path.join(
-        output_dir,
-        "pre_polygon.pkl")
-    df_points_post_hurr.to_pickle(path_save_post)
+    path_save_pre = os.path.join(output_dir, "xy_pre_pol_post_damage.pkl")
+    if not os.path.exists(path_save_pre) or reload_pickle:
+        df_pre_post_hurr_xy = extract_damage_allfiles_ensemble(
+            filepaths_dict=filepaths_dict,
+            crs="xy"
+        )
+        df_pre_post_hurr_xy.to_pickle(path_save_pre)
+    else:
+        df_pre_post_hurr_xy = pd.read_pickle(path_save_pre)
 
-    df_pre_post_hurr_xy = extract_damage_allfiles_ensemble(
-        filepaths_dict=filepaths_dict,
-        crs="xy"
-    )
-    path_save_pre = os.path.join(
-        output_dir,
-        "xy_pre_pol_post_damage.pkl")
-    df_pre_post_hurr_xy.to_pickle(path_save_pre)
-
-    df_pre_post_hurr_ll = extract_damage_allfiles_ensemble(
-        filepaths_dict=filepaths_dict,
-        crs="lng_lat"
-    )
-    path_save_pre_longlat = os.path.join(
-        output_dir,
-        "lnglat_pre_pol_post_damage.pkl")
-    df_pre_post_hurr_ll.to_pickle(path_save_pre_longlat)
+    path_save_pre_longlat = os.path.join(output_dir, "lnglat_pre_pol_post_damage.pkl")
+    if not os.path.exists(path_save_pre_longlat) or reload_pickle:
+        df_pre_post_hurr_ll = extract_damage_allfiles_ensemble(
+            filepaths_dict=filepaths_dict,
+            crs="lng_lat"
+        )
+        df_pre_post_hurr_ll.to_pickle(path_save_pre_longlat)
+    else:
+        df_pre_post_hurr_ll = pd.read_pickle(path_save_pre_longlat)
 
     return df_pre_post_hurr_xy, df_pre_post_hurr_ll
 
