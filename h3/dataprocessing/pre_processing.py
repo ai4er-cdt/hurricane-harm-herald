@@ -74,10 +74,10 @@ def main():
     # output_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_output"
 
     # hold_filepath = get_xbd_hlabel_dir()
-    hold_filepath = os.path.join(xbd_dir, "geotiffs/hold/labels")
-    tier1_filepath = os.path.join(xbd_dir, "geotiffs/tier1/labels")
-    tier3_filepath = os.path.join(xbd_dir, "geotiffs/tier3/labels")
-    test_filepath = os.path.join(xbd_dir, "geotiffs/test/labels")
+    hold_filepath = os.path.join(xbd_dir, "geotiffs", "hold", "labels")
+    tier1_filepath = os.path.join(xbd_dir, "geotiffs", "tier1", "labels")
+    tier3_filepath = os.path.join(xbd_dir, "geotiffs", "tier3", "labels")
+    test_filepath = os.path.join(xbd_dir, "geotiffs", "test", "labels")
 
     filepaths_dict = dict.fromkeys([hold_filepath, tier1_filepath,
                                     tier3_filepath, test_filepath])
@@ -88,8 +88,7 @@ def main():
         filepaths_dict, output_dir)
 
     # where to save zoomed and cropped images
-    save_dir_path = "datasets/processed_data/processed_xbd/geotiffs_zoom/" \
-        "images"
+    save_dir_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
 
     zoomdir_dict = {}
     for zoom_num in zoom_levels:
