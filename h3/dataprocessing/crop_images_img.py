@@ -20,7 +20,7 @@ def extract_coords(row):
     return np.array(row).astype(np.int32)
 
 
-def polygon_mask(img, polygon, im_size: int):
+def polygon_mask(img_array, polygon, im_size: int):
     """Fills up a polygon to create a mask of the building.
 
     Parameters
@@ -37,7 +37,6 @@ def polygon_mask(img, polygon, im_size: int):
     numpy array
         filled mask of the building.
     """
-    img = img.read()
     image_size = (im_size, im_size)
 
     empty_mask = np.zeros(image_size, np.uint8)
@@ -71,7 +70,7 @@ def mask_to_bb(Y):
     return np.array([left_x, top_y, right_x, bottom_y], dtype=np.int64)
 
 
-def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
+def crop_images(image_array, img_metadata, polygon_df, zoom_level: int, pixel_num: int,
                 im_size: int, output_path: str):
     """Crops imagery based on the building polygon and the desired pixel size.
     It can zoom in to certain levels, whilst maintaining the pixel size by
@@ -80,9 +79,11 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
 
     Parameters
     ----------
-    img : dataset object
-        The pre-event imagery that underlays the building polygon. This image
-        will be cropped.
+    image_array : ndarray
+        The pre-event image array given from rasterio.DatasetReader.read() that underlays the building polygon.
+        This image will be cropped.
+    img_metadata :  dict
+        The dictionary of the image metadata. See rasterio.DatasetReader.meta.
     polygon_df : object
         The building polygon that needs to be cropped around.
     zoom_level : int
@@ -104,7 +105,7 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
     """
     crop_size = int(pixel_num//zoom_level)
 
-    polygon_grid = polygon_mask(img, polygon_df, im_size)
+    polygon_grid = polygon_mask(image_array, polygon_df, im_size)
     bounding_box = mask_to_bb(polygon_grid)
 
     # extract bounding box information
@@ -114,9 +115,9 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
     y2 = int(bounding_box[2])
 
     x_min = 0
-    x_max = img.width - crop_size
+    x_max = img_metadata["width"] - crop_size
     y_min = 0
-    y_max = img.width - crop_size
+    y_max = img_metadata["width"] - crop_size
 
     # UNHASH if cropped houses should be exluded
     # find out if house is on the edge and potentially cut off
@@ -144,7 +145,7 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
     if (y_offset + size_limit > y_max or y_offset - size_limit < y_min or
             x_offset + size_limit > x_max or x_offset - size_limit < x_min):
 
-        image_array = img.read()
+        # image_array = img.read()
         # padding around image, add dimensions around offset to all sides
         pad = ((0, 0), (size_limit, size_limit), (size_limit, size_limit))
         padded = np.pad(image_array, pad_width=pad)
@@ -159,7 +160,7 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
             (padded_x_offset-size_limit):(padded_x_offset+size_limit)]
 
     else:
-        image_array = img.read()
+        # image_array = img.read()
         roi = image_array[:, (y_offset-size_limit):(y_offset+size_limit),
                           (x_offset-size_limit):(x_offset+size_limit)]
 
@@ -170,9 +171,8 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
     resized_img = scipy.ndimage.zoom(roi, (1, scaling_factor, scaling_factor),
                                      order=1)
     # preserve image metadata
-    img_bands = img.meta["count"]
-    img_crs = img.meta["crs"]
-    img_metadata = img.meta
+    img_bands = img_metadata["count"]
+    img_crs = img_metadata["crs"]
     img_metadata.update({
         "driver": "png",
         "height": pixel_num,

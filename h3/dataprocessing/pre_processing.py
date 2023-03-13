@@ -39,7 +39,7 @@ def image_loading(polygons_df, zoom_levels: list, pixel_num: int,
     polygons_df["index"] = np.arange(len(polygons_df))
     filtered_df = polygons_df[["image_name", "json_link"]].drop_duplicates(
         subset=['image_name'])
-    for json_path in tqdm(filtered_df["json_link"]):
+    for json_path in tqdm(filtered_df["json_link"], desc="Processing images", position=0, leave=False):
         tif_name = json_path.replace("json", "tif")
         image_path = os.path.join(json_path, tif_name).replace("labels",
                                                                "images")
@@ -49,16 +49,26 @@ def image_loading(polygons_df, zoom_levels: list, pixel_num: int,
         polygons_image = image_pol_df[["geometry", "index"]]
         with rio.open(image_path) as img:
             image_size = 1024
-            for building in range(len(polygons_image)):
-                polygon_for_img = polygons_image.iloc[building]["geometry"]
-                polygon_num = polygons_image.iloc[building]["index"]
+            img_metadata = img.meta
+            img_array = img.read()
 
-                for zoom_level in zoom_levels:
-                    zoom_dir = zoomdir_dict[zoom_level]
-                    img_num = str(polygon_num) + ".png"
-                    output_path = os.path.join(zoom_dir, (img_num))
-                    crop_images(img, polygon_for_img, zoom_level, pixel_num,
-                                image_size, output_path)
+        for building in tqdm(range(len(polygons_image)), desc="Buildings", position=1, leave=False):
+            polygon_for_img = polygons_image.iloc[building]["geometry"]
+            polygon_num = polygons_image.iloc[building]["index"]
+
+            for zoom_level in tqdm(zoom_levels, desc="zoom", position=2, leave=False):
+                zoom_dir = zoomdir_dict[zoom_level]
+                img_num = str(polygon_num) + ".png"
+                output_path = os.path.join(zoom_dir, img_num)
+                crop_images(
+                    image_array=img_array,
+                    img_metadata=img_metadata,
+                    polygon_df=polygon_for_img,
+                    zoom_level=zoom_level,
+                    pixel_num=pixel_num,
+                    im_size=image_size,
+                    output_path=output_path
+                )
 
 
 def main():
