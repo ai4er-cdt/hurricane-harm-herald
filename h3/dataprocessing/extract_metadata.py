@@ -256,8 +256,7 @@ def extract_damage_allfiles_ensemble(filepaths_dict: dict,
                                                 "hurricane*pre*.json")
         # pre_dataframes_list = []
         for pre_json_name in tqdm(full_pre_hurr_json_files,
-                                  desc=f"Extracting metadata for pre event" /
-                                  "and post damage label hurricane"):
+                                  desc=f"Extracting metadata for pre event and post damage label hurricane"):
             post_json_name = pre_json_name.replace("pre", "post")
 
             pre_metadata = extract_metadata(
@@ -272,13 +271,12 @@ def extract_damage_allfiles_ensemble(filepaths_dict: dict,
             merge_post_metadata = post_metadata[["damage_class", "match_num"]]
             pre_metadata["match_num"] = pre_metadata.index
             pre_metadata = pre_metadata.drop("damage_class", axis=1)
-
             # Assume order of polygons in pre and post json data is same
             # otherwise, use the overlapping_polygons function which indicates
             # polygonsare overlapping and are therefore pre and post pairs
             polygons_pre = pre_metadata.merge(merge_post_metadata,
                                               on="match_num")
-            polygons_pre.drop(["match_num"], axis=1)
+            polygons_pre = polygons_pre.drop(["match_num"], axis=1)
             full_pre_dataframes_list.append(polygons_pre)
     pre_rdf = gpd.GeoDataFrame(pd.concat(full_pre_dataframes_list,
                                          ignore_index=True))
@@ -346,8 +344,9 @@ def load_and_save_df(filepaths_dict: dict, output_dir: str):
 
 def main():
     xbd_dir = get_xbd_dir()
+    #xbd_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_geotiffs"
     output_dir = get_metadata_pickle_dir()
-
+    #output_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_output"
     # hold_filepath = get_xbd_hlabel_dir()
     hold_filepath = os.path.join(xbd_dir, "geotiffs/hold/labels")
     tier1_filepath = os.path.join(xbd_dir, "geotiffs/tier1/labels")
