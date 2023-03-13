@@ -6,8 +6,9 @@
 
 The destruction caused by hurricanes has huge social and economic impact. Between 1980-2008, 57\% of economic losses from worldwide natural disasters stem from storms making landfall across continental US and the Caribbean. Hurricanes comprise the bulk of these. In continental US alone, 206 hurricane landfalls between 1900 and 2017 caused on average over \$20 billion in annual damage (Normalised from the 2018 to the 2022 dollar value). Development in vulnerable areas driven by population growth and increasing wealth increases average year-on-year losses. In addition, anthropogenic global warming correlates with the fractional proportion of high-intensity extreme weather events globally, including hurricanes and their associated environmental hazards such as storm surges.
 
-To date hurricane damage prediction largely depends on probabilistic models of the response of physical building components to environmental stressors. These methods generally rely on time-intensive in-situ surveys and case studies of specific extreme weather events, which limits their ability to generalise. While use of ML in building damage classification is well-established thanks largely to the 2019 xView2 Challenge, damage prediction using ML is limited. 
+To date hurricane damage prediction largely depends on probabilistic models of the response of physical building components to environmental stressors. These methods generally rely on time-intensive in-situ surveys and case studies of specific extreme weather events, which limits their ability to generalise. While use of ML in building damage classification is well-established thanks largely to the 2019 xView2 [click here](https://xview2.org/) Challenge, damage prediction using ML is limited. 
 
+containing over 700,000 building annotations and labels. 
 **Hurricane Harm Herald (3H)** uses a novel multimodal machine learning approach to predict the damage extent to buildings in response to forecasted weather features associated with major hurricanes (categories 3 to 5, as classified by the Saffir-Simpson scale). The tool uses openly accessible datasets to produce a building-level damage forecast map for regions of NA presently at risk of hurricanes. It is hoped that this may be made available for community-level decision making to increase the long-term resilience of neighbourhoods, prepare defences in response to forecasts of imminent storms, and provide preliminary direction for rescue workers following events for which damage assessments are not immediately available. The tool may also be useful to inform insurance policy. 
 
 ## Documentation
@@ -33,9 +34,43 @@ The team would like to thank Robert Muir-Wood for proposing the project, and Dom
 
 ### Getting the datasets
 #### xBD
-Download the dataset from https://xview2.org/ (you will need to create an account)
-and put the files in `./data/datasets/XBD_data`.  
+xBD [click here](https://openaccess.thecvf.com/content_CVPRW_2019/papers/cv4gc/Gupta_Creating_xBD_A_Dataset_for_Assessing_Building_Damage_from_Satellite_CVPRW_2019_paper.pdf) is the dataset used in the xView2 challenge, providing pre- and post-event RGB satellite imagery with over 700,000 building polygons. 
+
+Download the dataset from https://xview2.org/ (you will need to register for an account) and put the files in `./data/datasets/XBD_data`.  
 <i>Note: </i> The uncompressed data is about 130GB.
+
+After downloading, the data will be organised in the directories as follows: (WE CAN DELETE THIS??)
+
+/data/datasets/xBD_data/geotiffs/
+
+ ├── tier1
+ │      ├── images
+ │      │      └── <image_id>.png
+ │      │      └── ...
+ │      └── labels
+ │             └── <image_id>.json
+ │             └── ...
+ ├── tier3
+ │      ├── images
+ │      │      └── <image_id>.png
+ │      │      └── ...
+ │      └── labels
+ │             └── <image_id>.json
+ │             └── ...
+ ├── test
+ │      ├── images
+ │      │      └── <image_id>.png
+ │      │      └── ...
+ │      └── labels
+ │             └── <image_id>.json
+ │             └── ...
+ └── holdout
+        ├── images
+        │      └── <image_id>.png
+        │      └── ...
+        └── labels
+               └── <image_id>.json
+               └── ...
 
 #### DEM
 To download the DEM files, you need an account here: https://urs.earthdata.nasa.gov/users/new/  
