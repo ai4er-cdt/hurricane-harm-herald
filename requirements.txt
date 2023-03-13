@@ -1,3 +1,4 @@
+cartopy
 cmocean
 dask
 ipython
@@ -7,12 +8,13 @@ matplotlib
 numpy
 opencv-python # opencv if conda
 pandas
+pytorch
 rasterio
 rich
+richdem
 shapely
-tqdm
 torchvision
-pytorch
+tqdm
 seaborn
 scikit-learn
 scipy
