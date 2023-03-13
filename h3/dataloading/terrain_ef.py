@@ -19,11 +19,19 @@ from h3.utils.file_ops import unpack_file
 from h3.utils.directories import get_processed_data_dir, get_coastline_dir, get_dem_dir, get_metadata_pickle_dir
 
 
+def get_building_group() -> DataFrameGroupBy:
+	"""Load the data from the building damage pickle file and group them in groups of 1 deg latlon
 
-def get_building_group():
+	Returns
+	-------
+	DataFrameGroupBy
+
+	See Also
+	--------
+	pd.DataFrame.groupby()
+	"""
 	# load the data of the locations (lon, lat) of buildings
 	df_pre_post_hurr_path = os.path.join(get_metadata_pickle_dir(), "lnglat_pre_pol_post_damage.pkl")
-	# building_locs_path="/content/drive/MyDrive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/xBD_data/xbd_points_posthurr_reformatted.pkl"
 	df_pre_post_hurr = pd.read_pickle(df_pre_post_hurr_path)
 
 	building_locs = pd.DataFrame({
@@ -42,14 +50,12 @@ def get_building_group():
 
 
 def _download_coastlines() -> None:
+	"""Download the coastline data from Nature Earth
+	(https://www.naturalearthdata.com/downloads/10m-physical-vectors/)
+	"""
 	# This cell check whether coastline data has been downloaded
 	# You can download coastline data from Nature Earth (https://www.naturalearthdata.com/downloads/10m-physical-vectors/),
 	# and store the .zip coastline data to "zip_path" (please change it according to your setting)
-
-	# zip_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline.zip"
-	# shp_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline/ne_10m_coastline.shp"
-	# coast_extracted_floder = "/data/datasets/EFs/terrain_data/ne_10m_coastline/"
-	# pkl_path = "/data/datasets/EFs/terrain_data/ne_10m_coastline/ne_10m_coastline.pkl"
 
 	# This is a weird url, but it is the correct one
 	# TODO: look more into this to make sure it works
@@ -88,16 +94,27 @@ def get_coastlines() -> list[tuple[float, float]]:
 	return coast_points
 
 
-# Find the closest point on the coastline to the building and return the distance
-# NOTE! this cell is quite time consuming to run (dependding on the size of building location data and the coastline data)
+def get_buildings_bounding_box(buildings_df: pd.DataFrame) -> tuple[int, int, int, int]:
+	"""Helper function to get the bounding box of a buildings DataFrame.
+	It will get the min and max of the lat lon present in the buildings_df.
 
-# define the function that calculate Geodesic distance between two points
-def geoddist(p1, p2):
-	return Geodesic.WGS84.Inverse(p1[1], p1[0], p2[1], p2[0])["s12"]
+	Parameters
+	----------
+	buildings_df : pd.DataFrame
+		A pd.DataFrame of the buildings, need to have a columns labeled `lat` an `lon`.
 
+	Returns
+	-------
+	tuple
+		tuple of int of the coordinates of the bounding box. The values are in degrees and as follows:
+		east, north, west, south
+	"""
+	west = int(np.floor(buildings_df["lon"].min()))
+	east = int(np.ceil(buildings_df["lon"].max()))
+	south = int(np.floor(buildings_df["lat"].min()))
+	north = int(np.ceil(buildings_df["lat"].max()))
+	return east, north, west, south
 
-def another_plot(building_groups, coast_points, dis_threshold: int = 2, calculate_dis_to_coast: bool = True):
-	# assuming the building is not more than dis_threshold latitude and longitude away from the coast,
 
 def get_coastpoints_range(bounding_box: tuple, coast_points: np.ndarray, dis_threshold: int = 2) -> np.ndarray:
 	"""Function to select a subset of the coastlines points which are in range of buildings.
@@ -127,14 +144,6 @@ def get_coastpoints_range(bounding_box: tuple, coast_points: np.ndarray, dis_thr
 	)
 	return coast_points[mask]
 
-		# plot the buildings and the coastline data that been choped
-		row = i // n_cols
-		col = i % n_cols
-		ax = axs[row, col]
-		ax.set_xlim(west - dis_threshold, east + dis_threshold)
-		ax.set_ylim(south - dis_threshold, north + dis_threshold)
-		ax.add_feature(cfeature.LAND.with_scale("10m"))
-		ax.add_feature(cfeature.OCEAN.with_scale("10m"))
 
 def get_distance_coast(buildings: np.ndarray, coast_points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 	"""
@@ -170,40 +179,31 @@ def get_distance_coast(buildings: np.ndarray, coast_points: np.ndarray) -> tuple
 	nearest_coast_point = np.degrees(coast_points[ind]).reshape(-1, 2)
 	return nearest_coast_point, dist
 
-			for j in range(len(buildings)):
-				data = coast_vp.get_nearest_neighbor(
-					buildings[j, :])  # find buildings' closest point on the coastline and get the distance
-				closestp[j, :] = data[1]
-				distance[j] = data[0]  # distance in unit of meter
 
-			building_locs.loc[group_data.index, "closestp_lon"] = closestp[:, 0]  # store the calculated data into "building_locs" dataframe
-			building_locs.loc[group_data.index, "closestp_lat"] = closestp[:, 1]
-			building_locs.loc[group_data.index, "dis2coast"] = distance[:, 0]
+def get_dem_urls(building_groups: DataFrameGroupBy) -> list:
+	"""
+	Generate the list of DEM to download from Land Processes Distributed Active Archive Center (LP DAAC):
+	https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/.
 
-			ax.scatter(closestp[:, 0], closestp[:, 1], s=5, transform=ccrs.PlateCarree(), c="yellow")
-			ax.plot([buildings[:, 0], closestp[:, 0]], [buildings[:, 1], closestp[:, 1]], "k", linewidth=0.1)
+	Parameters
+	----------
+	building_groups : DataFrameGroupBy
+		DataFrameGroupBy object of the building
 
-	for i in range(n_cols * n_rows):
-		fig.delaxes(axs.flatten()[i + 1])
-	plt.show()
+	Returns
+	-------
+	dem_urls : list
+		list of all the urls to download. See
 
-# check the data
-building_locs
+	Notes
+	-----
+	The DEM files can be manually downloaded https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/.
 
-def get_dem_urls(building_groups):
-	# https://urs.earthdata.nasa.gov/users/new/
-	# The following code check whether DEM data has been downloaded
-	# If it is not, the DEM files can be downloaded from Land Processes Distributed Active Archive Center (LP DAAC) manually
-	# The link to download DEM files: https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/
-	# If you have not download, please run this cell first to print the list of DEM files to download.
-	# Then, put DEM files in a local floder and update the "dem_zip_path"
-	# and run the code, DEM files will ben extracted to "extracted_path" (please change it according to your setting)
-	dem_tif_name_list = []
-	dem_tif_path_list = []
-	dem_tif_short_name_list = []
+	To automatically download them an account will be needed.
+	To create the account please go to https://urs.earthdata.nasa.gov/users/new/
+	"""
 
 	dem_urls = []
-
 	for name, group in building_groups:
 		lon_floor = int(np.floor(group["lon"].min()))
 		lat_floor = int(np.floor(group["lat"].min()))
@@ -215,36 +215,29 @@ def get_dem_urls(building_groups):
 		dem_zip_name = f"ASTGTMV003_{coordinate_str}.zip"
 		url_name = f"https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/{dem_zip_name}"
 		dem_urls.append(url_name)
-
-		# PLEASE MAUALLY DOWNLOAD THE DEM FILE SPECIFIED BY "dem_zip_name" AND PUT IT INTO THE "DEM_ZIP_PATH"
-		# dem_zip_path = f"./data/datasets/EFs/terrain_data/DEM_data/{dem_zip_name}"  # path to store the downloaded data, please change it accordingly
-		# dem_tif_name = f"ASTGTMV003_{coordinate_str}_dem.tif"
-		# dem_tif_short_name = f"{coordinate_str}"
-		# # extracted_path = "./data/datasets/EFs/terrain_data/DEM_data/DEM_extracted"  # path to store the extracted data, please change it accordingly
-		# # dem_tif_path = f"{extracted_path}/{dem_tif_name}"
-		#
-		# dem_tif_name_list.append(dem_tif_name)
-		# dem_tif_short_name_list.append(dem_tif_short_name)
-		# dem_tif_path_list.append(dem_tif_path)
-
-		# Check if the .tif file already exists in the specified directory
-		# if os.path.isfile(dem_tif_path):
-		# 	continue
-		# else:
-		# 	if os.path.isfile(dem_zip_path):
-		# 		with zipfile.ZipFile(dem_zip_path, "r") as zip_ref:
-		# 			zip_ref.extract(dem_tif_name, extracted_path)
-		# 	else:
-		# 		print("DEM file Not found, please download: ", dem_zip_name)
-
 	return dem_urls
 
 
-def _download_dem(dem_urls) -> None:
+def _download_dem(dem_urls: list) -> None:
+	"""Helper function to download the DEM to the correct folder
+
+	Parameters
+	----------
+	dem_urls : list
+		list of the urls to download.
+	"""
 	downloader(dem_urls, target_dir=get_dem_dir())
 
 
 def _unpack_dem(clean: bool = False) -> None:
+	"""Helper function to unpack the download DEM.zip file.
+
+	Parameters
+	----------
+	clean : bool, optional
+		If True, deletes the original .zip file and any .zip files extracted.
+		Default is False.
+	"""
 	dem_dir = get_dem_dir()
 	abs_list = [os.path.join(dem_dir, file) for file in os.listdir(dem_dir) if os.path.splitext(file)[1] == ".zip"]
 	for file in abs_list:
@@ -258,21 +251,37 @@ def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:
 	return cols, rows
 
 
-def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarray:  # get the height of the given location (given by lon and lat)
+def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarray:
+	"""
+	Return the elevation values for the given (lon, lat) coordinates from the provided DEM raster dataset.
+
+	Parameters
+	----------
+	lon : list
+		A list of longitude values of the query points.
+	lat : list
+		A list of latitude values of the query points.
+	dem : rasterio.DatasetReader
+		A rasterio dataset reader object of the DEM raster dataset.
+
+	Returns
+	-------
+	elevation : np.ndarray
+		A 1D numpy array of elevation values for the query points.
+	"""
 	coord_list = np.array((lon, lat)).T
 	elevation = np.fromiter(dem.sample(coord_list, 1), dtype=np.int16)
-	# df["elevation"] = np.array(data)
 	return elevation
 
 
 # The following code call corresponding functions and calculate the elevation, slope and aspect for buildings
 
-def calculate_esa(building_groups, dem_urls):
+def calculate_esa(building_groups: pd.DataFrameGroupBy, coast_points: np.ndarray, dem_urls: list, dis_threshold: int = 2) -> pd.DataFrame:
 	esa_df = pd.DataFrame()  # to store the calculated elevation, slope and aspect
-	dem_tif_path_list = [os.path.basename(os.path.splitext(dem_file)[0]) for dem_file in dem_urls]
+	dem_tif_path_list = [f"{os.path.basename(os.path.splitext(dem_file)[0])}_dem.tif" for dem_file in dem_urls]
 
 	for i, (group_name, group_data) in enumerate(building_groups):
-		tif_path = os.path.join(get_dem_dir(), f"{dem_tif_path_list[i]}_dem.tif")
+		tif_path = os.path.join(get_dem_dir(), dem_tif_path_list[i])
 		lon, lat = group_data["lon"].values, group_data["lat"].values
 
 		with rio.open(tif_path) as dem:
@@ -283,22 +292,39 @@ def calculate_esa(building_groups, dem_urls):
 		cols, rows = lonlat2xy(lon, lat, transform)
 
 		dem4slope = rd.rdarray(dem_array, no_data=-9999)
-		dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]  # defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
-		slope_dem = rd.TerrainAttribute(dem4slope, attrib="slope_riserun", zscale=1)  # calculate slope
-		aspect_dem = rd.TerrainAttribute(dem4slope, attrib="aspect")  # calculate aspect
+		# defining the geotransfrom, the top left corner is (0,0), width and heigth of a pixel is 1
+		dem4slope.geotransform = [0, 1, 0, 0, 0, 1, 0]
+		slope_dem = rd.TerrainAttribute(dem4slope, attrib="slope_riserun", zscale=1)    # calculate slope from dem
+		aspect_dem = rd.TerrainAttribute(dem4slope, attrib="aspect")                    # calculate aspect from dem
 
-		# temp_df = group_data
-		# temp_df = get_height(group_data, dem)  # calculate height
-		#
-		# slope = get_slope(cols, rows, slope_dem)  # calculate slope
-		# aspect = get_aspect(cols, rows, aspect_dem)  # calculate aspect
 		slope = np.array(slope_dem[rows, cols])
 		aspect = np.array(aspect_dem[rows, cols])
 
-		esa_df = pd.concat([esa_df, group_data], ignore_index=False)
+		group_esa_df = group_data.copy()
+		group_esa_df["elevation"] = elevation
+		group_esa_df["slope"] = slope
+		group_esa_df["aspect"] = aspect
+
+		east, north, west, south = get_buildings_bounding_box(group_data)
+		points_within_range = get_coastpoints_range(
+			bounding_box=(east, north, west, south),
+			coast_points=coast_points,
+			dis_threshold=dis_threshold
+		)
+		buildings = np.array([lat, lon]).T
+		coast_within_range = np.column_stack((
+			np.radians(points_within_range[:, 1]),
+			np.radians(points_within_range[:, 0])
+		))
+
+		nearest_coast_point, dist = get_distance_coast(buildings, coast_points=coast_within_range)
+		group_esa_df["closestp_lon"] = nearest_coast_point[:, 1]
+		group_esa_df["closestp_lat"] = nearest_coast_point[:, 0]
+		group_esa_df["dis2coast"] = dist.flatten()
+
+		esa_df = pd.concat([esa_df, group_esa_df], ignore_index=False)
 
 	esa_df = esa_df.sort_index()
-
 	return esa_df
 
 
@@ -321,14 +347,17 @@ def get_terrain_ef(esa_df):
 	Terrian_EFs.to_pickle(path_Terrain_EFs)  # store the dataframe
 
 
-	# read the stored data for test
-	with open(path_Terrain_EFs, "rb") as f:
-		Terrian_EFs_test = pickle.load(f)
-
+	# # read the stored data for test
+	# with open(path_Terrain_EFs, "rb") as f:
+	# 	Terrian_EFs_test = pickle.load(f)
 
 
 def main():
-	pass
+	buildings_group = get_building_group()
+	coast_points = np.array(get_coastlines())
+	dem_urls: list = get_dem_urls(building_groups=buildings_group)
+	esa_df = calculate_esa(building_groups=buildings_group, coast_points=coast_points, dem_urls=dem_urls)
+	get_terrain_ef(esa_df)
 
 
 if __name__ == "__main__":
