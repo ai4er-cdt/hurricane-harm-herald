@@ -42,6 +42,7 @@ Download the dataset from https://xview2.org/ (you will need to register for an 
 After downloading, the data will be organised in the directories as follows: (WE CAN DELETE THIS??)
 
 /data/datasets/xBD_data/geotiffs/
+
  ├── tier1
  │      ├── images
  │      │      └── <image_id>.png
