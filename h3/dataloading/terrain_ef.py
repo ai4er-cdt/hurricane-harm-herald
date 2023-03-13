@@ -57,9 +57,17 @@ def _download_coastlines() -> None:
 	downloader(url, target_dir=get_coastline_dir())
 
 
-def _unpack_coastlines(clean: bool = False):
+def _unpack_coastlines(clean: bool = False) -> None:
+	"""Unpack the downloaded coastline.
+
+	Parameters
+	----------
+	clean : bool, optional,
+		If True delete the archive file after unpack. Default is False.
+	"""
 	coastline_dir = get_coastline_dir()
-	filepath = os.path.join(coastline_dir, "ne_10m_coastline.zip")
+	coastline_filename = "ne_10m_coastline.zip"
+	filepath = os.path.join(coastline_dir, coastline_filename)
 	unpack_file(filepath, clean=clean)
 
 # check whether the .shp or .zip coastline data exist
