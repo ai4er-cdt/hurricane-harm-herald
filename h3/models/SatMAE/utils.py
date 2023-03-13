@@ -28,7 +28,7 @@ class Identity(nn.Module):
 
 def download_model() -> None:
     if not os.path.exists(os.path.join(get_download_dir(), "fmow_pretrain.pth")):
-        downloader("[https://zenodo.org/record/7369797/files/fmow_pretrain.pth"], get_download_dir())
+        downloader(["https://zenodo.org/record/7369797/files/fmow_pretrain.pth"], get_download_dir())
 
 def get_model():
     from h3.models.SatMAE.models_vit import vit_large_patch16
