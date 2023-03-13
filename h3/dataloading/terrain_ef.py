@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 from pandas.core.groupby.generic import DataFrameGroupBy
 
+from h3 import logger
 from h3.constants import EARTH_RADIUS
 from h3.utils.downloader import downloader
 from h3.utils.file_ops import unpack_file
@@ -76,6 +77,15 @@ def _unpack_coastlines(clean: bool = False) -> None:
 	coastline_filename = "ne_10m_coastline.zip"
 	filepath = os.path.join(coastline_dir, coastline_filename)
 	unpack_file(filepath, clean=clean)
+
+
+def _check_coastlines_file():
+	coastline_dir = get_coastline_dir()
+	coastline_dir_ls = os.listdir(coastline_dir)
+	if len(coastline_dir_ls) == 0:
+		logger.debug("No coastline data present")
+		_download_coastlines()
+		_unpack_coastlines()
 
 
 def get_coastlines() -> list[tuple[float, float]]:
@@ -198,7 +208,7 @@ def get_dem_urls(building_groups: DataFrameGroupBy) -> list:
 	Returns
 	-------
 	dem_urls : list
-		list of all the urls to download. See
+		list of all the urls to download.
 
 	Notes
 	-----
@@ -247,6 +257,17 @@ def _unpack_dem(clean: bool = False) -> None:
 	abs_list = [os.path.join(dem_dir, file) for file in os.listdir(dem_dir) if os.path.splitext(file)[1] == ".zip"]
 	for file in abs_list:
 		unpack_file(file, clean=clean)
+
+
+def _check_dem_files():
+	building_group = get_building_group()
+	dem_dir = get_dem_dir()
+	dem_dir_ls = os.listdir(dem_dir)
+	if len(dem_dir_ls) == 0:
+		logger.debug("No DEM files present")
+		dem_urls = get_dem_urls(building_group)
+		_download_dem(dem_urls)
+		_unpack_dem()
 
 
 def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:
