@@ -1,37 +1,23 @@
 from __future__ import annotations
 
 import os
-import math
-import pickle
-import zipfile
 
 import affine
-import cartopy.crs as ccrs
-import matplotlib.pyplot as plt
+import geopandas as gpd
+import pandas as pd
 import numpy as np
 import rasterio
 import rasterio as rio
-from rasterio.plot import show
-
 import richdem as rd
+from sklearn.neighbors import BallTree
 
-from scipy.interpolate import interp2d
-from scipy.interpolate import RegularGridInterpolator
+from pandas.core.groupby.generic import DataFrameGroupBy
 
-import pandas as pd
-import geopandas as gpd
-from shapely.geometry import Point, Polygon
-
-import vptree
-from geographiclib.geodesic import Geodesic
-
-from affine import Affine
-import shapefile
-import cartopy.feature as cfeature
-
+from h3.constants import EARTH_RADIUS
 from h3.utils.downloader import downloader
 from h3.utils.file_ops import unpack_file
-from h3.utils.directories import get_terrain_dir, get_processed_data_dir, get_coastline_dir, get_dem_dir, get_metadata_pickle_dir
+from h3.utils.directories import get_processed_data_dir, get_coastline_dir, get_dem_dir, get_metadata_pickle_dir
+
 
 
 def get_building_group():
