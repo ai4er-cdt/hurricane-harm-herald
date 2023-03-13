@@ -208,13 +208,10 @@ def image_processing(zoom_levels: list, pixel_num: int):
     """
     xbd_dir = get_xbd_dir()
     data_dir = get_data_dir()
-    labels_path = "geotiffs/hold/labels/"
-
-    filepath = os.path.join(xbd_dir, labels_path, "")
-
     # where to save zoomed and cropped images
-    save_dir_path = "datasets/processed_data/processed_xbd/geotiffs_zoom/" \
-        "hold/images"
+    save_dir_path = "datasets/processed_data/processed_xbd/" \
+        "test_geotiffs_zoom/hold/images"
+
     zoomdir_dict = {}
     for zoom_num in zoom_levels:
         zoom_dir = "zoom_" + str(zoom_num)
@@ -230,20 +227,32 @@ def image_processing(zoom_levels: list, pixel_num: int):
     if exists(path_pre) is True:
         polygons_df = pd.read_pickle(path_pre)
     else:
-        fulldirectory_files = [os.path.join(filepath, file)
+        # hold_filepath = get_xbd_hlabel_dir()
+        hold_filepath = os.path.join(xbd_dir, "geotiffs/hold/labels")
+        tier1_filepath = os.path.join(xbd_dir, "geotiffs/tier1/labels")
+        tier3_filepath = os.path.join(xbd_dir, "geotiffs/tier3/labels")
+        test_filepath = os.path.join(xbd_dir, "geotiffs/test/labels")
+        filepaths_dict = dict.fromkeys([hold_filepath, tier1_filepath,
+                                        tier3_filepath, test_filepath])
+        for filepath in filepaths_dict:
+            directory_files = [os.path.join(filepath, file)
                                for file in os.listdir(filepath)]
-        polygons_df = extract_damage_allfiles_ensemble(fulldirectory_files,
-                                                       filepath,
-                                                       "xy")
+            filepaths_dict[filepath] = directory_files
+
+        polygons_df = extract_damage_allfiles_ensemble(
+            filepaths_dict=filepaths_dict,
+            crs="xy")
 
     polygons_df["index"] = np.arange(len(polygons_df))
-    filtered_df = polygons_df[["image_name"]].drop_duplicates(
+    filtered_df = polygons_df[["image_name", "json_link"]].drop_duplicates(
         subset=['image_name'])
 
-    for name_img in tqdm(filtered_df["image_name"]):
-        tif_name = name_img.replace("png", "tif")
-        image_path = os.path.join(filepath, tif_name).replace("labels",
-                                                              "images")
+    for json_path in tqdm(filtered_df["json_link"]):
+        tif_name = json_path.replace("json", "tif")
+        image_path = os.path.join(json_path, tif_name).replace("labels",
+                                                               "images")
+        # image name is in the final folder so index with -1
+        name_img = json_path.rpartition("/")[-1].replace("json", "png")
         image_pol_df = polygons_df.query('image_name == @name_img')
         polygons_image = image_pol_df[["geometry", "index"]]
         with rio.open(image_path) as img:

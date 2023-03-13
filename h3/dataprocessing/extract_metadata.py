@@ -140,7 +140,6 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
             lnglat_point, lnglat_polygon, xy_point,
             xy_polygon, damage_num, disaster_type, image_name, capture_date,
             json_link])
-
     if crs == "xy":
         df = gpd.GeoDataFrame(
             damage_location,
@@ -153,7 +152,7 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
             damage_location,
             columns=["geometry", "polygon_lnglat", "point_xy", "polygon_xy",
                      "damage_class", "disaster_name", "image_name",
-                     "capture_date"])
+                     "capture_date", "json_link"])
     df["capture_date"] = pd.to_datetime(df["capture_date"])
     df["geometry"] = df["geometry"].apply(wkt.loads)
     return df
@@ -257,7 +256,8 @@ def extract_damage_allfiles_ensemble(filepaths_dict: dict,
                                                 "hurricane*pre*.json")
         # pre_dataframes_list = []
         for pre_json_name in tqdm(full_pre_hurr_json_files,
-                                  desc=f"Extracting metadata for pre event and post damage label hurricane"):
+                                  desc=f"Extracting metadata for pre event" /
+                                  "and post damage label hurricane"):
             post_json_name = pre_json_name.replace("pre", "post")
 
             pre_metadata = extract_metadata(
@@ -345,12 +345,11 @@ def load_and_save_df(filepaths_dict: dict, output_dir: str):
 
 
 def main():
-    # data_dir = get_data_dir()
     xbd_dir = get_xbd_dir()
-    # label path
-    # TODO: look/fix the geotiffs.old and all
-    hold_filepath = get_xbd_hlabel_dir()
     output_dir = get_metadata_pickle_dir()
+
+    # hold_filepath = get_xbd_hlabel_dir()
+    hold_filepath = os.path.join(xbd_dir, "geotiffs/hold/labels")
     tier1_filepath = os.path.join(xbd_dir, "geotiffs/tier1/labels")
     tier3_filepath = os.path.join(xbd_dir, "geotiffs/tier3/labels")
     test_filepath = os.path.join(xbd_dir, "geotiffs/test/labels")

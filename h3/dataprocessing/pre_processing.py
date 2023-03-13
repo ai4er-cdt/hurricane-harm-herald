@@ -32,15 +32,19 @@ def image_processing(polygons_df, zoom_levels: list, pixel_num: int,
         list containing all required zoom levels as integers.
     pixel_num : int
         Value of the sides of the squared cropped image as input for the model.
+    zoomdir_dict : dict
+        Dictionary containing all filepaths for the zoom directories with the
+        values of the zoom level.
     """
     polygons_df["index"] = np.arange(len(polygons_df))
-    filtered_df = polygons_df[["image_name"]].drop_duplicates(
+    filtered_df = polygons_df[["image_name", "json_link"]].drop_duplicates(
         subset=['image_name'])
-
     for json_path in tqdm(filtered_df["json_link"]):
         tif_name = json_path.replace("json", "tif")
         image_path = os.path.join(json_path, tif_name).replace("labels",
                                                                "images")
+        # image name is in the final folder so index with -1
+        name_img = json_path.rpartition("/")[-1].replace("json", "png")
         image_pol_df = polygons_df.query('image_name == @name_img')
         polygons_image = image_pol_df[["geometry", "index"]]
         with rio.open(image_path) as img:
@@ -63,9 +67,11 @@ def main():
 
     # TODO: look/fix the geotiffs.old and all
     output_dir = get_metadata_pickle_dir()
-    xbd_dir = get_xbd_dir()
     data_dir = get_data_dir()
-    hold_filepath = get_xbd_hlabel_dir()
+    xbd_dir = get_xbd_dir()
+
+    # hold_filepath = get_xbd_hlabel_dir()
+    hold_filepath = os.path.join(xbd_dir, "geotiffs/hold/labels")
     tier1_filepath = os.path.join(xbd_dir, "geotiffs/tier1/labels")
     tier3_filepath = os.path.join(xbd_dir, "geotiffs/tier3/labels")
     test_filepath = os.path.join(xbd_dir, "geotiffs/test/labels")
@@ -80,7 +86,8 @@ def main():
 
     # where to save zoomed and cropped images
     save_dir_path = "datasets/processed_data/processed_xbd/geotiffs_zoom/" \
-        "train/images"
+        "images"
+
     zoomdir_dict = {}
     for zoom_num in zoom_levels:
         zoom_dir = "zoom_" + str(zoom_num)
@@ -88,8 +95,7 @@ def main():
         zoomdir_dict[zoom_num] = zoom_path
         if not os.path.exists(zoom_path):
             os.makedirs(zoom_path)
-
-    image_processing(df_pre_post_hurr_xy, zoom_levels, pixel_num, zoom_dir)
+    image_processing(df_pre_post_hurr_xy, zoom_levels, pixel_num, zoomdir_dict)
 
 
 if __name__ == '__main__':
