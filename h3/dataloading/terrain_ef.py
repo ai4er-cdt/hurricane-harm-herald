@@ -10,6 +10,7 @@ import rasterio
 import rasterio as rio
 import richdem as rd
 from sklearn.neighbors import BallTree
+from tqdm import tqdm
 
 from pandas.core.groupby.generic import DataFrameGroupBy
 
@@ -151,12 +152,16 @@ def get_distance_coast(buildings: np.ndarray, coast_points: np.ndarray) -> tuple
 	Parameters
 	----------
 	buildings : ndarray
+		array of the buildings coordinates in `lat`, `lon`.
 	coast_points : ndarray
+		array of the coastline point coordinates in `lat`, `lon`.
 
 	Returns
 	-------
-	nearest_coast_point
-	dist
+	nearest_coast_point : ndarray
+		array of the coordinates of the coast point closest to the corresponding building point.
+	dist : ndarray
+		array of the distance between the nearest the coast point and corresponding building point, in metres.
 
 	See Also
 	--------
@@ -274,13 +279,11 @@ def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarr
 	return elevation
 
 
-# The following code call corresponding functions and calculate the elevation, slope and aspect for buildings
-
 def calculate_esa(building_groups: pd.DataFrameGroupBy, coast_points: np.ndarray, dem_urls: list, dis_threshold: int = 2) -> pd.DataFrame:
 	esa_df = pd.DataFrame()  # to store the calculated elevation, slope and aspect
 	dem_tif_path_list = [f"{os.path.basename(os.path.splitext(dem_file)[0])}_dem.tif" for dem_file in dem_urls]
 
-	for i, (group_name, group_data) in enumerate(building_groups):
+	for i, (group_name, group_data) in enumerate(tqdm(building_groups)):
 		tif_path = os.path.join(get_dem_dir(), dem_tif_path_list[i])
 		lon, lat = group_data["lon"].values, group_data["lat"].values
 
@@ -329,9 +332,7 @@ def calculate_esa(building_groups: pd.DataFrameGroupBy, coast_points: np.ndarray
 
 
 def get_terrain_ef(esa_df):
-	# Explore the data to a local path
-
-	Terrian_EFs = pd.DataFrame({
+	terrain_efs = pd.DataFrame({
 		"xbd_observation_lat": esa_df["lat"],
 		"xbd_observation_lon": esa_df["lon"],
 		"elevation": esa_df["elevation"],
@@ -342,14 +343,8 @@ def get_terrain_ef(esa_df):
 		"damage_class": esa_df["damage_class"]
 	})
 
-	# path to store Terrain_EFs
-	path_Terrain_EFs = os.path.join(get_processed_data_dir(), "Terrian_EFs.pkl")
-	Terrian_EFs.to_pickle(path_Terrain_EFs)  # store the dataframe
-
-
-	# # read the stored data for test
-	# with open(path_Terrain_EFs, "rb") as f:
-	# 	Terrian_EFs_test = pickle.load(f)
+	path_terrain_efs = os.path.join(get_processed_data_dir(), "Terrian_EFs.pkl")
+	terrain_efs.to_pickle(path_terrain_efs)
 
 
 def main():
