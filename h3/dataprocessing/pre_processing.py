@@ -17,8 +17,8 @@ from h3.dataprocessing.extract_metadata import load_and_save_df
 from h3.dataprocessing.crop_images_img import crop_images
 
 
-def image_processing(polygons_df, zoom_levels: list, pixel_num: int,
-                     zoomdir_dict: dict):
+def image_loading(polygons_df, zoom_levels: list, pixel_num: int,
+                  zoomdir_dict: dict):
     """Loads images and crops them based on the required zoom levels
     and the required imagery input pixel size for the model.
 
@@ -69,6 +69,9 @@ def main():
     output_dir = get_metadata_pickle_dir()
     data_dir = get_data_dir()
     xbd_dir = get_xbd_dir()
+    # xbd_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_geotiffs"
+    # data_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_output/images"
+    # output_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_output"
 
     # hold_filepath = get_xbd_hlabel_dir()
     hold_filepath = os.path.join(xbd_dir, "geotiffs/hold/labels")
@@ -95,7 +98,7 @@ def main():
         zoomdir_dict[zoom_num] = zoom_path
         if not os.path.exists(zoom_path):
             os.makedirs(zoom_path)
-    image_processing(df_pre_post_hurr_xy, zoom_levels, pixel_num, zoomdir_dict)
+    image_loading(df_pre_post_hurr_xy, zoom_levels, pixel_num, zoomdir_dict)
 
 
 if __name__ == '__main__':

@@ -210,7 +210,7 @@ def image_processing(zoom_levels: list, pixel_num: int):
     data_dir = get_data_dir()
     # where to save zoomed and cropped images
     save_dir_path = "datasets/processed_data/processed_xbd/" \
-        "geotiffs_zoom/hold/images"
+        "geotiffs_zoom/images"
 
     zoomdir_dict = {}
     for zoom_num in zoom_levels:
