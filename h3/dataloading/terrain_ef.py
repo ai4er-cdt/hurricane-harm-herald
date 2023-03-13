@@ -131,28 +131,39 @@ def another_plot(building_groups, coast_points, dis_threshold: int = 2, calculat
 		ax.add_feature(cfeature.LAND.with_scale("10m"))
 		ax.add_feature(cfeature.OCEAN.with_scale("10m"))
 
-		# Plot the coast points
-		ax.scatter(points_within_range[:, 0], points_within_range[:, 1], s=5, transform=ccrs.PlateCarree())
-		ax.scatter(group_data["lon"], group_data["lat"], s=5, transform=ccrs.PlateCarree())
+def get_distance_coast(buildings: np.ndarray, coast_points: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+	"""
 
-		# Set x-label and y-label
-		ax.set_xlabel("Longitude (°)", fontsize=12)
-		ax.set_ylabel("Latitude (°)", fontsize=12)
+	Parameters
+	----------
+	buildings : ndarray
+	coast_points : ndarray
 
-		# Set x-ticks and y-ticks
-		xticks = np.arange(west - dis_threshold, east + dis_threshold, dis_threshold)
-		yticks = np.arange(south - dis_threshold, north + dis_threshold, dis_threshold)
+	Returns
+	-------
+	nearest_coast_point
+	dist
 
-		ax.set_xticks(xticks, crs=ccrs.PlateCarree())
-		ax.set_yticks(yticks, crs=ccrs.PlateCarree())
+	See Also
+	--------
+	sklearn.metrics.pairwise.haversine_distances : Compute the Haversine distance between two samples.
+	sklearn.neighbors.BallTree : BallTree for nearest neighbours lookup, generalised for N-points.
 
-		points_within_range = np.column_stack((points_within_range[:, 0], points_within_range[:, 1]))
-		buildings = np.column_stack((group_data["lon"], group_data["lat"]))
+	Notes
+	-----
+	The haversine function assumes the coordinates are latitude and longitude in radians.
+	Use the following equation for the Haversine distance:
 
-		if calculate_dis_to_coast:
-			closestp = np.zeros([len(buildings), 2])  # to store the closest point in the coast to a given building
-			distance = np.zeros([len(buildings), 1])  # to store the building's distance to the coast
-			coast_vp = vptree.VPTree(points_within_range, geoddist)  # build the lookup table
+	.. math:: D(x, y) = 2 \arcsin{\left(\sqrt{\sin^{2}{\left(\frac{x_1 - y_1}{2}\right)} +
+	\cos{(x_1)}\cos{(y_1)}\sin^{2}{\left(\frac{x_2-y_2}{2}\right)}}\right)}
+	"""
+	coast_points = np.radians(coast_points)
+	buildings = np.radians(buildings)
+	tree = BallTree(coast_points, metric="haversine")
+	dist_rad, ind = tree.query(buildings)
+	dist = dist_rad * EARTH_RADIUS  # to get the distance in meters
+	nearest_coast_point = np.degrees(coast_points[ind]).reshape(-1, 2)
+	return nearest_coast_point, dist
 
 			for j in range(len(buildings)):
 				data = coast_vp.get_nearest_neighbor(
