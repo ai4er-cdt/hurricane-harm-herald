@@ -95,32 +95,33 @@ def geoddist(p1, p2):
 def another_plot(building_groups, coast_points, dis_threshold: int = 2, calculate_dis_to_coast: bool = True):
 	# assuming the building is not more than dis_threshold latitude and longitude away from the coast,
 
-	coast_points = np.array(coast_points)
-	n_groups = len(building_groups)  #
-	n_cols = 3
-	n_rows = math.ceil(n_groups / n_cols)
-	fig, axs = plt.subplots(
-		n_rows,
-		n_cols,
-		figsize=(12, 12),
-		dpi=300,
-		subplot_kw={"projection": ccrs.PlateCarree()}
-	)
+def get_coastpoints_range(bounding_box: tuple, coast_points: np.ndarray, dis_threshold: int = 2) -> np.ndarray:
+	"""Function to select a subset of the coastlines points which are in range of buildings.
 
-	for i, (group_name, group_data) in enumerate(building_groups):
-		west = int(np.floor(group_data["lon"].min()))
-		east = int(np.ceil(group_data["lon"].max()))
-		south = int(np.floor(group_data["lat"].min()))
-		north = int(np.ceil(group_data["lat"].max()))
+	Parameters
+	----------
+	bounding_box : tuple
+		tuple of int of the coordinates of the bounding box. The values are in degrees and as follows:
+		east, north, west, south. See the function get_building_bounding_box().
+	coast_points : ndarray
+		an array of the coast points. Coordinates are in `lat` and `lon`.
+	dis_threshold : int, optional
+		padding distance in degrees to the bounding box. The default is 2.
 
-		# chop the coastline data
-		mask = (
+	Returns
+	-------
+	ndarray
+		an array of the coast point dis_threshold distant to the buildings bounding box.
+		Gives the coordinates in `lat`, `lon`.
+	"""
+	east, north, west, south = bounding_box
+	mask = (
 			(west - dis_threshold <= coast_points[:, 0]) &
 			(coast_points[:, 0] <= east + dis_threshold) &
 			(south - dis_threshold <= coast_points[:, 1]) &
 			(coast_points[:, 1] <= north + dis_threshold)
-		)
-		points_within_range = coast_points[mask]
+	)
+	return coast_points[mask]
 
 		# plot the buildings and the coastline data that been choped
 		row = i // n_cols
