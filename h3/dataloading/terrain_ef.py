@@ -54,7 +54,7 @@ def _download_coastlines() -> None:
 	# This is a weird url, but it is the correct one
 	# TODO: look more into this to make sure it works
 	url = ["https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_coastline.zip"]
-	downloader(url, target_dir=get_terrain_dir())
+	downloader(url, target_dir=get_coastline_dir())
 
 
 def _unpack_coastlines(clean: bool = False):
