@@ -137,10 +137,10 @@ def get_coastpoints_range(bounding_box: tuple, coast_points: np.ndarray, dis_thr
 	"""
 	east, north, west, south = bounding_box
 	mask = (
-			(west - dis_threshold <= coast_points[:, 0]) &
-			(coast_points[:, 0] <= east + dis_threshold) &
-			(south - dis_threshold <= coast_points[:, 1]) &
-			(coast_points[:, 1] <= north + dis_threshold)
+			(west - dis_threshold <= coast_points[:, 1]) &
+			(coast_points[:, 1] <= east + dis_threshold) &
+			(south - dis_threshold <= coast_points[:, 0]) &
+			(coast_points[:, 0] <= north + dis_threshold)
 	)
 	return coast_points[mask]
 
@@ -313,8 +313,8 @@ def calculate_esa(building_groups: pd.DataFrameGroupBy, coast_points: np.ndarray
 		)
 		buildings = np.array([lat, lon]).T
 		coast_within_range = np.column_stack((
-			np.radians(points_within_range[:, 1]),
-			np.radians(points_within_range[:, 0])
+			points_within_range[:, 0],
+			points_within_range[:, 1]
 		))
 
 		nearest_coast_point, dist = get_distance_coast(buildings, coast_points=coast_within_range)

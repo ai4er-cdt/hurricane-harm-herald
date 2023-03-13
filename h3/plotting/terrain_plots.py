@@ -98,7 +98,8 @@ def plot_buildings_coast(building_groups, coast_points, dis_threshold: int = 2, 
 
 		if dis_to_coast:
 			buildings = np.column_stack((group_data["lat"], group_data["lon"]))
-			coast_within_range = np.column_stack((np.radians(points_within_range[:, 1]), np.radians(points_within_range[:, 0])))
+			# points_within_range are lat lon
+			coast_within_range = np.column_stack((points_within_range[:, 0], points_within_range[:, 1]))
 			nearest_coast_point, _ = get_distance_coast(buildings, coast_points=coast_within_range)
 
 			ax.scatter(
