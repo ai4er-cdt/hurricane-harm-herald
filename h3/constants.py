@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 
+EARTH_RADIUS = 6371009  # metres
+
 # Position of AOI
 # TODO: round these values
 HAITI_LON_MIN: float = -74.53520783870444
@@ -15,9 +17,9 @@ TEXAS_TO_MAINE_LAT_MAX: float = 36.75816955589585
 
 
 DMG_CLASSES_DICT = {
-    "no-damage": 0,
-    "minor-damage": 1,
-    "major-damage": 2,
-    "destroyed": 3,
-    "un-classified": 4
+	"no-damage": 0,
+	"minor-damage": 1,
+	"major-damage": 2,
+	"destroyed": 3,
+	"un-classified": 4
 }
