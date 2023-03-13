@@ -44,7 +44,7 @@ def image_loading(polygons_df, zoom_levels: list, pixel_num: int,
         image_path = os.path.join(json_path, tif_name).replace("labels",
                                                                "images")
         # image name is in the final folder so index with -1
-        name_img = json_path.rpartition("/")[-1].replace("json", "png")
+        name_img = os.path.basename(json_path).replace("json", "png")
         image_pol_df = polygons_df.query('image_name == @name_img')
         polygons_image = image_pol_df[["geometry", "index"]]
         with rio.open(image_path) as img:
