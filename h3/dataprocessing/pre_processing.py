@@ -11,8 +11,8 @@ from tqdm import tqdm
 # from threading import Thread
 # from h3 import logger
 # from h3.constants import DMG_CLASSES_DICT
-from h3.utils.directories import get_metadata_pickle_dir, get_xbd_hlabel_dir, \
-    get_xbd_dir, get_data_dir
+from h3.utils.directories import get_metadata_pickle_dir, get_xbd_hlabel_dir
+from h3.utils.directories import get_xbd_dir, get_data_dir, get_processed_data_dir
 from h3.dataprocessing.extract_metadata import load_and_save_df
 from h3.dataprocessing.crop_images_img import crop_images
 
