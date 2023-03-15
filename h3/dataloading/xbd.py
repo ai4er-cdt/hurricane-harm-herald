@@ -123,12 +123,14 @@ def _combine_xbd(
 	if not current_files:
 		raise IOError("No files found\nMake sure you specified the correct glob name or have downloaded the files")
 
-	with open(output_filepath, "wb") as wfb:
-		for file in tqdm(current_files, desc="File"):
-			filepath = os.path.join(xbd_dir, file)
-			with open(filepath, "rb") as fd:
-				shutil.copyfileobj(fd, wfb)  # similar to `cat FILE > NEW_FILE`
-	logger.info(f"{len(current_files)} files merged into {output_filename}")
+	if not os.path.exists(output_filepath):
+		logger.info("Main xBD tar file not found, combining the part files.")
+		with open(output_filepath, "wb") as wfb:
+			for file in tqdm(current_files, desc="Combining xbd files"):
+				filepath = os.path.join(xbd_dir, file)
+				with open(filepath, "rb") as fd:
+					shutil.copyfileobj(fd, wfb)  # similar to `cat FILE > NEW_FILE`
+		logger.info(f"{len(current_files)} files merged into {output_filename}")
 
 	if delete_if_check and check_xbd(output_filename, checksum=True):
 		for file in tqdm(current_files, desc="Deleting"):
