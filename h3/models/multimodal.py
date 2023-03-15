@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytorch_lightning as pl
 import torchvision.models as models
 import torchvision
@@ -222,24 +224,25 @@ class OverallModel(pl.LightningModule):
         self,
         training_dataset, 
         validation_dataset,
-        image_embedding_architecture = "ResNet18",
+        image_embedding_architecture: str = "ResNet18",
         dropout_rate: float = 0.2,
         general_lr: float = 1e-4,
         image_encoder_lr: float = 0,
-        batch_size = 32,
-        weight_decay = 0,
-        lr_scheduler_patience = 2, 
-        num_input_channels = 3,
+        batch_size: int = 32,
+        weight_decay: float = 0.0,
+        lr_scheduler_patience: int = 2,
+        num_input_channels: int = 3,
         EF_features = None,
-        num_concat_encoder_features = 100,
-        num_image_feature_encoder_features = 56,
-        num_output_classes = 4,
-        zoom_levels = ["1"],
-        class_weights = None,
-        image_only_model = False,
-        
-        loss_function_str = "CELoss", # maybe use focal loss for unbalanced multiclass as in GaLeNet
-        output_activation = None # CELoss expects unnormalized logits
+        num_concat_encoder_features: int = 100,
+        num_image_feature_encoder_features: int = 56,
+        num_output_classes: int = 4,
+        zoom_levels: None | list = None,
+        class_weights=None,
+        image_only_model: bool = False,
+        num_workers: int = 0,
+        persistent_w: bool = False,
+        loss_function_str: str = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
+        output_activation: str | None = None  # CELoss expects unnormalized logits
 
     ) -> None:
         super().__init__()
@@ -249,6 +252,7 @@ class OverallModel(pl.LightningModule):
         else: # every other case should be a ViT which outputs 1024 features
             num_image_encoder_features = 1024
 
+        zoom_levels = ["1"] if zoom_levels is None else zoom_levels
 
         # total number of EFs present in the EF_features dictionary
         total_num_EFs = sum(map(len, EF_features.values()))
@@ -348,6 +352,8 @@ class OverallModel(pl.LightningModule):
         self.weight_decay = weight_decay
         self.image_only_model = image_only_model
         self.EF_features = EF_features
+        self.num_workers = num_workers
+        self.persistent_w = persistent_w
 
         self.training_dataset = training_dataset
         self.validation_dataset = validation_dataset
@@ -521,9 +527,19 @@ class OverallModel(pl.LightningModule):
         pass
 
     def train_dataloader(self):
-        loader = DataLoader(self.training_dataset, batch_size = self.batch_size)
+        loader = DataLoader(
+            self.training_dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            persistent_workers=self.persistent_w
+        )
         return loader
 
     def val_dataloader(self):
-        loader = DataLoader(self.validation_dataset, batch_size = self.batch_size)
+        loader = DataLoader(
+            self.validation_dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            persistent_workers=self.persistent_w
+            )
         return loader
