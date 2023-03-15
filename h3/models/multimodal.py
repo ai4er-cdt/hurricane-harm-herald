@@ -573,7 +573,9 @@ class OverallModel(pl.LightningModule):
 			self.training_dataset,
 			batch_size=self.batch_size,
 			num_workers=self.num_workers,
-			persistent_workers=self.persistent_w
+			pin_memory=True,
+			persistent_workers=self.persistent_w,
+			shuffle=True,
 		)
 		return loader
 
@@ -582,6 +584,8 @@ class OverallModel(pl.LightningModule):
 			self.validation_dataset,
 			batch_size=self.batch_size,
 			num_workers=self.num_workers,
-			persistent_workers=self.persistent_w
+			pin_memory=True,
+			persistent_workers=self.persistent_w,
+			shuffle=True,
 		)
 		return loader
