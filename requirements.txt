@@ -14,6 +14,8 @@ rasterio
 rich
 richdem
 shapely
+tensorboard
+timm
 torchvision
 torchmetrics
 tqdm
