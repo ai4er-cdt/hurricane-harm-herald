@@ -86,7 +86,7 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 	"""
 	filename = os.path.basename(filepath)
 	if not os.path.exists(filepath):
-		logger.info(f"{filepath} does not exist.")
+		logger.info(f"{filepath} does not exist.\nDownload them here: https://xview2.org/")
 		return False
 	if checksum:
 		assert get_sha1(filepath) == SHA1[filename], f"{filename} failed sha1 checksum"
@@ -143,7 +143,7 @@ def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 	unpack_file(filepath)
 
 
-def get_xbd(checksum: bool = False, clean_after_merge: bool = True, unpack_tar: bool = True, **kwargs) -> None:
+def get_xbd(checksum: bool = False, clean_after_merge: bool = False, unpack_tar: bool = True, **kwargs) -> None:
 	"""Wrapper function to check part files, combine and unpack them."""
 	xbd_dir = get_xbd_dir()
 	all_part_name = list(SHA1.keys())[1:]
