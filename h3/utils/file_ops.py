@@ -47,7 +47,7 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 	# TODO: this is a bit slow, and not verbose
 	logger.info(f"Unpacking {os.path.basename(filepath)}\nThis can take some time")
 	shutil.unpack_archive(filepath, extract_dir=os.path.dirname(filepath), format=file_format)
-	logger.debug(f"{os.path.basename(filepath)} unpack in {os.path.dirname(filepath)}")
+	logger.info(f"{os.path.basename(filepath)} unpack in {os.path.dirname(filepath)}")
 	if clean:
 		logger.debug(f"Deleting {os.path.basename(filepath)}")
 		os.remove(filepath)
