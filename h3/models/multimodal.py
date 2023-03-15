@@ -558,16 +558,6 @@ class OverallModel(pl.LightningModule):
 		self.log("val accuracy", acc, logger=True, on_epoch=True)
 		return val_loss
 
-	def training_epoch_end(self, out):
-		# put stuff here that happens at the end of every training epoch
-		# self.log('train_acc_epoch', self.accuracy)
-		pass
-
-	def validation_epoch_end(self, out):
-		# put stuff here that happens at the end of every validation epoch
-		# self.log('validation_acc_epoch', self.accuracy)
-		pass
-
 	def train_dataloader(self):
 		loader = DataLoader(
 			self.training_dataset,
