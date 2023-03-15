@@ -9,11 +9,13 @@ numpy
 opencv-python # opencv if conda
 pandas
 pytorch
+pytorch-lightning
 rasterio
 rich
 richdem
 shapely
 torchvision
+torchmetrics
 tqdm
 seaborn
 scikit-learn
