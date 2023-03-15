@@ -26,5 +26,12 @@ def cli_parser():
 		choices=["noaa", "ecmwf", "both"]
 	)
 
+	parser.add_argument(
+		"--num-workers",
+		type=int,
+		default=4,
+		help="Number of workers for the Dataloader. (default: %(default)s). Set to 0 if using CPU."
+	)
+
 	args = parser.parse_args()
 	return args
