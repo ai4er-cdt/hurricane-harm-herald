@@ -79,13 +79,50 @@ def _unpack_coastlines(clean: bool = False) -> None:
 	unpack_file(filepath, clean=clean)
 
 
-def _check_coastlines_file():
+def check_coastlines_file():
 	coastline_dir = get_coastline_dir()
 	coastline_dir_ls = os.listdir(coastline_dir)
 	if len(coastline_dir_ls) == 0:
 		logger.debug("No coastline data present")
 		_download_coastlines()
 		_unpack_coastlines()
+
+
+def _download_dem(dem_urls: list) -> None:
+	"""Helper function to download the DEM to the correct folder
+
+	Parameters
+	----------
+	dem_urls : list
+		list of the urls to download.
+	"""
+	downloader(dem_urls, target_dir=get_dem_dir())
+
+
+def _unpack_dem(clean: bool = False) -> None:
+	"""Helper function to unpack the download DEM.zip file.
+
+	Parameters
+	----------
+	clean : bool, optional
+		If True, deletes the original .zip file and any .zip files extracted.
+		Default is False.
+	"""
+	dem_dir = get_dem_dir()
+	abs_list = [os.path.join(dem_dir, file) for file in os.listdir(dem_dir) if os.path.splitext(file)[1] == ".zip"]
+	for file in abs_list:
+		unpack_file(file, clean=clean)
+
+
+def check_dem_files():
+	building_group = get_building_group()
+	dem_dir = get_dem_dir()
+	dem_dir_ls = os.listdir(dem_dir)
+	if len(dem_dir_ls) == 0:
+		logger.debug("No DEM files present")
+		dem_urls = get_dem_urls(building_group)
+		_download_dem(dem_urls)
+		_unpack_dem()
 
 
 def get_coastlines() -> list[tuple[float, float]]:
@@ -231,43 +268,6 @@ def get_dem_urls(building_groups: DataFrameGroupBy) -> list:
 		url_name = f"https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/{dem_zip_name}"
 		dem_urls.append(url_name)
 	return dem_urls
-
-
-def _download_dem(dem_urls: list) -> None:
-	"""Helper function to download the DEM to the correct folder
-
-	Parameters
-	----------
-	dem_urls : list
-		list of the urls to download.
-	"""
-	downloader(dem_urls, target_dir=get_dem_dir())
-
-
-def _unpack_dem(clean: bool = False) -> None:
-	"""Helper function to unpack the download DEM.zip file.
-
-	Parameters
-	----------
-	clean : bool, optional
-		If True, deletes the original .zip file and any .zip files extracted.
-		Default is False.
-	"""
-	dem_dir = get_dem_dir()
-	abs_list = [os.path.join(dem_dir, file) for file in os.listdir(dem_dir) if os.path.splitext(file)[1] == ".zip"]
-	for file in abs_list:
-		unpack_file(file, clean=clean)
-
-
-def _check_dem_files():
-	building_group = get_building_group()
-	dem_dir = get_dem_dir()
-	dem_dir_ls = os.listdir(dem_dir)
-	if len(dem_dir_ls) == 0:
-		logger.debug("No DEM files present")
-		dem_urls = get_dem_urls(building_group)
-		_download_dem(dem_urls)
-		_unpack_dem()
 
 
 def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:
