@@ -8,12 +8,13 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+
 class HurricaneDataset(Dataset):
-    def __init__(self, dataframe, img_path, EF_features, image_embedding_architecture, augmentations = None, zoom_levels = ["1"]):
+    def __init__(self, dataframe, img_path, EF_features, image_embedding_architecture, augmentations = None, zoom_levels = None):
         self.dataframe = dataframe
         self.img_path = img_path
         self.EF_features = EF_features
-        self.zoom_levels = zoom_levels
+        self.zoom_levels = ["1"] if zoom_levels is None else zoom_levels
 
         if image_embedding_architecture == "ResNet18":
             self.preprocessing = transforms.Compose([
@@ -56,10 +57,10 @@ class HurricaneDataset(Dataset):
 
             img = Image.open(os.path.join(self.img_path, "zoom_" + zoom_level, str(image_id) + ".png"))
             img = self.transform(img)
-            img = np.asarray(img)
+            # img = np.asarray(img)
             #img = np.swapaxes(img, 0, 2)
 
-            zoomed_images["img_zoom_" + zoom_level] = np.copy(img)
+            zoomed_images["img_zoom_" + zoom_level] = torch.clone(img)
 
         #idx_EFs = [int(self.dataframe[ef].iloc[idx]) for ef in EF_features]
 
