@@ -51,3 +51,25 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 	if clean:
 		logger.debug(f"Deleting {os.path.basename(filepath)}")
 		os.remove(filepath)
+
+
+def check_all_downloads():
+	from h3.dataloading.terrain_ef import check_dem_files, check_coastlines_file
+	from h3.dataloading.xbd import get_xbd
+	from h3.dataloading.strom_surge import check_storm
+	logger.info("Checking coastline files")
+	check_coastlines_file()
+	logger.info("Checking DEM files")
+	check_dem_files()
+	logger.info("Checking xBD files")
+	get_xbd()
+	logger.info("Checking storm surge files")
+	check_storm()
+
+
+def main():
+	check_all_downloads()
+
+
+if __name__ == "__main__":
+	main()
