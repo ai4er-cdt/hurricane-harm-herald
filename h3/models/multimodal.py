@@ -367,7 +367,7 @@ class OverallModel(pl.LightningModule):
 		# balanced accuracy (i think)
 		self.accuracy = Accuracy(task='multiclass', average='macro', num_classes=num_output_classes)
 
-		self.save_hyperparameters()
+		self.save_hyperparameters(ignore=["training_dataset", "validation_dataset"])
 
 	def forward(self, inputs):
 		"""for each zoom level Z, do image_Z_embedding = self.image_encoder(inputs["image_Z"], image_embedding_architecture)"""
