@@ -1,4 +1,4 @@
-from h3.utils.directories import get_data_dir
+from h3.utils.directories import get_data_dir, get_metadata_pickle_dir
 import pandas as pd
 import os
 from typing import List, Union
@@ -103,6 +103,7 @@ def data_loader():
 
 
 def main():
+    output_dir = get_metadata_pickle_dir()
     bperf_EF_df_no_dups = data_loader()
 
     n_sampled_dfs = []
@@ -117,6 +118,10 @@ def main():
             random_n_df = filtered_damage_df
         n_sampled_dfs.append(random_n_df)
     balanced_df = pd.concat(n_sampled_dfs)
+
+    output_path = os.path.join(output_dir,
+                               "filtered_lnglat_pre_pol_post_damage.pkl")
+    balanced_df.to_pickle(output_path)
     return balanced_df
 
 
