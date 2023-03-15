@@ -152,12 +152,13 @@ def get_xbd(
 	"""Wrapper function to check part files, combine and unpack them."""
 	xbd_dir = get_xbd_dir()
 	all_part_name = list(SHA1.keys())[1:]
+	extracted_path = os.path.join(xbd_dir, "geotiffs")
 
 	for name in all_part_name:
 		filepath = os.path.join(xbd_dir, name)
 		check_xbd(filepath=filepath, checksum=checksum)
 	_combine_xbd(output_filename=combined_name, delete_if_check=clean_after_merge)
-	if unpack_tar:
+	if unpack_tar and not os.path.exists(extracted_path):
 		_unpack_xbd(filename=combined_name)
 
 
