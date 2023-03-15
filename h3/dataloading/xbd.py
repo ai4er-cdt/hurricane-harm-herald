@@ -127,7 +127,7 @@ def _combine_xbd(
 		for file in tqdm(current_files, desc="File"):
 			filepath = os.path.join(xbd_dir, file)
 			with open(filepath, "rb") as fd:
-				shutil.copyfileobj(fd, wfb)     # similar to `cat FILE > NEW_FILE`
+				shutil.copyfileobj(fd, wfb)  # similar to `cat FILE > NEW_FILE`
 	logger.info(f"{len(current_files)} files merged into {output_filename}")
 
 	if delete_if_check and check_xbd(output_filename, checksum=True):
@@ -143,11 +143,15 @@ def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 	unpack_file(filepath)
 
 
-def get_xbd(checksum: bool = False, clean_after_merge: bool = False, unpack_tar: bool = True, **kwargs) -> None:
+def get_xbd(
+		checksum: bool = False,
+		clean_after_merge: bool = False,
+		unpack_tar: bool = True,
+		combined_name: str = "xview2_geotiff.tgz"
+) -> None:
 	"""Wrapper function to check part files, combine and unpack them."""
 	xbd_dir = get_xbd_dir()
 	all_part_name = list(SHA1.keys())[1:]
-	combined_name = kwargs["combined_name"]
 
 	for name in all_part_name:
 		filepath = os.path.join(xbd_dir, name)
