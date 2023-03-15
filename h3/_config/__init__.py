@@ -8,10 +8,10 @@ from .cli_utils import cli_parser
 
 __all__ = [
 	"logger",
-	"parser"
+	# "parser"
 ]
 
-parser = cli_parser()
+# parser = cli_parser()
 logger: logging.Logger
 
 logger = make_logger(
