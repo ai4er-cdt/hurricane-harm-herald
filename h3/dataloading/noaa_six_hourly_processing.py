@@ -61,7 +61,7 @@ def reformat_noaa_df(
 
 def windspeed_to_strength_category(
 	val: float | int
-) -> bool:
+) -> bool | int:
 	"""Assign an intensity value based on maximum sustained wind speed
 
 	Parameters
