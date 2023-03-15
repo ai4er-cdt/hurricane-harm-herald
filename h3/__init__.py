@@ -1,3 +1,1 @@
-from ._config import logger
-
-RANDOM_STATE = 17
+from ._config import *

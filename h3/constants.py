@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+RANDOM_STATE = 17
 
 EARTH_RADIUS = 6371009  # metres
 
