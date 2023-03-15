@@ -7,9 +7,7 @@ from functools import reduce
 from h3.constants import DMG_CLASSES_DICT
 
 
-def check_files_in_list_exist(
-    file_list: Union[List[str], List[Path]]
-    ):
+def check_files_in_list_exist(file_list: Union[List[str], List[Path]]):
     """State which files don't exist and remove from list"""
     files_found = []
     for fl in file_list:
@@ -48,8 +46,6 @@ def drop_cols_containing_lists(
     multi-type column, this would be the least of
     our worries...
     """
-    df = df.loc[:, df.iloc[0].apply(lambda x: type(x) != list)]
-
     return df
 
 
@@ -68,9 +64,22 @@ def rename_and_drop_duplicated_cols(
     return dropped_df.rename(columns=new_col_names)
 
 
-def data_loader():
-    data_dir = get_data_dir()
-    data_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_folder"
+def data_loader(data_dir: Path):
+    """Loads NOAA weather, terrain and soil EFS from the pickle file,
+    merges them and drops the duplicates.
+
+    Parameters
+    ----------
+    data_dir : Path
+        Path to the datasets, input either the google drive path or the local
+        path.
+    Returns
+    -------
+    Dataframe
+        Merged dataframe from all the pickled dataframes with EFs of interest.
+    """
+    #data_dir = get_data_dir()
+    #data_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_folder"
     # ecmwf weather EFs
     df_ecmwf_xbd_pkl_path = os.path.join(data_dir,
                                          "EFs/weather_data/ecmwf/xbd_ecmwf_points.pkl")
@@ -88,23 +97,35 @@ def data_loader():
                                         "processed_data/shortest_dis2hurricanes_varying_res.pkl")
 
     # based on feature importance
-    all_pkl_paths = [df_noaa_xbd_pkl_path, df_terrain_efs_path
+    all_pkl_paths = [df_noaa_xbd_pkl_path, df_terrain_efs_path,
                      df_topographic_efs_path]
     # all_pkl_paths = [df_noaa_xbd_pkl_path, df_ecmwf_xbd_pkl_path, df_terrain_efs_path, df_topographic_efs_path,df_distance_to_track]
-
     all_EF_df = read_and_merge_pkls(all_pkl_paths)
     all_df_no_dups = rename_and_drop_duplicated_cols(all_EF_df)
     # drop r_max_wind as it is a column full of NaNs
     all_df_no_dups = all_df_no_dups.drop(columns=["r_max_wind"])
 
-    map_dictionary = {v : k for k, v in DMG_CLASSES_DICT.items()}
+    map_dictionary = {v:k for k, v in DMG_CLASSES_DICT.items()}
     all_df_no_dups["damage_categorical"] = all_df_no_dups["damage_class"].replace(map_dictionary)
     return all_df_no_dups
 
 
-def main():
-    output_dir = get_metadata_pickle_dir()
-    bperf_EF_df_no_dups = data_loader()
+def main(data_dir):
+    """Randomly samples the merged dataframe ]
+
+    Parameters
+    ----------
+    data_dir : Path
+       Path to directory of all the pickle EF data file.
+
+    Returns
+    -------
+    dataframe
+        EFs dataframe, balanced with value count of the destroyed damage class. 
+    """
+    # output_dir = get_metadata_pickle_dir()
+    output_dir = os.path.join(data_dir, "processed_data/metadata_pickle")
+    bperf_EF_df_no_dups = data_loader(data_dir)
 
     n_sampled_dfs = []
     for damage_type in bperf_EF_df_no_dups.damage_class.unique():
@@ -126,4 +147,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    data_dir = get_data_dir()
+    main(data_dir)
