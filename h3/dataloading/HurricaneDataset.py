@@ -7,7 +7,7 @@ from PIL import Image
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from h3.models.opti_utils import load_full_ram
+from h3.models.opti_utils import load_full_ram, open_img
 from h3 import logger
 
 
@@ -95,8 +95,9 @@ class HurricaneDataset(Dataset):
             for zoom_level in self.zoom_levels:
                 path = os.path.join(self.img_path, "zoom_" + zoom_level, str(image_id) + ".png")
 
-                img = Image.open(path)
-                img = self.transform(img)
+                img = open_img(path, transform=self.transform)
+                # img = Image.open(path)
+                # img = self.transform(img)
                 # img = np.asarray(img)
                 #img = np.swapaxes(img, 0, 2)
 

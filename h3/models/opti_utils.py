@@ -4,6 +4,8 @@ import os
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
+from numba import jit
+
 from PIL import Image
 from tqdm import tqdm
 from h3.utils.directories import get_processed_data_dir
@@ -11,8 +13,8 @@ from h3.utils.directories import get_processed_data_dir
 from typing import Callable
 
 
+@jit(forceobj=True)
 def open_img(path: str, transform: Callable):
-
 	img = Image.open(path)
 	img = transform(img)
 	# print(img.shape)
