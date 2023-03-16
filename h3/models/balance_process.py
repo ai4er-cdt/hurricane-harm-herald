@@ -115,7 +115,7 @@ def data_loader(data_dir: Path, ECMWF):
     return all_df_no_dups
 
 
-def main(data_dir, ECMWF=False):
+def main(data_dir, ECMWF):
     """Randomly samples the merged dataframe ]
 
     Parameters
