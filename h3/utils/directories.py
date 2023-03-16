@@ -88,3 +88,8 @@ def get_coastline_dir() -> str:
 def get_dem_dir() -> str:
 	"""./data/datasets/terrain/dem_data"""
 	return guarantee_existence(os.path.join(get_terrain_dir(), "dem_data"))
+
+
+def get_checkpoint_dir() -> str:
+	"""./data/datasets/checkpoints"""
+	return guarantee_existence(os.path.join(get_datasets_dir(), "checkpoints"))

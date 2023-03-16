@@ -512,10 +512,10 @@ class OverallModel(pl.LightningModule):
 			]
 
 		optimizer = torch.optim.Adam(parameters)
-		lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+		lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
 			optimizer,
-			mode="min",
-			patience=self.lr_scheduler_patience
+			T_max=30,
+			eta_min=1e-4
 		)
 		return {
 			"optimizer": optimizer,
@@ -558,16 +558,6 @@ class OverallModel(pl.LightningModule):
 		self.log("val accuracy", acc, logger=True, on_epoch=True)
 		return val_loss
 
-	def training_epoch_end(self, out):
-		# put stuff here that happens at the end of every training epoch
-		# self.log('train_acc_epoch', self.accuracy)
-		pass
-
-	def validation_epoch_end(self, out):
-		# put stuff here that happens at the end of every validation epoch
-		# self.log('validation_acc_epoch', self.accuracy)
-		pass
-
 	def train_dataloader(self):
 		loader = DataLoader(
 			self.training_dataset,
@@ -586,6 +576,5 @@ class OverallModel(pl.LightningModule):
 			num_workers=self.num_workers,
 			pin_memory=True,
 			persistent_workers=self.persistent_w,
-			shuffle=True,
 		)
 		return loader

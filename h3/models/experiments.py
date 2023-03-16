@@ -30,7 +30,7 @@ from h3.dataloading.HurricaneDataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.utils.directories import *
 
-from line_profiler_pycharm import profile
+# from line_profiler_pycharm import profile
 
 
 def check_files_in_list_exist(
@@ -120,7 +120,6 @@ def main():
 
 	EF_df_no_dups["id"] = EF_df_no_dups.index
 	EF_df_no_dups = EF_df_no_dups[EF_df_no_dups["damage_class"] != 4]
-	df = EF_df_no_dups
 	# df = EF_df_no_dups.sample(200) #sample rows for testing that it works
 
 
@@ -144,7 +143,8 @@ def main():
 		"storm_surge": ["storm_surge"],
 		"dem": ["elevation", "slope", "aspect", "dis2coast"]}
 
-	train_df, val_df = train_test_split(df, test_size=0.2)
+	train_df, test_df = train_test_split(EF_df_no_dups, test_size=0.1, random_state=1)
+	train_df, val_df = train_test_split(train_df, test_size=0.2 / 0.9, random_state=1)
 
 	# features_to_scale = [
 	# 	"max_sust_wind", "shortest_distance_to_track", "max_sust_wind", "min_p",
@@ -172,13 +172,13 @@ def main():
 	scaled_val_df[features_to_scale] = scaler.transform(val_df[features_to_scale])
 
 	augmentations = DataAugmentation()
-	augmentations = None
+	# augmentations = None
 
 	zoom_levels = ["1", "2", "4", "0.5"]
 	zoom_levels = ["1"]
 	# image_embedding_architecture = "ResNet18"
-	# image_embedding_architecture = "SatMAE"
-	image_embedding_architecture = "Swin_V2_B"
+	image_embedding_architecture = "SatMAE"
+	# image_embedding_architecture = "Swin_V2_B"
 
 	cuda_device = torch.cuda.is_available()
 
@@ -190,21 +190,24 @@ def main():
 	)
 
 	class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
+	ram_load = False
 
 	train_dataset = HurricaneDataset(
 		scaled_train_df, img_path, EF_features,
 		image_embedding_architecture=image_embedding_architecture,
 		zoom_levels=zoom_levels,
-		augmentations=augmentations
+		augmentations=augmentations,
+		ram_load=ram_load
 	)
 
 	val_dataset = HurricaneDataset(
 		scaled_val_df, img_path, EF_features,
 		image_embedding_architecture=image_embedding_architecture,
-		zoom_levels=zoom_levels
+		zoom_levels=zoom_levels,
+		ram_load=ram_load
 	)
 	if cuda_device:
-		torch.set_float32_matmul_precision('medium')
+		# torch.set_float32_matmul_precision('medium')
 		num_workers = 4
 		persistent_w = bool(num_workers)
 	else:
@@ -232,14 +235,17 @@ def main():
 		persistent_w=persistent_w
 	)
 
-	max_epochs = 100
+	max_epochs = 30
 	log_every_n_steps = 100
 
 	early_stop_callback = EarlyStopping(monitor="val/loss", patience=5, mode="min")
 
 	checkpoint_callback = ModelCheckpoint(
 		monitor="val/loss",
-		dirpath="/content/checkpoints/experiment_1/",   # TODO: fix this path
+		dirpath=os.path.join(
+			get_checkpoint_dir(),
+			f"{image_embedding_architecture}_{*zoom_levels,}_{ram_load}"
+		),   # TODO: fix this path
 		filename="{epoch}-{val/loss:.4f}",
 		save_top_k=1,  # save the best model
 		mode="min",
