@@ -64,7 +64,7 @@ def rename_and_drop_duplicated_cols(
     return dropped_df.rename(columns=new_col_names)
 
 
-def data_loader(data_dir: Path):
+def data_loader(data_dir: Path, ECMWF):
     """Loads NOAA weather, terrain and soil EFS from the pickle file,
     merges them and drops the duplicates.
 
@@ -78,8 +78,8 @@ def data_loader(data_dir: Path):
     Dataframe
         Merged dataframe from all the pickled dataframes with EFs of interest.
     """
-    #data_dir = get_data_dir()
-    #data_dir = "/Users/Lisanne/Documents/AI4ER/hurricane-harm-herald/data/test_folder"
+    # data_dir = get_data_dir()
+   
     # ecmwf weather EFs
     df_ecmwf_xbd_pkl_path = os.path.join(data_dir,
                                          "EFs/weather_data/ecmwf/xbd_ecmwf_points.pkl")
@@ -97,9 +97,14 @@ def data_loader(data_dir: Path):
                                         "processed_data/shortest_dis2hurricanes_varying_res.pkl")
 
     # based on feature importance
-    all_pkl_paths = [df_noaa_xbd_pkl_path, df_terrain_efs_path,
-                     df_topographic_efs_path]
-    # all_pkl_paths = [df_noaa_xbd_pkl_path, df_ecmwf_xbd_pkl_path, df_terrain_efs_path, df_topographic_efs_path,df_distance_to_track]
+    if ECMWF == "ECMWF":
+        all_pkl_paths = [df_ecmwf_xbd_pkl_path, df_noaa_xbd_pkl_path, 
+                         df_terrain_efs_path,
+                         df_topographic_efs_path]
+    else: 
+        all_pkl_paths = [df_noaa_xbd_pkl_path, df_terrain_efs_path,
+                         df_topographic_efs_path]
+        
     all_EF_df = read_and_merge_pkls(all_pkl_paths)
     all_df_no_dups = rename_and_drop_duplicated_cols(all_EF_df)
     # drop r_max_wind as it is a column full of NaNs
@@ -110,7 +115,7 @@ def data_loader(data_dir: Path):
     return all_df_no_dups
 
 
-def main(data_dir):
+def main(data_dir, ECMWF==False):
     """Randomly samples the merged dataframe ]
 
     Parameters
@@ -125,7 +130,7 @@ def main(data_dir):
     """
     # output_dir = get_metadata_pickle_dir()
     output_dir = os.path.join(data_dir, "processed_data/metadata_pickle")
-    bperf_EF_df_no_dups = data_loader(data_dir)
+    bperf_EF_df_no_dups = data_loader(data_dir, ECMWF)
 
     n_sampled_dfs = []
     for damage_type in bperf_EF_df_no_dups.damage_class.unique():
