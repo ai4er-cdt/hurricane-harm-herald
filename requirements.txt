@@ -6,9 +6,12 @@ geopandas
 h5netcdf
 matplotlib
 numpy
-opencv-python # opencv if conda
+numba
+opencv-python
 pandas
-pytorch
+pillow
+torch
+--index-url https://download.pytorch.org/whl/cu118; system_platform  != 'Darwin'
 pytorch-lightning
 rasterio
 rich
@@ -16,6 +19,7 @@ richdem
 shapely
 tensorboard
 timm
+torchaudio
 torchvision
 torchmetrics
 tqdm
