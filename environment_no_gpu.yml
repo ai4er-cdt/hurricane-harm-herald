@@ -1,0 +1,35 @@
+name: h3
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.10
+  - affine
+  - cartopy
+  - cmocean
+  - dask
+  - ipython
+  - geopandas
+  - h5netcdf
+  - matplotlib
+  - numpy
+  - numba
+  - opencv
+  - pandas
+  - pillow
+  - pytorch::pytorch
+  - pytorch::torchvision
+  - pytorch::torchaudio
+  - pytorch-lightning
+  - rasterio
+  - rich
+  - richdem
+  - shapely
+  - tensorboard
+  - timm
+  - torchmetrics
+  - tqdm
+  - seaborn
+  - scikit-learn
+  - scipy
+  - xarray
