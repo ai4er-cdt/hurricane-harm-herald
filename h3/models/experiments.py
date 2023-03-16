@@ -101,6 +101,7 @@ def drop_cols_containing_lists(
 def run_predict(
 		model,
 		test_df: pd.DataFrame,
+		pkl_name: str,
 		scaler,
 		features_to_scale: list[str],
 		ef_features: dict[list[str]],
@@ -112,6 +113,9 @@ def run_predict(
 	model.eval()
 
 	scaled_test_df = test_df.copy()
+	test_save_path = os.path.join(get_pickle_dir(), 'test_df.pickle')
+	with open(test_save_path, 'wb') as handle:
+		pickle.dump(test_save_path, handle)
 
 	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
 
@@ -132,7 +136,9 @@ def run_predict(
 		prediction = model(x)
 		predictions_list.append(prediction)
 
-	with open('predictions_list_satmae_cpu.pickle', 'wb') as handle:
+	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
+
+	with open(pickle_save_path, 'wb') as handle:
 		pickle.dump(predictions_list, handle)
 
 
@@ -178,6 +184,7 @@ def run_model(
 	frame = inspect.currentframe()
 	args, _, _, values = inspect.getargvalues(frame)
 	rich_table(args, values, title="Model Parameters")
+	logger.info(f"Cuda: {cuda_device}")
 
 	if balanced_data:
 		loss_function = "CELoss"
@@ -209,7 +216,7 @@ def run_model(
 		loss_function = "weighted_CELoss"
 		# weather
 		df_noaa_xbd_pkl_path = os.path.join(
-			data_dir, 'weather/xbd_obs_noaa_six_hourly_larger_dataset.pkl'
+			data_dir, 'EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl'
 		)
 		# terrain efs
 		df_terrain_efs_path = os.path.join(
@@ -282,6 +289,9 @@ def run_model(
 		num_workers = 0
 		persistent_w = False
 
+	logger.info(f"Loss function is {loss_function}")
+	logger.info(f"{num_workers} number of workers")
+
 	model = OverallModel(
 		training_dataset=train_dataset,
 		validation_dataset=val_dataset,
@@ -350,7 +360,8 @@ def run_model(
 			img_path=img_path,
 			augmentations=augmentations,
 			zoom_levels=zoom_levels,
-			image_embedding_architecture=image_embedding_architecture
+			image_embedding_architecture=image_embedding_architecture,
+			pkl_name=ckp_name
 		)
 
 
@@ -371,7 +382,7 @@ def main():
 		features_to_scale=ALL_FEATURES_TO_SCALE,
 		split_val_train_test=[0.7, 0.2, 0.1],
 		zoom_levels=zooms,
-		balanced_data=True,
+		balanced_data=False,
 		max_epochs=30,
 		log_every_n_steps=100,
 		image_embedding_architecture=architecture,
