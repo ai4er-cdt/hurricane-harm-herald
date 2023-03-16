@@ -101,10 +101,10 @@ def data_loader(data_dir: Path, ECMWF):
         all_pkl_paths = [df_ecmwf_xbd_pkl_path, df_noaa_xbd_pkl_path, 
                          df_terrain_efs_path,
                          df_topographic_efs_path]
-    else: 
+    else:
         all_pkl_paths = [df_noaa_xbd_pkl_path, df_terrain_efs_path,
                          df_topographic_efs_path]
-        
+ 
     all_EF_df = read_and_merge_pkls(all_pkl_paths)
     all_df_no_dups = rename_and_drop_duplicated_cols(all_EF_df)
     # drop r_max_wind as it is a column full of NaNs
@@ -115,7 +115,7 @@ def data_loader(data_dir: Path, ECMWF):
     return all_df_no_dups
 
 
-def main(data_dir, ECMWF==False):
+def main(data_dir, ECMWF=False):
     """Randomly samples the merged dataframe ]
 
     Parameters
