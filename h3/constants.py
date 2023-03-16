@@ -24,3 +24,41 @@ DMG_CLASSES_DICT = {
 	"destroyed": 3,
 	"un-classified": 4
 }
+
+ALL_EF_FEATURES = {
+	"weather": [
+		"max_sust_wind", "shortest_distance_to_track", "max_sust_wind", "min_p",
+		"r_ne_34", "r_se_34", "r_nw_34", "r_sw_34", "r_ne_50",
+		"r_se_50", "r_nw_50", "r_sw_50", "r_ne_64", "r_se_64",
+		"r_nw_64", "r_sw_64", "strength"
+	],
+	"soil": ["soil_density", "sand_content", "clay_content", "silt_content"],
+	"storm_surge": ["storm_surge"],
+	"dem": ["elevation", "slope", "aspect", "dis2coast"]}
+
+ALL_FEATURES_TO_SCALE = [
+	"max_sust_wind", "shortest_distance_to_track", "max_sust_wind", "min_p",
+	"r_ne_34", "r_se_34", "r_nw_34", "r_sw_34", "r_ne_50",
+	"r_se_50", "r_nw_50", "r_sw_50", "r_ne_64", "r_se_64",
+	"r_nw_64", "r_sw_64", "strength",
+	"soil_density", "sand_content", "clay_content", "silt_content",
+	"storm_surge",
+	"elevation", "slope", "aspect", "dis2coast"
+]
+
+RF_BEST_EF_FEATURES = {
+	"weather": [
+		"max_sust_wind", "shortest_distance_to_track", "min_p",
+		"r_nw_34", "r_sw_34",
+	],
+	"soil": ["soil_density", "sand_content", "clay_content", "silt_content"],
+	"storm_surge": ["storm_surge"],
+	"dem": ["elevation", "slope", "aspect", "dis2coast"]}
+RF_BEST_FEATURES_TO_SCALE = [
+	"max_sust_wind", "shortest_distance_to_track", "min_p",
+	"r_nw_34", "r_sw_34",
+	"soil_density", "sand_content", "clay_content", "silt_content",
+	"storm_surge",
+	"elevation", "slope", "aspect", "dis2coast"
+]
+
