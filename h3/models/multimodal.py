@@ -512,10 +512,10 @@ class OverallModel(pl.LightningModule):
 			]
 
 		optimizer = torch.optim.Adam(parameters)
-		lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+		lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
 			optimizer,
-			mode="min",
-			patience=self.lr_scheduler_patience
+			T_max=30,
+			eta_min=1e-4
 		)
 		return {
 			"optimizer": optimizer,
