@@ -29,6 +29,7 @@ from h3.dataprocessing.DataAugmentation import DataAugmentation
 from h3.dataloading.HurricaneDataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.utils.directories import *
+from h3.models.balance_process import main as balance_process_main
 
 # from line_profiler_pycharm import profile
 
@@ -95,33 +96,61 @@ def drop_cols_containing_lists(
 def main():
 	torch.manual_seed(17)
 	data_dir = get_datasets_dir()
-
-	# weather
-	df_noaa_xbd_pkl_path = os.path.join(data_dir, 'weather/xbd_obs_noaa_six_hourly_larger_dataset.pkl')
-
-	# terrain efs
-	df_terrain_efs_path = os.path.join(data_dir, "processed_data/Terrian_EFs.pkl")
-
-	# flood and soil properties
-	df_topographic_efs_path = os.path.join(
-		data_dir,
-		"processed_data/df_points_posthurr_flood_risk_storm_surge_soil_properties.pkl")
-
-	pkl_paths = [df_noaa_xbd_pkl_path, df_topographic_efs_path, df_terrain_efs_path]
-	EF_df = read_and_merge_pkls(pkl_paths)
-
-	logger.info("rename and drop")
-	EF_df_no_dups = rename_and_drop_duplicated_cols(EF_df)
-	logger.info("done")
-
-	# the below directory should be to the .pkl with all EFs
-	# img_path = "/content/images/"
+	#
+	# # weather
+	# df_noaa_xbd_pkl_path = os.path.join(data_dir, 'weather/xbd_obs_noaa_six_hourly_larger_dataset.pkl')
+	#
+	# # terrain efs
+	# df_terrain_efs_path = os.path.join(data_dir, "processed_data/Terrian_EFs.pkl")
+	#
+	# # flood and soil properties
+	# df_topographic_efs_path = os.path.join(
+	# 	data_dir,
+	# 	"processed_data/df_points_posthurr_flood_risk_storm_surge_soil_properties.pkl")
+	#
+	# pkl_paths = [df_noaa_xbd_pkl_path, df_topographic_efs_path, df_terrain_efs_path]
+	# EF_df = read_and_merge_pkls(pkl_paths)
+	#
+	# logger.info("rename and drop")
+	# EF_df_no_dups = rename_and_drop_duplicated_cols(EF_df)
+	# logger.info("done")
+	#
+	# # the below directory should be to the .pkl with all EFs
+	# # img_path = "/content/images/"
 	img_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
+	#
+	# EF_df_no_dups["id"] = EF_df_no_dups.index
+	# EF_df_no_dups = EF_df_no_dups[EF_df_no_dups["damage_class"] != 4]
+	# # df = EF_df_no_dups.sample(200) #sample rows for testing that it works
+	# img_path = "/content/images/"
 
-	EF_df_no_dups["id"] = EF_df_no_dups.index
-	EF_df_no_dups = EF_df_no_dups[EF_df_no_dups["damage_class"] != 4]
-	# df = EF_df_no_dups.sample(200) #sample rows for testing that it works
+	ECMWF_filtered_pickle_path = os.path.join(
+		data_dir,
+		"processed_data/metadata_pickle/filtered_lnglat_ECMWF_damage.pkl"
+	)
 
+	if os.path.exists(ECMWF_filtered_pickle_path):
+		ECMWF_balanced_df = pd.read_pickle(ECMWF_filtered_pickle_path)
+	else:
+		ECMWF_balanced_df = balance_process_main(data_dir, "ECMWF")
+
+	# remove unclassified class
+	ECMWF_balanced_df = ECMWF_balanced_df[ECMWF_balanced_df.damage_class != 4]
+	ECMWF_balanced_df["id"] = ECMWF_balanced_df.index
+
+	filtered_pickle_path = os.path.join(
+		data_dir,
+		"processed_data/metadata_pickle/filtered_lnglat_pre_pol_post_damage.pkl"
+	)
+
+	if os.path.exists(filtered_pickle_path):
+		balanced_df = pd.read_pickle(filtered_pickle_path)
+	else:
+		balanced_df = balance_process_main(data_dir)
+
+	# remove unclassified class
+	balanced_df = balanced_df[balanced_df.damage_class != 4]
+	balanced_df["id"] = balanced_df.index
 
 	# EF_features = {
 	# 	"weather": [
@@ -143,7 +172,7 @@ def main():
 		"storm_surge": ["storm_surge"],
 		"dem": ["elevation", "slope", "aspect", "dis2coast"]}
 
-	train_df, test_df = train_test_split(EF_df_no_dups, test_size=0.1, random_state=1)
+	train_df, test_df = train_test_split(balanced_df, test_size=0.1, random_state=1)
 	train_df, val_df = train_test_split(train_df, test_size=0.2 / 0.9, random_state=1)
 
 	# features_to_scale = [
@@ -183,13 +212,13 @@ def main():
 	cuda_device = torch.cuda.is_available()
 
 	# class weights for weighted cross-entropy loss
-	class_weights = compute_class_weight(
-		class_weight="balanced",
-		classes=np.unique(train_df["damage_class"].to_numpy()),
-		y=train_df["damage_class"]
-	)
+	# class_weights = compute_class_weight(
+	# 	class_weight="balanced",
+	# 	classes=np.unique(train_df["damage_class"].to_numpy()),
+	# 	y=train_df["damage_class"]
+	# )
 
-	class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
+	# class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
 	ram_load = False
 
 	train_dataset = HurricaneDataset(
@@ -224,11 +253,11 @@ def main():
 		image_encoder_lr=0,
 		general_lr=1e-3,
 		output_activation=None,
-		loss_function_str="weighted_CELoss",
+		loss_function_str="CELoss",
 		num_output_classes=4,
 		lr_scheduler_patience=3,
 		zoom_levels=zoom_levels,
-		class_weights=class_weights,
+		# class_weights=class_weights,
 		image_only_model=False,
 		weight_decay=0.001,
 		num_workers=num_workers,
@@ -244,7 +273,7 @@ def main():
 		monitor="val/loss",
 		dirpath=os.path.join(
 			get_checkpoint_dir(),
-			f"{image_embedding_architecture}_{*zoom_levels,}_{ram_load}"
+			f"{image_embedding_architecture}_{*zoom_levels,}_{ram_load}_balanced"
 		),   # TODO: fix this path
 		filename="{epoch}-{val/loss:.4f}",
 		save_top_k=1,  # save the best model
@@ -263,7 +292,7 @@ def main():
 			log_every_n_steps=log_every_n_steps,
 			callbacks=[checkpoint_callback, early_stop_callback, RichProgressBar(refresh_rate=10)],
 			logger=tensor_logger,
-			precision=16
+			precision="16-mixed"
 		)
 	else:
 		logger.info("Setting the trainer using CPU")
