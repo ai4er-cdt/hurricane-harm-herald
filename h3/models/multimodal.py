@@ -576,6 +576,5 @@ class OverallModel(pl.LightningModule):
 			num_workers=self.num_workers,
 			pin_memory=True,
 			persistent_workers=self.persistent_w,
-			shuffle=True,
 		)
 		return loader
