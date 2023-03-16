@@ -30,7 +30,7 @@ from h3.dataloading.HurricaneDataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.utils.directories import *
 
-from line_profiler_pycharm import profile
+# from line_profiler_pycharm import profile
 
 
 def check_files_in_list_exist(
@@ -190,18 +190,21 @@ def main():
 	)
 
 	class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
+	ram_load = True
 
 	train_dataset = HurricaneDataset(
 		scaled_train_df, img_path, EF_features,
 		image_embedding_architecture=image_embedding_architecture,
 		zoom_levels=zoom_levels,
-		augmentations=augmentations
+		augmentations=augmentations,
+		ram_load=ram_load
 	)
 
 	val_dataset = HurricaneDataset(
 		scaled_val_df, img_path, EF_features,
 		image_embedding_architecture=image_embedding_architecture,
-		zoom_levels=zoom_levels
+		zoom_levels=zoom_levels,
+		ram_load=ram_load
 	)
 	if cuda_device:
 		torch.set_float32_matmul_precision('medium')
@@ -239,7 +242,10 @@ def main():
 
 	checkpoint_callback = ModelCheckpoint(
 		monitor="val/loss",
-		dirpath="/content/checkpoints/experiment_1/",   # TODO: fix this path
+		dirpath=os.path.join(
+			get_checkpoint_dir(),
+			f"{image_embedding_architecture}_{*zoom_levels,}"
+		),   # TODO: fix this path
 		filename="{epoch}-{val/loss:.4f}",
 		save_top_k=1,  # save the best model
 		mode="min",
