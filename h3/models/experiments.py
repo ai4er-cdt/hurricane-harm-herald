@@ -78,7 +78,7 @@ def rename_and_drop_duplicated_cols(
 	# need to ensure no bad types first
 	df = drop_cols_containing_lists(df)
 	# remove duplicated columns
-	dropped_df = df.T.drop_duplicates().T   # TODO: this a massive bottleneck
+	dropped_df = df.T.drop_duplicates().T   # this a small bottleneck
 	# rename columns for clarity (especially those which are shared between dfs). Will be able to remove most with better
 	# column naming further up the process
 	new_col_names = {col: col.replace('_x', '') for col in dropped_df.columns if col.endswith('_x')}
@@ -379,7 +379,7 @@ def main():
 		ram_load=False,
 		num_worker=4,
 		precision="16-mixed",
-		torch_float32_precision="medium",  # TODO: call it with medium
+		torch_float32_precision="medium",
 		predict=True,
 		ckp_name=ckp_name,
 		spatial=True,
