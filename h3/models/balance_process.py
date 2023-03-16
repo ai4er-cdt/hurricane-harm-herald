@@ -145,8 +145,12 @@ def main(data_dir, ECMWF==False):
         n_sampled_dfs.append(random_n_df)
     balanced_df = pd.concat(n_sampled_dfs)
 
-    output_path = os.path.join(output_dir,
-                               "filtered_lnglat_pre_pol_post_damage.pkl")
+    if ECMWF == "ECMWF":
+        output_path = os.path.join(output_dir,
+                                   "filtered_lnglat_ECMWF_damage.pkl")
+    else:
+        output_path = os.path.join(output_dir,
+                                   "filtered_lnglat_pre_pol_post_damage.pkl")
     balanced_df.to_pickle(output_path)
     return balanced_df
 
