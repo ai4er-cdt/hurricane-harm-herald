@@ -157,7 +157,7 @@ def run_predict(
 			for key in x.keys():
 				x[key] = x[key].unsqueeze(0).to(device)
 			prediction = model(x)
-			predictions_list.append(prediction.detach().cpu())
+			predictions_list.append(prediction)
 
 	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
 	logger.info("Pickling the saved data")
