@@ -157,7 +157,7 @@ def run_predict(
 			for key in x.keys():
 				x[key] = x[key].unsqueeze(0).to(device)
 			prediction = model(x)
-			predictions_list.append(prediction.cpu())
+			predictions_list.append(prediction.detach().cpu())
 
 	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
 	logger.info("Pickling the saved data")
@@ -467,6 +467,31 @@ def main():
 		"test": ["MICHAEL", "MATTHEW"],
 		"train": ["MICHAEL", "MATTHEW"]
 	}
+
+	# Run
+	balanced = True
+	ef = RF_BEST_EF_FEATURES
+	features_scale = RF_BEST_FEATURES_TO_SCALE
+	zooms = ["1", "2", "4", "0.5"]
+	zooms = ["1"]
+	architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"]
+	architecture = "SatMAE"
+	spatial = False
+	ckp_name = f"{architecture}_{*zooms,}_False_balanced"
+	hurricanes = None
+
+	# Run
+	balanced = False
+	ef = RF_BEST_EF_FEATURES
+	features_scale = RF_BEST_FEATURES_TO_SCALE
+	zooms = ["1", "2", "4", "0.5"]
+	zooms = ["1"]
+	architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"]
+	architecture = "SatMAE"
+	spatial = False
+	ckp_name = f"{architecture}_{*zooms,}_False"
+	hurricanes = None
+
 
 	run_model(
 		ef_features=ef,
