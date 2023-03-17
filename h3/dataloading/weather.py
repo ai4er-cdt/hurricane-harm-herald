@@ -433,37 +433,57 @@ def download_ecmwf_files(
         areas=areas,
         download_dest_dir=download_dest_dir)
 
+    return df_xbd_points, df_noaa_xbd_hurricanes, weather_keys
 
-def merge_grib_files_to_nc(
-    grib_dir_path: str
-):
-    """Merge all GRIB files in a directory into a single NetCDF file.
 
-    Parameters
-    ----------
-    grib_dir_path : str
-        Path to the directory containing the GRIB files.
+def generate_ecmwf_pkl(
+    distance_buffer: float = 5
+) -> pd.DataFrame:
+    download_dest_dir = directories.get_ecmwf_data_dir()
+    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_ecmwf_files(download_dest_dir, distance_buffer)
+    # download ecmwf grib files to separate directories within /datasets/weather/ecmwf/
+    # group ecmwf xarray files into dictionary indexed by name of weather event
+    xbd_event_xa_dict = generate_xbd_event_xa_dict(download_dest_dir, df_noaa_xbd_hurricanes)
+    # generate df for all xbd points' closest maximum era5 values
+    df_ecmwf_xbd_points = determine_ecmwf_values_from_points_df(
+        xbd_event_xa_dict,
+        weather_keys=weather_keys,
+        df_points=df_xbd_points,
+        )
 
-    Returns
-    -------
-    None
-    """
-    # load in all files in folder
-    file_paths = '/'.join((grib_dir_path, '*.grib'))
-    grib_dir_name = '/'.split(grib_dir_path)[-2]
+    return df_ecmwf_xbd_points
 
-    xa_dict = {}
-    for file_path in tqdm.tqdm(glob.glob(file_paths)):
-        # get name of file
-        file_name = file_path.split('/')[-1]
-        # read into xarray
-        xa_dict[file_name] = xr.load_dataset(file_path, engine="cfgrib")
-    out = xr.merge([array for array in xa_dict.values()], compat='override')
-    # save as new file
-    nc_file_name = '.'.join((grib_dir_name, 'nc'))
-    save_file_path = '/'.join((grib_dir_path, nc_file_name))
-    out.to_netcdf(path=save_file_path)
-    print(f'{nc_file_name} saved successfully')
+
+# def merge_grib_files_to_nc(
+#     grib_dir_path: str
+# ):
+#     """Merge all GRIB files in a directory into a single NetCDF file.
+
+#     Parameters
+#     ----------
+#     grib_dir_path : str
+#         Path to the directory containing the GRIB files.
+
+#     Returns
+#     -------
+#     None
+#     """
+#     # load in all files in folder
+#     file_paths = '/'.join((grib_dir_path, '*.grib'))
+#     grib_dir_name = '/'.split(grib_dir_path)[-2]
+
+#     xa_dict = {}
+#     for file_path in tqdm.tqdm(glob.glob(file_paths)):
+#         # get name of file
+#         file_name = file_path.split('/')[-1]
+#         # read into xarray
+#         xa_dict[file_name] = xr.load_dataset(file_path, engine="cfgrib")
+#     out = xr.merge([array for array in xa_dict.values()], compat='override')
+#     # save as new file
+#     nc_file_name = '.'.join((grib_dir_name, 'nc'))
+#     save_file_path = '/'.join((grib_dir_path, nc_file_name))
+#     out.to_netcdf(path=save_file_path)
+#     print(f'{nc_file_name} saved successfully')
 
 
 def determine_ecmwf_values_from_points_df(
@@ -859,4 +879,3 @@ def save_pkl_to_structured_dir(
 
     save_dest = os.join(save_dir_path, pkl_name)
     df_to_pkl.to_pickle(save_dest)
-
