@@ -406,13 +406,14 @@ def download_ecmwf_files(
 
     # if file doesn't exist at correct directory, generate it
     if os.path.exists(directories.get_noaa_data_dir()):
-        df_noaa_xbd_hurricanes = pd.read_pickle(os.join(directories.get_noaa_data_dir(), 'noaa_xbd_hurricanes.pkl'))
+        df_noaa_xbd_hurricanes = pd.read_pickle(
+            os.path.join(directories.get_noaa_data_dir(), 'noaa_xbd_hurricanes.pkl'))
     else:
         df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
             os.path.join(directories.get_metadata_pickle_dir(), 'hurdat2-1851-2021-meta.txt'), xbd_hurricanes_only=True)
 
     if os.path.exists(directories.get_xbd_dir()):
-        df_xbd_points = pd.read_pickle(os.join(directories.get_xbd_dir(), 'xbd_data_points.pkl'))
+        df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), 'xbd_data_points.pkl'))
     else:
         _, df_xbd_points = dataprocessing.main()
 
@@ -663,7 +664,7 @@ def fetch_era5_data(
         dir_name = '_'.join((
             dates[0].strftime("%d-%m-%Y"), dates[1].strftime("%d-%m-%Y")
             ))
-        dir_path = guarantee_existence(os.join(download_dest_dir, dir_name))
+        dir_path = guarantee_existence(os.path.join(download_dest_dir, dir_name))
 
         time_info_dict = generate_times_from_start_end(dates)
 
