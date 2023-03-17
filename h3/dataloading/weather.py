@@ -874,5 +874,5 @@ def save_pkl_to_structured_dir(
     else:
         raise ValueError(f'Unrecognised pkl name: {pkl_name}')
 
-    save_dest = os.join(save_dir_path, pkl_name)
+    save_dest = os.path.join(save_dir_path, pkl_name)
     df_to_pkl.to_pickle(save_dest)
