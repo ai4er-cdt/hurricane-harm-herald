@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from h3.dataloading import general_df_utils
 from h3.utils import directories
-from h3.utils.geometry_ops import pad_number_with_zeros
+from h3.utils.simple_functions import pad_number_with_zeros
 import os
 import re
 import xarray as xr
@@ -411,7 +411,6 @@ def download_ecmwf_files(
         df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
             os.path.join(directories.get_metadata_pickle_dir(), 'hurdat2-1851-2021-meta.txt'), xbd_hurricanes_only=True)
 
-    # TODO: script for xbd points
     if os.path.exists(directories.get_xbd_dir()):
         df_xbd_points = pd.read_pickle(os.join(directories.get_xbd_dir(), 'xbd_data_points.pkl'))
     else:
@@ -432,7 +431,7 @@ def download_ecmwf_files(
         start_end_dates=start_end_dates,
         areas=areas,
         download_dest_dir=download_dest_dir)
-
+    
     return df_xbd_points, df_noaa_xbd_hurricanes, weather_keys
 
 
@@ -450,7 +449,7 @@ def generate_ecmwf_pkl(
         weather_keys=weather_keys,
         df_points=df_xbd_points,
         )
-
+    
     return df_ecmwf_xbd_points
 
 
@@ -674,8 +673,6 @@ def fetch_era5_data(
             file_name = f'{param}.{format}'
             dest = '/'.join((dir_path, file_name))
             # make api call
-            # TODO: is there a nice way to overwrite files of same name, provided they are
-            # different? e.g. different area
             try:
                 c.retrieve(
                     'reanalysis-era5-land',
