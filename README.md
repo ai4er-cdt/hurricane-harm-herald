@@ -139,3 +139,10 @@ Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track
  │             └── <image_id>.png
  │             └── ...
 
+
+
+## License
+This software is double_licensed.  
+The main code is under MIT license, the SatMAE model is under the Attribution-NonCommercial 4.0 International.  
+The SatMAE code is in `h3.models.SatMAE`, please look at the README there for more information.  
+Additionally, the SatMAE code was modify to make it compatible with `numpy=1.24`
