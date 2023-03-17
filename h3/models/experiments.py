@@ -12,6 +12,7 @@ import pytorch_lightning as pl
 import time
 import torch
 from tqdm.rich import tqdm
+from torch.utils.data import DataLoader
 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -99,6 +100,72 @@ def drop_cols_containing_lists(
 	return df
 
 
+def run_predict(
+		model,
+		trainer,
+		test_df: pd.DataFrame,
+		pkl_name: str,
+		scaler,
+		features_to_scale: list[str],
+		ef_features: dict[list[str]],
+		img_path: str,
+		augmentations,
+		zoom_levels: list | None = None,
+		image_embedding_architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"] = "ResNet18",
+		num_workers: int = 0,
+		persistent_w: bool = False
+):
+	# model.eval()
+
+	scaled_test_df = test_df.copy()
+	test_save_path = os.path.join(get_pickle_dir(), f'test_df_{pkl_name}.pickle')
+	with open(test_save_path, 'wb') as handle:
+		pickle.dump(test_save_path, handle)
+
+	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
+
+	test_dataset = HurricaneDataset(
+		scaled_test_df,
+		img_path,
+		ef_features,
+		image_embedding_architecture=image_embedding_architecture,
+		zoom_levels=zoom_levels,
+		augmentations=augmentations,
+
+	)
+	#
+	# test_loader = DataLoader(
+	# 	test_dataset,
+	# 	batch_size=64,
+	# 	num_workers=num_workers,
+	# 	pin_memory=True,
+	# 	persistent_workers=persistent_w,
+	# )
+	#
+	# # prediction_trainer = pl.Trainer()
+	# predictions_list = trainer.predict(model=model, dataloaders=test_loader)
+
+	predictions_list = []
+
+	device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+	if torch.cuda.is_available():
+		model.to(device)
+
+	with torch.no_grad():
+		for index in tqdm(range(len(test_df)), desc="Eval model"):
+			x, y = test_dataset[index]
+			for key in x.keys():
+				x[key] = x[key].unsqueeze(0).to(device)
+			prediction = model(x)
+			predictions_list.append(prediction.cpu())
+
+	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
+	logger.info("Pickling the saved data")
+
+	with open(pickle_save_path, 'wb') as handle:
+		pickle.dump(predictions_list, handle)
+
+
 def load_model_predict(
 		path: str,
 		train_dataset: pd.DataFrame,
@@ -110,7 +177,10 @@ def load_model_predict(
 		img_path,
 		augmentation,
 		zooms,
-		architecture
+		architecture,
+		trainer,
+		num_workers,
+		persistent_w
 ):
 	name = os.listdir(os.path.join(path, "epoch=29-val"))
 	model = OverallModel.load_from_checkpoint(
@@ -130,56 +200,10 @@ def load_model_predict(
 		augmentations=augmentation,
 		zoom_levels=zooms,
 		image_embedding_architecture=architecture,
+		trainer=trainer,
+		num_workers=num_workers,
+		persistent_w=persistent_w
 	)
-
-
-def run_predict(
-		model,
-		test_df: pd.DataFrame,
-		pkl_name: str,
-		scaler,
-		features_to_scale: list[str],
-		ef_features: dict[list[str]],
-		img_path: str,
-		augmentations,
-		zoom_levels: list | None = None,
-		image_embedding_architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"] = "ResNet18",
-):
-	model.eval()
-
-	scaled_test_df = test_df.copy()
-	test_save_path = os.path.join(get_pickle_dir(), 'test_df.pickle')
-	with open(test_save_path, 'wb') as handle:
-		pickle.dump(test_save_path, handle)
-
-	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
-
-	test_dataset = HurricaneDataset(
-		scaled_test_df,
-		img_path,
-		ef_features,
-		image_embedding_architecture=image_embedding_architecture,
-		zoom_levels=zoom_levels,
-		augmentations=augmentations
-	)
-	predictions_list = []
-
-	device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-	if torch.cuda.is_available():
-		model.to(device)
-
-	with torch.no_grad():
-		for index in tqdm(range(len(test_df)), desc="Eval model"):
-			x, y = test_dataset[index]
-			for key in x.keys():
-				x[key] = x[key].unsqueeze(0).to(device)
-			prediction = model(x)
-			predictions_list.append(prediction)
-
-	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
-	logger.info("Pickling the saved data")
-	with open(pickle_save_path, 'wb') as handle:
-		pickle.dump(predictions_list, handle)
 
 
 # please save the pickle file to google drive. it will be in hurricane-harm-herald/predictions_list_satmae.pickle
@@ -333,46 +357,6 @@ def run_model(
 	logger.info(f"Loss function is {loss_function}")
 	logger.info(f"{num_workers} number of workers")
 
-	if load_only:
-		load_model_predict(
-			path=os.path.join(
-				get_checkpoint_dir(),
-				ckp_name
-			),
-			train_dataset=train_df,
-			val_dataset=val_df,
-			test_df=test_df,
-			scaler=scaler,
-			feature_to_scale=features_to_scale,
-			ef_features=ef_features,
-			img_path=img_path,
-			augmentation=augmentations,
-			zooms=zoom_levels,
-			architecture=image_embedding_architecture
-		)
-		return
-
-	model = OverallModel(
-		training_dataset=train_dataset,
-		validation_dataset=val_dataset,
-		num_input_channels=3,
-		EF_features=ef_features,
-		batch_size=64,
-		image_embedding_architecture=image_embedding_architecture,
-		image_encoder_lr=0,
-		general_lr=1e-3,
-		output_activation=None,
-		loss_function_str=loss_function,
-		num_output_classes=4,
-		lr_scheduler_patience=3,
-		zoom_levels=zoom_levels,
-		class_weights=class_weights,
-		image_only_model=False,
-		weight_decay=0.001,
-		num_workers=num_workers,
-		persistent_w=persistent_w,
-	)
-
 	early_stop_callback = EarlyStopping(monitor="val/loss", patience=5, mode="min")
 
 	checkpoint_callback = ModelCheckpoint(
@@ -408,6 +392,49 @@ def run_model(
 			logger=tensor_logger
 		)
 
+	if load_only:
+		load_model_predict(
+			path=os.path.join(
+				get_checkpoint_dir(),
+				ckp_name
+			),
+			train_dataset=train_df,
+			val_dataset=val_df,
+			test_df=test_df,
+			scaler=scaler,
+			feature_to_scale=features_to_scale,
+			ef_features=ef_features,
+			img_path=img_path,
+			augmentation=augmentations,
+			zooms=zoom_levels,
+			architecture=image_embedding_architecture,
+			trainer=trainer,
+			num_workers=num_workers,
+			persistent_w=persistent_w
+		)
+		return
+
+	model = OverallModel(
+		training_dataset=train_dataset,
+		validation_dataset=val_dataset,
+		num_input_channels=3,
+		EF_features=ef_features,
+		batch_size=64,
+		image_embedding_architecture=image_embedding_architecture,
+		image_encoder_lr=0,
+		general_lr=1e-3,
+		output_activation=None,
+		loss_function_str=loss_function,
+		num_output_classes=4,
+		lr_scheduler_patience=3,
+		zoom_levels=zoom_levels,
+		class_weights=class_weights,
+		image_only_model=False,
+		weight_decay=0.001,
+		num_workers=num_workers,
+		persistent_w=persistent_w,
+	)
+
 	trainer.fit(model)
 
 	if predict:
@@ -426,23 +453,27 @@ def run_model(
 
 
 def main():
+	# Run
+	balanced = False
+	ef = ALL_EF_FEATURES
+	features_scale = ALL_FEATURES_TO_SCALE
 	zooms = ["1", "2", "4", "0.5"]
 	zooms = ["1"]
 	architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"]
 	architecture = "ResNet18"
 	spatial = True
-	ckp_name = f"{architecture}_{*zooms,}_balanced_{spatial}"
+	ckp_name = f"{architecture}_{*zooms,}_b{int(balanced)}_{spatial}_EF{len(ef)}"
 	hurricanes = {
 		"test": ["MICHAEL", "MATTHEW"],
 		"train": ["MICHAEL", "MATTHEW"]
 	}
 
 	run_model(
-		ef_features=ALL_EF_FEATURES,
-		features_to_scale=ALL_FEATURES_TO_SCALE,
+		ef_features=ef,
+		features_to_scale=features_scale,
 		split_val_train_test=[0.7, 0.2, 0.1],
 		zoom_levels=zooms,
-		balanced_data=False,
+		balanced_data=balanced,
 		max_epochs=30,
 		log_every_n_steps=100,
 		image_embedding_architecture=architecture,
@@ -453,8 +484,9 @@ def main():
 		torch_float32_precision="medium",
 		predict=True,
 		ckp_name=ckp_name,
-		spatial=True,
-		hurricanes=hurricanes
+		spatial=spatial,
+		hurricanes=hurricanes,
+		load_only=True
 	)
 
 
