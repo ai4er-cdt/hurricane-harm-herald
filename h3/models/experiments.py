@@ -11,7 +11,7 @@ import numpy as np
 import pytorch_lightning as pl
 import time
 import torch
-from rich.progress import track
+from tqdm.rich import tqdm
 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -112,8 +112,9 @@ def load_model_predict(
 		zooms,
 		architecture
 ):
+	name = os.listdir(os.path.join(path, "epoch=29-val"))
 	model = OverallModel.load_from_checkpoint(
-		path,
+		os.path.join(path, "epoch=29-val", name[0]),
 		training_dataset=train_dataset,
 		validation_dataset=val_dataset
 	)
@@ -163,7 +164,7 @@ def run_predict(
 	)
 	predictions_list = []
 
-	for index in track(range(len(test_df)), description="Eval model"):
+	for index in tqdm(range(len(test_df)), desc="Eval model"):
 		x, y = test_dataset[index]
 		for key in x.keys():
 			x[key] = x[key].unsqueeze(0)
@@ -171,7 +172,7 @@ def run_predict(
 		predictions_list.append(prediction)
 
 	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
-
+	logger.info("Pickling the saved data")
 	with open(pickle_save_path, 'wb') as handle:
 		pickle.dump(predictions_list, handle)
 
