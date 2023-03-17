@@ -93,3 +93,13 @@ def get_dem_dir() -> str:
 def get_checkpoint_dir() -> str:
 	"""./data/datasets/checkpoints"""
 	return guarantee_existence(os.path.join(get_datasets_dir(), "checkpoints"))
+
+
+def get_dataloading_dir() -> str:
+	"""./h3/dataloading"""
+	return guarantee_existence(os.path.join(get_h3_dir(), "h3", "dataloading"))
+
+
+def get_h3_data_files_dir() -> str:
+	"""./h3/data_files"""
+	return guarantee_existence(os.path.join(get_h3_dir(), "h3", "data_files"))
