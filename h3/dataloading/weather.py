@@ -12,7 +12,7 @@ import geopy
 import glob
 from shapely.geometry.point import Point
 from h3.utils.file_ops import guarantee_existence
-from h3 import dataprocessing
+from h3.dataprocessing import extract_metadata
 import cdsapi
 
 
@@ -405,17 +405,20 @@ def download_ecmwf_files(
     """Load in ecmwf grib files from online"""
 
     # if file doesn't exist at correct directory, generate it
-    if os.path.exists(directories.get_noaa_data_dir()):
+    if os.path.exists(os.path.join(directories.get_noaa_data_dir(), 'noaa_xbd_hurricanes.pkl')):
         df_noaa_xbd_hurricanes = pd.read_pickle(
             os.path.join(directories.get_noaa_data_dir(), 'noaa_xbd_hurricanes.pkl'))
     else:
         df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
-            os.path.join(directories.get_metadata_pickle_dir(), 'hurdat2-1851-2021-meta.txt'), xbd_hurricanes_only=True)
+            os.path.join(directories.get_h3_data_files_dir(), 'hurdat2-1851-2021-meta.txt'), xbd_hurricanes_only=True)
+        # save noaa pkl
+        save_pkl_to_structured_dir(df_noaa_xbd_hurricanes, )
 
-    if os.path.exists(directories.get_xbd_dir()):
+    if os.path.exists(os.path.join(directories.get_xbd_dir(), 'xbd_data_points.pkl')):
         df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), 'xbd_data_points.pkl'))
     else:
-        _, df_xbd_points = dataprocessing.main()
+        _, df_xbd_points = extract_metadata.main()
+        save_pkl_to_structured_dir(df_xbd_points, 'df_xbd_points.pkl')
 
     event_api_info, start_end_dates, areas = return_relevant_event_info(
         df_xbd_points,
@@ -867,10 +870,13 @@ def save_pkl_to_structured_dir(
     pkl_name: str
 ) -> None:
     if pkl_name == 'noaa_xbd_hurricanes.pkl' or pkl_name == 'noaa_hurricanes.pkl':
-        save_dir_path = directories.get_weather_data_dir()
+        save_dir_path = directories.get_noaa_data_dir()
 
     elif pkl_name == 'ecmwf_params.pkl':
         save_dir_path = directories.get_ecmwf_data_dir()
+
+    elif pkl_name == 'df_xbd_points.pkl':
+        save_dir_path = directories.get_xbd_dir()
 
     else:
         raise ValueError(f'Unrecognised pkl name: {pkl_name}')
