@@ -108,3 +108,8 @@ def get_h3_data_files_dir() -> str:
 def get_ecmwf_data_dir() -> str:
 	"""./data/datasets/weather/ecmwf"""
 	return guarantee_existence(os.path.join(get_weather_data_dir(), "ecmwf"))
+
+
+def get_nooaa_data_dir() -> str:
+	"""./data/datasets/weather/noaa"""
+	return guarantee_existence(os.path.join(get_weather_data_dir(), "noaa"))
