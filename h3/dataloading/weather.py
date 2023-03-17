@@ -431,7 +431,7 @@ def download_ecmwf_files(
         start_end_dates=start_end_dates,
         areas=areas,
         download_dest_dir=download_dest_dir)
-    
+
     return df_xbd_points, df_noaa_xbd_hurricanes, weather_keys
 
 
@@ -449,7 +449,7 @@ def generate_ecmwf_pkl(
         weather_keys=weather_keys,
         df_points=df_xbd_points,
         )
-    
+
     return df_ecmwf_xbd_points
 
 
@@ -703,8 +703,8 @@ def fetch_era5_data(
 
 
 def geoddist(
-    p1: list(float),
-    p2: list(float)
+    p1: list[float],
+    p2: list[float]
 ):
     """Determines the distance between points p1 and p2
 
