@@ -164,11 +164,15 @@ def run_predict(
 	)
 	predictions_list = []
 
+	device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+	if torch.cuda.is_available():
+		model.to(device)
+
 	with torch.no_grad():
 		for index in tqdm(range(len(test_df)), desc="Eval model"):
 			x, y = test_dataset[index]
 			for key in x.keys():
-				x[key] = x[key].unsqueeze(0)
+				x[key] = x[key].unsqueeze(0).to(device)
 			prediction = model(x)
 			predictions_list.append(prediction)
 
