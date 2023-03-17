@@ -359,8 +359,8 @@ def main():
     # filepath = os.path.join(xbd_dir, labels_path, "")
     filepaths_dict = dict.fromkeys([hold_filepath, tier1_filepath,
                                     tier3_filepath, test_filepath])
-    load_and_save_df(filepaths_dict, output_dir)
-
+    df_pre_post_hurr_xy, df_pre_post_hurr_ll = load_and_save_df(filepaths_dict, output_dir)
+    return df_pre_post_hurr_xy, df_pre_post_hurr_ll
 
 if __name__ == "__main__":
     main()

@@ -7,9 +7,11 @@ dependencies:
   - affine
   - cartopy
   - cmocean
+  - cdsapi
   - dask
   - ipython
   - geopandas
+  - geopy 
   - h5netcdf
   - matplotlib
   - numpy

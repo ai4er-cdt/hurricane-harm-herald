@@ -3,8 +3,17 @@ import urllib
 import numpy as np
 from tqdm import tqdm
 from h3.dataloading import general_df_utils
+from h3.utils import directories
+from h3.utils.simple_functions import pad_number_with_zeros
 import os
 import re
+import xarray as xr
+import geopy
+import glob
+from shapely.geometry.point import Point
+from h3.utils.file_ops import guarantee_existence
+from h3 import dataprocessing
+import cdsapi
 
 
 def find_fetch_closest_station_files(
@@ -387,3 +396,484 @@ def return_most_recent_events_by_name(
     recent_tags = df_sorted.groupby('name').first().tag
 
     return df_sorted.loc[df['tag'].isin(recent_tags)]
+
+
+def download_ecmwf_files(
+    download_dest_dir: str,
+    distance_buffer: float = 5
+):
+    """Load in ecmwf grib files from online"""
+
+    # if file doesn't exist at correct directory, generate it
+    if os.path.exists(directories.get_noaa_data_dir()):
+        df_noaa_xbd_hurricanes = pd.read_pickle(
+            os.path.join(directories.get_noaa_data_dir(), 'noaa_xbd_hurricanes.pkl'))
+    else:
+        df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
+            os.path.join(directories.get_metadata_pickle_dir(), 'hurdat2-1851-2021-meta.txt'), xbd_hurricanes_only=True)
+
+    if os.path.exists(directories.get_xbd_dir()):
+        df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), 'xbd_data_points.pkl'))
+    else:
+        _, df_xbd_points = dataprocessing.main()
+
+    event_api_info, start_end_dates, areas = return_relevant_event_info(
+        df_xbd_points,
+        df_noaa_xbd_hurricanes,
+        distance_buffer=distance_buffer,
+        verbose=True)
+    # these are the weather parameters with appropriate formats for download
+    weather_keys = ['d2m', 't2m', 'tp', 'sp', 'slhf', 'e', 'pev', 'ro', 'ssro', 'sro', 'u10', 'v10']
+    weather_params = return_full_weather_param_strings(weather_keys)
+
+    # call api to download ecmwf weather files
+    fetch_era5_data(
+        weather_params=weather_params,
+        start_end_dates=start_end_dates,
+        areas=areas,
+        download_dest_dir=download_dest_dir)
+
+    return df_xbd_points, df_noaa_xbd_hurricanes, weather_keys
+
+
+def generate_ecmwf_pkl(
+    distance_buffer: float = 5
+) -> pd.DataFrame:
+    download_dest_dir = directories.get_ecmwf_data_dir()
+    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_ecmwf_files(download_dest_dir, distance_buffer)
+    # download ecmwf grib files to separate directories within /datasets/weather/ecmwf/
+    # group ecmwf xarray files into dictionary indexed by name of weather event
+    xbd_event_xa_dict = generate_xbd_event_xa_dict(download_dest_dir, df_noaa_xbd_hurricanes)
+    # generate df for all xbd points' closest maximum era5 values
+    df_ecmwf_xbd_points = determine_ecmwf_values_from_points_df(
+        xbd_event_xa_dict,
+        weather_keys=weather_keys,
+        df_points=df_xbd_points,
+        )
+
+    return df_ecmwf_xbd_points
+
+
+# def merge_grib_files_to_nc(
+#     grib_dir_path: str
+# ):
+#     """Merge all GRIB files in a directory into a single NetCDF file.
+
+#     Parameters
+#     ----------
+#     grib_dir_path : str
+#         Path to the directory containing the GRIB files.
+
+#     Returns
+#     -------
+#     None
+#     """
+#     # load in all files in folder
+#     file_paths = '/'.join((grib_dir_path, '*.grib'))
+#     grib_dir_name = '/'.split(grib_dir_path)[-2]
+
+#     xa_dict = {}
+#     for file_path in tqdm.tqdm(glob.glob(file_paths)):
+#         # get name of file
+#         file_name = file_path.split('/')[-1]
+#         # read into xarray
+#         xa_dict[file_name] = xr.load_dataset(file_path, engine="cfgrib")
+#     out = xr.merge([array for array in xa_dict.values()], compat='override')
+#     # save as new file
+#     nc_file_name = '.'.join((grib_dir_name, 'nc'))
+#     save_file_path = '/'.join((grib_dir_path, nc_file_name))
+#     out.to_netcdf(path=save_file_path)
+#     print(f'{nc_file_name} saved successfully')
+
+
+def determine_ecmwf_values_from_points_df(
+    xa_dict: dict,
+    weather_keys: list[str],
+    df_points: pd.DataFrame,
+    distance_buffer: float = 2
+) -> pd.DataFrame:
+    """Determine the maximum weather values from xarray datasets for each point in a pd.DataFrame
+
+    Parameters
+    ----------
+    xa_dict : dict
+        A dictionary containing xarray datasets as values, disaster names as keys
+    weather_keys : list[str]
+        A list of strings representing weather keys to determine maximum values
+    df_points : pd.DataFrame
+        A pandas DataFrame containing latitude, longitude, and disaster name columns
+    distance_buffer : float
+        A float value representing the distance buffer in degrees
+
+    Returns
+    -------
+    pd.DataFrame
+        pd.DataFrame containing the maximum weather values for each point in df_points
+    """
+    dictionary_list = []
+
+    df_xbd_points_grouped = df_points.groupby('disaster_name')
+    for event_name, group in df_xbd_points_grouped:
+
+        # drop first and last dates (avoids nans from api calling)
+        first_date, last_date = xa_dict[event_name].time.values.min(), xa_dict[event_name].time.values.max()
+        event_xa = xa_dict[event_name].drop_sel(time=[first_date, last_date])
+        df = event_xa.to_dataframe()
+        # df = xa_dict[event_name].to_dataframe()
+
+        # remove missing values (i.e. lat-lons in ocean)
+        df_nonans = df.dropna(how='any')
+        # assign latitude longitude multiindices to columns for easier access
+        df_flat = df_nonans.reset_index()
+
+        # coarse df spatial limitation for faster standardisation
+        av_lon, av_lat = group.lon.mean(), group.lat.mean()
+        df_flat = general_df_utils.limit_df_spatial_range(df_flat, [av_lat, av_lon], distance_buffer)
+        df_flat = general_df_utils.standardise_df(df_flat)
+
+        # iterate through each row in the xbd event df
+        for i, row in tqdm.tqdm(group.iterrows(), total=len(group)):
+            poi = Point(row.lon, row.lat)
+            # further restrict df for specific point
+            df_flat_specific = general_df_utils.limit_df_spatial_range(df_flat, [row.lat, row.lon], min_number=1)
+            closest_ind = general_df_utils.find_index_closest_point_in_col(poi, df_flat_specific, 'geometry')
+            # need to find lon, lat of closest point rather than the index
+            # TODO: not sure that max is most relevant for all – parameterisation
+            df_maxes = df_flat_specific[df_flat_specific['geometry'] == df_flat_specific.loc[closest_ind]['geometry']]
+            maxs = df_maxes[weather_keys].abs().max()
+
+            # generate dictionary of weather values
+            dict_data = {k: maxs[k] for k in weather_keys}
+            dict_data['xbd_index'] = row.name
+            dict_data['name'] = event_name
+
+            dictionary_list.append(dict_data)
+
+    return pd.DataFrame.from_dict(dictionary_list)
+
+
+def generate_api_dict(
+    weather_params: list[str],
+    time_info_dict: dict,
+    area: list[float],
+    format: str
+) -> dict:
+    """Generate api dictionary format for single month of event"""
+
+    api_call_dict = {
+        "variable": weather_params,
+        "area": area,
+        "format": format
+    } | time_info_dict
+
+    return api_call_dict
+
+
+def return_full_weather_param_strings(
+    dict_keys: list[str]
+):
+    """Look up weather parameters in a dictionary so they can be entered as short strings rather than typed out in full.
+    Key:value pairs ordered in expected importance
+
+    Parameters
+    ----------
+    dict_keys : list[str]
+        list of shorthand keys for longhand weather parameters. See accompanying documentation on GitHub
+    """
+
+    weather_dict = {
+        'd2m': '2m_dewpoint_temperature', 't2m': '2m_temperature', 'skt': 'skin_temperature',
+        'tp': 'total_precipitation',
+        'sp': 'surface_pressure',
+        'src': 'skin_reservoir_content', 'swvl1': 'volumetric_soil_water_layer_1',
+        'swvl2': 'volumetric_soil_water_layer_2', 'swvl3': 'volumetric_soil_water_layer_3',
+        'swvl4': 'volumetric_soil_water_layer_4',
+        'slhf': 'surface_latent_heat_flux', 'sshf': 'surface_sensible_heat_flux',
+        'ssr': 'surface_net_solar_radiation', 'str': 'surface_net_thermal_radiation',
+        'ssrd': 'surface_solar_radiation_downwards', 'strd': 'surface_thermal_radiation_downwards',
+        'e': 'total_evaporation', 'pev': 'potential_evaporation',
+        'ro': 'runoff', 'ssro': 'sub-surface_runoff', 'sro': 'surface_runoff',
+        'u10': '10m_u_component_of_wind', 'v10': '10m_v_component_of_wind',
+    }
+
+    weather_params = []
+    for key in dict_keys:
+        weather_params.append(weather_dict.get(key))
+
+    return weather_params
+
+
+def generate_times_from_start_end(
+    start_end_dates: list[tuple[pd.Timestamp]]
+) -> dict:
+    """Generate dictionary containing ecmwf time values from list of start and end dates.
+
+    TODO: update so can span multiple months accurately (will involve several api calls)
+    """
+
+    # padding dates of interest + 1 day on either side to deal with later nans
+    dates = pd.date_range(start_end_dates[0]-pd.Timedelta(1, 'd'), start_end_dates[1]+pd.Timedelta(1, 'd'))
+    years, months, days, hours = set(), set(), set(), []
+    # extract years from time
+    for date in dates:
+        years.add(str(date.year))
+        months.add(pad_number_with_zeros(date.month))
+        days.add(pad_number_with_zeros(date.day))
+
+    for i in range(24):
+        hours.append(f'{i:02d}:00')
+
+    years, months, days = list(years), list(months), list(days)
+
+    time_info = {"year": years, "month": months[0], "day": days, "time": hours}
+
+    return time_info
+
+
+def fetch_era5_data(
+    weather_params: list[str],
+    start_end_dates: list[tuple[pd.Timestamp]],
+    areas: list[tuple[float]],
+    download_dest_dir: str,
+    format: str = 'grib'
+):
+    """Generate API call, download files, merge xarrays, save as new pkl file.
+
+    Parameters
+    ----------
+    weather_keys : list[str]
+        list of weather parameter short names to be included in the call
+    start_end_dates : list[tuple[pd.Timestamp]]
+        list of start and end date/times for each event
+    area : list[tuple[float]]
+        list of max/min lat/lon values in format [north, west, south, east]
+    download_dest_dir : str
+        path to download destination
+    format : str = 'grib'
+        format of data file to be downloaded
+
+    Returns
+    -------
+    None
+    """
+    # initialise client
+    c = cdsapi.Client()
+
+    for i, dates in enumerate(start_end_dates):
+        # create new folder for downloads
+        dir_name = '_'.join((
+            dates[0].strftime("%d-%m-%Y"), dates[1].strftime("%d-%m-%Y")
+            ))
+        dir_path = guarantee_existence(os.path.join(download_dest_dir, dir_name))
+
+        time_info_dict = generate_times_from_start_end(dates)
+
+        for param in weather_params:
+            # generate api call info TODO: put into function
+            api_call_dict = generate_api_dict(param, time_info_dict, areas[i], format)
+            file_name = f'{param}.{format}'
+            dest = '/'.join((dir_path, file_name))
+            # make api call
+            try:
+                c.retrieve(
+                    'reanalysis-era5-land',
+                    api_call_dict,
+                    dest
+                )
+            # if error in fetching, limit the parameter
+            except TypeError():
+                print(f'{param} not found in {dates}. Skipping fetching, moving on.')
+
+        # load in all files in folder
+        file_paths = '/'.join((dir_path, f'*.{format}'))
+
+        xa_dict = {}
+        for file_path in tqdm.tqdm(glob.glob(file_paths)):
+            # get name of file
+            file_name = file_path.split('/')[-1]
+            # read into xarray
+            xa_dict[file_name] = xr.load_dataset(file_path, engine="cfgrib")
+
+        # merge TODO: apparently conflicting values of 'step'. Unsure why.
+        out = xr.merge([array for array in xa_dict.values()], compat='override')
+        # save as new file
+        nc_file_name = '.'.join((dir_name, 'nc'))
+        save_file_path = '/'.join((download_dest_dir, nc_file_name))
+        out.to_netcdf(path=save_file_path)
+        print(f'{nc_file_name} saved successfully')
+
+
+def geoddist(
+    p1: list[float],
+    p2: list[float]
+):
+    """Determines the distance between points p1 and p2
+
+    Parameters
+    ----------
+    p1 : list(float)
+        format [lat1, lon1]
+    p2 : list(float)
+        format [lat2, lon2]
+    """
+    return geopy.distance.Geodesic.WGS84.Inverse(p1[1], p1[0], p2[1], p2[0])['s12']
+
+
+def generate_xbd_event_xa_dict(
+    nc_dir_path: str,
+    df_xbd_hurricanes_noaa: pd.DataFrame
+) -> dict:
+    """Generate a dictionary of xarray datasets for each hurricane event, where each dataset
+    contains the relevant variables (latitude, longitude, wind speed, etc.) from the
+    corresponding netCDF file in the specified directory.
+
+    Parameters
+    ----------
+    nc_dir_path : str
+        Path to the directory containing the netCDF files
+    df_xbd_hurricanes_noaa : pd.DataFrame
+        DataFrame containing information about the relevant hurricanes, including their names and dates
+
+    Returns
+    -------
+    dict
+        A dictionary where the keys are the names of the hurricane events and the values are the corresponding
+        xarray datasets
+    """
+
+    xa_dict = {}
+    event_info = {
+        'FLORENCE': '14-09-2018',
+        'HARVEY': '26-08-2017',
+        'MATTHEW': '04-10-2016',
+        'MICHAEL': '10-10-2018'
+    }
+    # load in all .nc files in folder
+    file_names = [fl for fl in os.listdir(nc_dir_path) if fl.endswith(".nc")]
+
+    # assign xarrays to labelled dictionary
+    for event_name, date in tqdm.tqdm(event_info.items()):
+        # find index of file with date matching event
+        index = [idx for idx, s in enumerate(file_names) if date in s][0]
+        # generate file path from file name
+        file_path = '/'.join((nc_dir_path, file_names[index]))
+        # assign to dictionary key with correct event name
+        xa_dict[event_name] = xr.load_dataset(file_path)
+
+    return xa_dict
+
+
+def return_relevant_event_info(
+    df_point_obs: pd.DataFrame,
+    df_xbd_hurricanes_noaa: pd.DataFrame,
+    distance_buffer: float = 5,
+    verbose: bool = True
+) -> dict:
+    """Return the date and geography spans relevvant to each hurricane event in a format conducive to ECMWF API call
+
+    Parameters
+    ----------
+    df_point_obs : pd.DataFrame
+        pd.DataFrame of xbd observations
+    df_xbd_hurricanes_noaa : pd.DataFrame
+        pd.DataFrame of NOAA HURDAT2 Best Track observations for xbd hurricanes
+    distance_buffer : float = 2.5
+        number of degrees from mean of observed lat/lons to count as important to the damage. N.B. this is fairly
+        arbitrary, and may require expansion when parameterisation of weather is considered
+    verbose : bool = True
+        if verbose is True, also prints the result
+
+    Returns
+    -------
+    dict
+        dictionary of format {'EVENT_NAME', [[start_time, end_time], [north, west, south, east]]} for each event
+    """
+
+    info_dict = {}
+
+    for event_name in df_xbd_hurricanes_noaa.name.unique():
+        mean_obs_lat = df_point_obs[df_point_obs['disaster_name'] == event_name]['lat'].mean()
+        mean_obs_lon = df_point_obs[df_point_obs['disaster_name'] == event_name]['lon'].mean()
+
+        restricted_event_df = general_df_utils.limit_df_spatial_range(
+            df_xbd_hurricanes_noaa[df_xbd_hurricanes_noaa.name == event_name],
+            [mean_obs_lat, mean_obs_lon],
+            distance_buffer)
+
+        dates = [restricted_event_df.date.min(), restricted_event_df.date.max()]
+
+        # coordinates to maximise
+        north, east = (mean_obs_lat+distance_buffer), (mean_obs_lon+distance_buffer)
+        # coordinates to minimise
+        south, west = (mean_obs_lat-distance_buffer), (mean_obs_lon-distance_buffer)
+
+        maximised, minimised = maximise_area_through_rounding([north, east], [west, south])
+        event_area = [maximised[0], minimised[0], minimised[1], maximised[1]]
+
+        info_dict[event_name] = [dates, event_area]
+        if verbose:
+            print(f'event_name: {event_name}')
+            print(f'min_date: {dates[0]}, max_date: {dates[1]}, event_area: {event_area}')
+
+    # reformat for api call
+    start_end_dates, areas = [], []
+    for k in info_dict:
+        start_end_dates.append(info_dict[k][0])
+        areas.append(info_dict[k][1])
+
+    return info_dict, start_end_dates, areas
+
+
+def maximise_area_through_rounding(
+    maximise: list[float],
+    minimise: list[float]
+) -> tuple[list]:
+    """Generate an area as large as possible by rounding up/down dependent on sign of coordinate
+
+    Parameters
+    ----------
+    maximise : list[float]
+        e.g. [north, east]
+    minimise : list[float]
+        e.g. [south, west]
+
+    Returns
+    -------
+    tuple[list]:
+        of maximised/minimised values. For above example this would be: ([north, east], [south, west])
+    """
+
+    maximised = []
+    minimised = []
+    for coord in maximise:
+        if coord <= 0:
+            max_coord = np.floor(coord)
+        else:
+            max_coord = np.ceil(coord)
+        maximised.append(max_coord)
+
+    for coord in minimise:
+        if coord <= 0:
+            min_coord = np.ceil(coord)
+        else:
+            min_coord = np.floor(coord)
+        minimised.append(min_coord)
+
+    return maximised, minimised
+
+
+def save_pkl_to_structured_dir(
+    df_to_pkl: pd.DataFrame,
+    pkl_name: str
+) -> None:
+    if pkl_name == 'noaa_xbd_hurricanes.pkl' or pkl_name == 'noaa_hurricanes.pkl':
+        save_dir_path = directories.get_weather_data_dir()
+
+    elif pkl_name == 'ecmwf_params.pkl':
+        save_dir_path = directories.get_ecmwf_data_dir()
+
+    else:
+        raise ValueError(f'Unrecognised pkl name: {pkl_name}')
+
+    save_dest = os.path.join(save_dir_path, pkl_name)
+    df_to_pkl.to_pickle(save_dest)
