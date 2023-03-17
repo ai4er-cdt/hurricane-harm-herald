@@ -11,6 +11,7 @@ import numpy as np
 import pytorch_lightning as pl
 import time
 import torch
+from rich.progress import track
 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -98,6 +99,39 @@ def drop_cols_containing_lists(
 	return df
 
 
+def load_model_predict(
+		path: str,
+		train_dataset: pd.DataFrame,
+		val_dataset: pd.DataFrame,
+		test_df: pd.DataFrame,
+		scaler,
+		feature_to_scale,
+		ef_features,
+		img_path,
+		augmentation,
+		zooms,
+		architecture
+):
+	model = OverallModel.load_from_checkpoint(
+		path,
+		training_dataset=train_dataset,
+		validation_dataset=val_dataset
+	)
+
+	run_predict(
+		model=model,
+		test_df=test_df,
+		pkl_name=os.path.basename(path),
+		scaler=scaler,
+		features_to_scale=feature_to_scale,
+		ef_features=ef_features,
+		img_path=img_path,
+		augmentations=augmentation,
+		zoom_levels=zooms,
+		image_embedding_architecture=architecture,
+	)
+
+
 def run_predict(
 		model,
 		test_df: pd.DataFrame,
@@ -129,7 +163,7 @@ def run_predict(
 	)
 	predictions_list = []
 
-	for index in range(len(test_df)):
+	for index in track(range(len(test_df)), description="Eval model"):
 		x, y = test_dataset[index]
 		for key in x.keys():
 			x[key] = x[key].unsqueeze(0)
@@ -164,6 +198,7 @@ def run_model(
 		ckp_name: str | None = None,
 		spatial: bool = False,
 		hurricanes: dict[str, list[str]] | None = None,
+		load_only: bool = False
 ) -> None:
 
 	cuda_device = torch.cuda.is_available()
@@ -291,6 +326,25 @@ def run_model(
 
 	logger.info(f"Loss function is {loss_function}")
 	logger.info(f"{num_workers} number of workers")
+
+	if load_only:
+		load_model_predict(
+			path=os.path.join(
+				get_checkpoint_dir(),
+				ckp_name
+			),
+			train_dataset=train_df,
+			val_dataset=val_df,
+			test_df=test_df,
+			scaler=scaler,
+			feature_to_scale=features_to_scale,
+			ef_features=ef_features,
+			img_path=img_path,
+			augmentation=augmentations,
+			zooms=zoom_levels,
+			architecture=image_embedding_architecture
+		)
+		return
 
 	model = OverallModel(
 		training_dataset=train_dataset,
