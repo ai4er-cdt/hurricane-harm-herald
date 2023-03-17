@@ -220,8 +220,10 @@ def get_distance_coast(buildings: np.ndarray, coast_points: np.ndarray) -> tuple
 	The haversine function assumes the coordinates are latitude and longitude in radians.
 	Use the following equation for the Haversine distance:
 
-	.. math:: D(x, y) = 2 \arcsin{\left(\sqrt{\sin^{2}{\left(\frac{x_1 - y_1}{2}\right)} +
-	\cos{(x_1)}\cos{(y_1)}\sin^{2}{\left(\frac{x_2-y_2}{2}\right)}}\right)}
+	.. math::
+		D(x, y) = 2 \\arcsin{\\left(\\sqrt{\\sin^{2}{\\left(\\frac{x_1 - y_1}{2}\\right)} +
+						\\cos{(x_1)}\\cos{(y_1)}\\sin^{2}{\\left(\\frac{x_2-y_2}{2}\\right)}}\\right)}
+
 	"""
 	coast_points = np.radians(coast_points)
 	buildings = np.radians(buildings)

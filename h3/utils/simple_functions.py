@@ -1,3 +1,9 @@
+from rich.console import Console
+from rich.table import Table
+from rich.text import Text
+from rich.syntax import Syntax
+
+
 def convert_bytes(size: float) -> str:
 	"""Function to convert bytes into a human-readable format
 	https://stackoverflow.com/a/59174649/9931399
@@ -17,3 +23,22 @@ def convert_bytes(size: float) -> str:
 			return f"{size:3.2f} {x}"
 		size /= 1024.0
 	return str(size)
+
+
+def rich_table(args, values, title):
+	console = Console()
+	table = Table(
+		title=title,
+		show_header=True,
+		header_style="bold magenta"
+	)
+	table.add_column("Variable")
+	table.add_column("Value")
+
+	for i in args:
+		table.add_row(
+			i,
+			Syntax(str(values[i]), lexer="python")
+		)
+
+	console.print(table)

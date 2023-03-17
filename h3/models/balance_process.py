@@ -64,13 +64,13 @@ def rename_and_drop_duplicated_cols(
     return dropped_df.rename(columns=new_col_names)
 
 
-def data_loader(data_dir: Path, ECMWF):
+def data_loader(data_dir: str, ECMWF):
     """Loads NOAA weather, terrain and soil EFS from the pickle file,
     merges them and drops the duplicates.
 
     Parameters
     ----------
-    data_dir : Path
+    data_dir : str
         Path to the datasets, input either the google drive path or the local
         path.
     Returns
@@ -120,7 +120,7 @@ def main(data_dir, ECMWF=False):
 
     Parameters
     ----------
-    data_dir : Path
+    data_dir : str
        Path to directory of all the pickle EF data file.
 
     Returns
