@@ -140,6 +140,14 @@ Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track
  │             └── ...
 
 
+## Contributors
+
+<a href="https://github.com/ai4er-cdt/hurricane-harm-herald/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ai4er-cdt/hurricane-harm-herald" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
+
 
 ## License
 This software is double_licensed.  
