@@ -1,0 +1,53 @@
+h3.utils package
+================
+
+Submodules
+----------
+
+h3.utils.directories module
+---------------------------
+
+.. automodule:: h3.utils.directories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.utils.downloader module
+--------------------------
+
+.. automodule:: h3.utils.downloader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.utils.file\_ops module
+-------------------------
+
+.. automodule:: h3.utils.file_ops
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.utils.geometry\_ops module
+-----------------------------
+
+.. automodule:: h3.utils.geometry_ops
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.utils.simple\_functions module
+---------------------------------
+
+.. automodule:: h3.utils.simple_functions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: h3.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
