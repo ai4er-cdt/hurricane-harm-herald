@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+	- family-names: Allemang
+	  given-names: Owen
+	  orcid: https://orcid.org/0000-0002-2006-5544
+	- family-names: Blok
+	  given-names: Lisanne
+	  orcid:
+	- family-names: Marshall-Hawkes
+	  given-names: Ruari
+	  orcid:
+	- family-names: Timmerman
+	  given-names: Orlando
+	  orcid:
+	- family-names: Zheng
+	  given-names: Peisong
+	  orcid:
+title: "Hurricane Harm Herald - h3"
+version: 0.1.0
+date-released: 2023-03-17
