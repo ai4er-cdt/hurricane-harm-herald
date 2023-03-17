@@ -453,6 +453,7 @@ def run_model(
 
 
 def main():
+	pl.seed_everything(17, workers=True)
 	# Run
 	balanced = False
 	ef = ALL_EF_FEATURES
