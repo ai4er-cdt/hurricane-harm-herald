@@ -164,12 +164,13 @@ def run_predict(
 	)
 	predictions_list = []
 
-	for index in tqdm(range(len(test_df)), desc="Eval model"):
-		x, y = test_dataset[index]
-		for key in x.keys():
-			x[key] = x[key].unsqueeze(0)
-		prediction = model(x)
-		predictions_list.append(prediction)
+	with torch.no_grad():
+		for index in tqdm(range(len(test_df)), desc="Eval model"):
+			x, y = test_dataset[index]
+			for key in x.keys():
+				x[key] = x[key].unsqueeze(0)
+			prediction = model(x)
+			predictions_list.append(prediction)
 
 	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
 	logger.info("Pickling the saved data")
