@@ -12,6 +12,7 @@ import geopy
 import glob
 from shapely.geometry.point import Point
 from h3.utils.file_ops import guarantee_existence
+from h3 import dataprocessing
 import cdsapi
 
 
@@ -410,14 +411,11 @@ def download_ecmwf_files(
         df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
             os.path.join(directories.get_metadata_pickle_dir(), 'hurdat2-1851-2021-meta.txt'), xbd_hurricanes_only=True)
 
-# TODO: script for xbd points
-    # if os.path.exists(directories.get_xbd_dir()):
-    #     df_xbd_points = pd.read_pickle(os.join(directories.get_xbd_dir(),)
-    # else:
-
-
-    # df_points_xbd = gtc_functions.standardise_df(pd.read_pickle(os.path.join(get_metadata_pickle_dir(), 'filtered_lnglat_pre_pol_post_damage.pkl')))
-    df_xbd_points = general_df_utils.standardise_df(pd.read_pickle('/Users/orlandotimmerman/Library/CloudStorage/GoogleDrive-rt582@cam.ac.uk/My Drive/ai4er/python/hurricane/hurricane-harm-herald/data/datasets/processed_data/metadata_pickle/lnglat_pre_pol_post_damage.pkl'))
+    # TODO: script for xbd points
+    if os.path.exists(directories.get_xbd_dir()):
+        df_xbd_points = pd.read_pickle(os.join(directories.get_xbd_dir(), 'xbd_data_points.pkl'))
+    else:
+        _, df_xbd_points = dataprocessing.main()
 
     event_api_info, start_end_dates, areas = return_relevant_event_info(
         df_xbd_points,
@@ -844,3 +842,21 @@ def maximise_area_through_rounding(
         minimised.append(min_coord)
 
     return maximised, minimised
+
+
+def save_pkl_to_structured_dir(
+    df_to_pkl: pd.DataFrame,
+    pkl_name: str
+) -> None:
+    if pkl_name == 'noaa_xbd_hurricanes.pkl' or pkl_name == 'noaa_hurricanes.pkl':
+        save_dir_path = directories.get_weather_data_dir()
+
+    elif pkl_name == 'ecmwf_params.pkl':
+        save_dir_path = directories.get_ecmwf_data_dir()
+
+    else:
+        raise ValueError(f'Unrecognised pkl name: {pkl_name}')
+
+    save_dest = os.join(save_dir_path, pkl_name)
+    df_to_pkl.to_pickle(save_dest)
+
