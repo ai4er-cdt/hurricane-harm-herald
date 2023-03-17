@@ -13,8 +13,7 @@ jobs:
           pip install sphinx sphinx_rtd_theme sphinx-mathjax-offline
       - name: Sphinx build
         run: |
-          sphinx-apidoc -f -o docs\source h3\
-          docs\make html
+          sphinx-build doc _build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
