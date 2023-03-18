@@ -13,6 +13,8 @@ containing over 700,000 building annotations and labels.
 
 ## Documentation
 
+Functions documentation is available [here](blob/auto_docs/docs/build/html/index.html)
+
 The `notebooks` folder contains interactive walk-throughs of data loading and visualisation, and model training and testing. The accompanying written report is in progress and will be uploaded to the repository once complete.
 
 ## Contributing
@@ -86,36 +88,38 @@ Download the dataset from https://xview2.org/ (you will need to register for an 
 
 After downloading, the data will be organised in the directories as follows:
 
-/data/datasets/xBD_data/geotiffs/
+`/data/datasets/xBD_data/geotiffs/`
 
- ├── tier1
- │      ├── images
- │      │      └── <image_id>.png
- │      │      └── ...
- │      └── labels
- │             └── <image_id>.json
- │             └── ...
+```
+ ├── tier1  
+ │      ├── images  
+ │      │      └── <image_id>.png  
+ │      │      └── ...  
+ │      └── labels  
+ │             └── <image_id>.json  
+ │             └── ...  
  ├── tier3
- │      ├── images
- │      │      └── <image_id>.png
- │      │      └── ...
- │      └── labels
- │             └── <image_id>.json
- │             └── ...
- ├── test
- │      ├── images
- │      │      └── <image_id>.png
- │      │      └── ...
- │      └── labels
- │             └── <image_id>.json
- │             └── ...
- └── holdout
-        ├── images
-        │      └── <image_id>.png
-        │      └── ...
-        └── labels
-               └── <image_id>.json
-               └── ...
+ │      ├── images  
+ │      │      └── <image_id>.png  
+ │      │      └── ...  
+ │      └── labels  
+ │             └── <image_id>.json  
+ │             └── ...  
+ ├── test  
+ │      ├── images  
+ │      │      └── <image_id>.png  
+ │      │      └── ...  
+ │      └── labels  
+ │             └── <image_id>.json  
+ │             └── ...  
+ └── holdout  
+        ├── images  
+        │      └── <image_id>.png  
+        │      └── ...  
+        └── labels  
+               └── <image_id>.json  
+               └── ...  
+```
 
 ### DEM
 
