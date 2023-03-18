@@ -35,6 +35,7 @@ def load_cmorph(hurricane_date: datetime.date, day_range: int):
 
 	file_to_load = cmorph_filename_range(start_date, stop_date)
 	weather_data = xr.open_mfdataset(file_to_load, parallel=True)
+	return weather_data
 
 
 def main():
