@@ -1,0 +1,82 @@
+h3.dataloading package
+======================
+
+.. automodule:: h3.dataloading
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+h3.dataloading.HurricaneDataset module
+--------------------------------------
+
+.. automodule:: h3.dataloading.HurricaneDataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.cmorph module
+----------------------------
+
+.. automodule:: h3.dataloading.cmorph
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.flood\_risk module
+---------------------------------
+
+.. automodule:: h3.dataloading.flood_risk
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.general\_df\_utils module
+----------------------------------------
+
+.. automodule:: h3.dataloading.general_df_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.noaa\_six\_hourly\_processing module
+---------------------------------------------------
+
+.. automodule:: h3.dataloading.noaa_six_hourly_processing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.strom\_surge module
+----------------------------------
+
+.. automodule:: h3.dataloading.strom_surge
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.terrain\_ef module
+---------------------------------
+
+.. automodule:: h3.dataloading.terrain_ef
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.weather module
+-----------------------------
+
+.. automodule:: h3.dataloading.weather
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataloading.xbd module
+-------------------------
+
+.. automodule:: h3.dataloading.xbd
+   :members:
+   :undoc-members:
+   :show-inheritance:
