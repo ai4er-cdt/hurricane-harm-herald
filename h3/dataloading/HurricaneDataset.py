@@ -26,33 +26,12 @@ class HurricaneDataset(Dataset):
         self.img_path = img_path
         self.EF_features = EF_features
         self.zoom_levels = ["1"] if zoom_levels is None else zoom_levels
-
-        if image_embedding_architecture == "ResNet18":
-            self.preprocessing = transforms.Compose([
-                    transforms.CenterCrop(224),
-                    transforms.ToTensor(),
-                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ])
-            
-        elif image_embedding_architecture == "ViT_L_16":
-            self.preprocessing = ViT_L_16_Weights.IMAGENET1K_V1.transforms()
-        
-        elif image_embedding_architecture == "Swin_V2_B":
-            self.preprocessing = Swin_V2_B_Weights.IMAGENET1K_V1.transforms()
-
-        elif image_embedding_architecture == "SatMAE":
-            # values from CustomDatasetFromImages() in https://github.com/sustainlab-group/SatMAE/blob/main/util/datasets.py
-            self.preprocessing = transforms.Compose([
-                    transforms.CenterCrop(224),
-                    transforms.ToTensor(),
-                    transforms.Normalize(mean=[0.4182007312774658, 0.4214799106121063, 0.3991275727748871], 
-                                         std=[0.28774282336235046, 0.27541765570640564, 0.2764017581939697]),
-                ])
+        self.image_embedding_architecture = image_embedding_architecture
 
         if augmentations is not None:
-            self.transform = transforms.Compose([augmentations, self.preprocessing])
+            self.transform = transforms.Compose([augmentations, self.get_preprocessing()])
         else:
-            self.transform = self.preprocessing
+            self.transform = self.get_preprocessing()
 
         self.ram_load = ram_load
 
@@ -69,7 +48,36 @@ class HurricaneDataset(Dataset):
                 zoom: load_full_ram(zoom_path, transform=self.transform) for zoom, zoom_path in self.lst_paths.items()
             }
 
-    def __len__(self):
+    def get_preprocessing(self):
+        if self.image_embedding_architecture == "ResNet18":
+            preprocessing = transforms.Compose([
+                    transforms.CenterCrop(224),
+                    transforms.ToTensor(),
+                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                ])
+
+        elif self.image_embedding_architecture == "ViT_L_16":
+            preprocessing = ViT_L_16_Weights.IMAGENET1K_V1.transforms()
+
+        elif self.image_embedding_architecture == "Swin_V2_B":
+            preprocessing = Swin_V2_B_Weights.IMAGENET1K_V1.transforms()
+
+        elif self.image_embedding_architecture == "SatMAE":
+            # values from CustomDatasetFromImages()
+            # https://github.com/sustainlab-group/SatMAE/blob/main/util/datasets.py
+            preprocessing = transforms.Compose([
+                    transforms.CenterCrop(224),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.4182007312774658, 0.4214799106121063, 0.3991275727748871],
+                        std=[0.28774282336235046, 0.27541765570640564, 0.2764017581939697]
+                    ),
+                ])
+        else:
+            preprocessing = transforms.ToTensor()
+        return preprocessing
+
+    def __len__(self) -> int:
         return len(self.dataframe)
 
     def __getitem__(self, idx) -> tuple:
