@@ -128,10 +128,10 @@ def exclude_df_rows_by_range(
     col_names : list[str]
         e.g. ['col1', ..., 'colN']
         list of column names to be restricted by their relevant...
-    value_bounds : list[ |[tuple[float], list[float]] ]
+    value_bounds : list[ [tuple[float], list[float]] ]
         e.g. [ (start_val1,end_val1), ..., (start_valN,end_valN) ]
         list of tuples (or lists) specifying minimum and maximum values to allow
-    buffer : |[ list[float], list[tuple[float,str]] ] = 0
+    buffer : [ list[float], list[tuple[float,str]] ] = 0
         add buffer on either side of value_bounds. Defaults to no buffer. Useful
         for specifying weather station observations must exist some time before
         and after the event of interest
@@ -229,7 +229,7 @@ def calc_distance_between_df_cols(
     ----------
     df: pd.DataFrame
         df containing two pairs of lat/lon values
-    cols_compare: list[[tuple[str]] | list[list[str]]
+    cols_compare: list[[tuple[str]] or list[list[str]]
         list of columns of lat/lon values. Inputted as pairs as a tuple or list
 
     Returns
@@ -374,7 +374,7 @@ def limit_df_spatial_range(
     ----------
     df : pd.DataFrame
         df containing 'lat' and 'lon' columns
-    centre_coords : list[float] | tuple[float]
+    centre_coords : list[float] or tuple[float]
         geographical centre about which to restrict df
     min_number : int = None
         minimum number of rows in df to be returned
