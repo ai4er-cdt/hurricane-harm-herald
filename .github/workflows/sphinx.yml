@@ -4,6 +4,8 @@ on:
   - push
 
 jobs:
+  permissions:
+    contents: write
   build:
     runs-on: ubuntu-latest
     steps:
@@ -22,5 +24,3 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: docs/build/html
         publish_branch: auto_docs
-        permissions:
-          contents: write
