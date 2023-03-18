@@ -32,25 +32,6 @@ The team would like to thank Robert Muir-Wood for proposing the project, and Dom
 
 ---
 
-
-## Environment setup
-
-During development we used `Python`'s `miniconda` and installed packages via `conda-forge`. This is recommended as it helps control dependencies and ensures the latest stable versions of packages are installed without intering with your existing repositories.
-
-Our minimum `Python` version is `3.9`, which can be downloaded from [here](https://www.python.org/downloads/).
-
-To get started, make sure you have `Python` version `3.9+` running, and have downloaded both `pip` ([here](https://pypi.org/project/pip/)) and `conda` ([here](https://conda.io/projects/conda/en/stable/user-guide/install/download.html)).
-
-- First, initialize `conda` by running `conda create -n $ENV_NAME` within your project root directory (see below for directory setup). This will create an `anaconda` virtual environment ready to install dependencies.
-- Second, install `pip` via `conda activate $ENV_NAME` && `conda install pip`.
-
-Now you are in your virtual environment you can install the packages required to train and run the baseline model. These packages are kept in this repository's requirements.txt file. Install these packages using `pip install -r requirements.txt`.
-
-
-## Loading the datasets
-
-
-
 ## Environment setup
 
 It supports `python>=3.10`.
