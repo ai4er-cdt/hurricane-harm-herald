@@ -3,9 +3,10 @@ name: Sphinx build
 on:
   - push
 
+permissions:
+  contents: write
+
 jobs:
-  permissions:
-    contents: write
   build:
     runs-on: ubuntu-latest
     steps:
