@@ -13,7 +13,7 @@ containing over 700,000 building annotations and labels.
 
 ## Documentation
 
-Functions documentation is available [here](blob/auto_docs/docs/build/html/index.html)
+Functions documentation is available (https://ai4er-cdt.github.io/hurricane-harm-herald/)
 
 The `notebooks` folder contains interactive walk-throughs of data loading and visualisation, and model training and testing. The accompanying written report is in progress and will be uploaded to the repository once complete.
 
