@@ -3,6 +3,7 @@
 *Owen Allemang, Lisanne Blok, Ruari Marshall-Hawkes, Orlando Timmerman, Peisong Zheng*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
+[![docs](https://github.com/ai4er-cdt/hurricane-harm-herald/actions/workflows/sphinx.yml/badge.svg)](https://ai4er-cdt.github.io/hurricane-harm-herald/)
 
 The destruction caused by hurricanes has huge social and economic impact. Between 1980-2008, 57\% of economic losses from worldwide natural disasters stem from storms making landfall across continental US and the Caribbean. Hurricanes comprise the bulk of these. In continental US alone, 206 hurricane landfalls between 1900 and 2017 caused on average over \$20 billion in annual damage (Normalised from the 2018 to the 2022 dollar value). Development in vulnerable areas driven by population growth and increasing wealth increases average year-on-year losses. In addition, anthropogenic global warming correlates with the fractional proportion of high-intensity extreme weather events globally, including hurricanes and their associated environmental hazards such as storm surges.
 
