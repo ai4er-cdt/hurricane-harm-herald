@@ -10,7 +10,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
-from h3 import RANDOM_STATE
+from h3.constants import RANDOM_STATE
 from h3.utils.directories import get_pickle_dir
 
 
