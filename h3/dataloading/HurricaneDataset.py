@@ -80,13 +80,6 @@ class HurricaneDataset(Dataset):
             for zoom_level in self.zoom_levels:
                 zoomed_images = {"img_zoom_" + zoom_level: self.all_images[zoom_level][idx]}
 
-            for key in self.EF_features:
-                x.update(
-                    {key: torch.as_tensor(self.dataframe[self.EF_features[key]].iloc[idx]).type(torch.FloatTensor)}
-                )
-            label = torch.as_tensor(self.dataframe["damage_class"].iloc[idx]).type(torch.LongTensor)
-            x.update(zoomed_images)
-
         else:
             image_id = self.dataframe["id"].iloc[idx]
             x = {}
@@ -99,34 +92,33 @@ class HurricaneDataset(Dataset):
                 # img = Image.open(path)
                 # img = self.transform(img)
                 # img = np.asarray(img)
-                #img = np.swapaxes(img, 0, 2)
+                # img = np.swapaxes(img, 0, 2)
 
                 zoomed_images["img_zoom_" + zoom_level] = img
 
-            #idx_EFs = [int(self.dataframe[ef].iloc[idx]) for ef in EF_features]
+            # idx_EFs = [int(self.dataframe[ef].iloc[idx]) for ef in EF_features]
 
             # for each of the different types of EF (e.g. weather, soil, DEM) grab
             # their associated values and put them into the dictionary
-            for key in self.EF_features:
-                x.update({key: torch.as_tensor(self.dataframe[self.EF_features[key]].iloc[idx]).type(torch.FloatTensor)})
+        for key in self.EF_features:
+            x.update({key: torch.as_tensor(self.dataframe[self.EF_features[key]].iloc[idx]).type(torch.FloatTensor)})
 
             # from risk df
             # storm_surge_ef = self.dataframe["max_sust_wind"].iloc[idx]
 
-            label = torch.as_tensor(self.dataframe["damage_class"].iloc[idx]).type(torch.LongTensor)
+        label = torch.as_tensor(self.dataframe["damage_class"].iloc[idx]).type(torch.LongTensor)
 
-            # add Weather EFs
+        # add Weather EFs
 
-            # put it in a dictionary so don't have to return a tonne of different values
-            # img also goes in the below dictionary
-            # x = {"storm_surge_ef": storm_surge_ef, "soil_ef": soil_ef}
-            # EFs = concat all EFs
-            # 0-1 normalize all EFs
-            # mean, std
-            # x = {"EFs": idx_EFs}
-            x.update(zoomed_images)
+        # put it in a dictionary so don't have to return a tonne of different values
+        # img also goes in the below dictionary
+        # x = {"storm_surge_ef": storm_surge_ef, "soil_ef": soil_ef}
+        # EFs = concat all EFs
+        # 0-1 normalize all EFs
+        # mean, std
+        # x = {"EFs": idx_EFs}
+        x.update(zoomed_images)
 
-        #print("x=",x)
         # torch.nn.CrossEntropyLoss expects integer labels, not one-hot labels
         # see https://stackoverflow.com/questions/62456558/is-one-hot-encoding-required-for-using-pytorchs-cross-entropy-loss-function
         # label = F.one_hot(label, num_classes = 5)
