@@ -25,8 +25,12 @@ class HurricaneDataset(Dataset):
     img_path: str
     EF_features : dict
     image_embedding_architecture : str
-    zoom_levels : list
-    ram_load : bool
+    augmentations: optional
+        The default is None
+    zoom_levels : list, optinal
+        The default uses ["1"].
+    ram_load : bool, optional
+        The default is False
     """
     def __init__(
             self,
@@ -43,9 +47,10 @@ class HurricaneDataset(Dataset):
         self.EF_features = EF_features
         self.zoom_levels = ["1"] if zoom_levels is None else zoom_levels
         self.image_embedding_architecture = image_embedding_architecture
+        self.augmentations = augmentations
 
-        if augmentations is not None:
-            self.transform = transforms.Compose([augmentations, self.get_preprocessing()])
+        if self.augmentations is not None:
+            self.transform = transforms.Compose([self.augmentations, self.get_preprocessing()])
         else:
             self.transform = self.get_preprocessing()
 
@@ -148,3 +153,11 @@ class HurricaneDataset(Dataset):
         # label = F.one_hot(label, num_classes = 5)
 
         return x, label
+
+    def __str__(self):
+        return "%s, EF:%s, zoom:%s, augmented:%s" % (
+            self.image_embedding_architecture,
+            sum(map(len, self.EF_features.values())),
+            *self.zoom_levels,
+            self.augmentations
+        )
