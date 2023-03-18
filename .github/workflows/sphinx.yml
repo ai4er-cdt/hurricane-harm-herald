@@ -24,12 +24,12 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: html-docs
-        path: _build/
+        path: docs/
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: _build/
+        publish_dir: docs/
         publish_branch: auto_docs
         force_orphan: true
