@@ -1,14 +1,6 @@
 name: Sphinx build
 
-on:
-  push:
-    branches:
-      - main
-      - auto_docs
-  pull_request:
-    branches:
-      - main
-      - auto_docs
+on: [push, pull_request]
 
 permissions:
   contents: write
