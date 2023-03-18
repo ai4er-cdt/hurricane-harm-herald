@@ -71,6 +71,12 @@ conda env create -f environment_no_gpu.yml
 
 ### PIP
 You may want to install it in a virtual environment.
+
+```shell
+pip install -e .
+```
+
+If you want to only install the requirements.
 ```shell
 pip install -r requirement.txt
 ```
