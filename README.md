@@ -132,6 +132,7 @@ Once your account created, have your credential on hand to input them when neede
 
 Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track Data, and ERA5-Land Reanalysis can be downloaded by running the `download_weather_data.ipynb` notebook. This will be downloaded in the following file structure:
 
+```
  ├── weather_data
  │      ├── ecmwf_era5
  │      │      └── <image_id>.png
@@ -142,7 +143,7 @@ Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track
  │      ├── global_isd
  │             └── <image_id>.png
  │             └── ...
-
+```
 
 ## Contributors
 
