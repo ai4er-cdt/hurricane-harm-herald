@@ -1,25 +1,41 @@
-from torchvision import transforms
+from __future__ import annotations
+
+import os
+
 import pandas as pd
+import torch
+
+from torch.utils.data import Dataset
+from torchvision import transforms
 from torchvision.models import ViT_L_16_Weights
 from torchvision.models import Swin_V2_B_Weights
-import os
-from PIL import Image
-import numpy as np
-import torch
-from torch.utils.data import Dataset
-from h3.models.opti_utils import load_full_ram, open_img
+
+from typing import Literal
+
 from h3 import logger
+from h3.models.opti_utils import load_full_ram, open_img
 
 
 class HurricaneDataset(Dataset):
+    """Torch Dataset for h3's Hurricane data.
+
+    Attributes
+    ----------
+    dataframe : pd.Dataframe
+    img_path: str
+    EF_features : dict
+    image_embedding_architecture : str
+    zoom_levels : list
+    ram_load : bool
+    """
     def __init__(
             self,
-            dataframe,
-            img_path,
-            EF_features,
-            image_embedding_architecture,
+            dataframe: pd.DataFrame,
+            img_path: str,
+            EF_features: dict,
+            image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"],
             augmentations=None,
-            zoom_levels=None,
+            zoom_levels: list | None = None,
             ram_load: bool = False
     ):
         self.dataframe = dataframe
