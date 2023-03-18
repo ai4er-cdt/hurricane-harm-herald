@@ -158,7 +158,7 @@ def concat_df_cols(
     df: pd.DataFrame,
     concatted_col_name: str,
     cols_to_concat: list[str],
-    delimiter: str = ''
+    delimiter: str = ""
 ) -> pd.DataFrame:
     """Concatenate columns in a pd.DataFrame into a new column of strings linked
     by 'delimiter'.capitalize()
@@ -171,7 +171,7 @@ def concat_df_cols(
         name of new concatenated column
     cols_to_concat : list[str]
         names of columns to concatenate (in desired order)
-    delimiter : str = ''
+    delimiter : str, optional
         character to insert in between column values. Defaults to empty string
 
     Returns
@@ -188,7 +188,7 @@ def concat_df_cols(
 def generate_lat_lon_from_points_cols(
     df: pd.DataFrame,
     points_cols: list[str]
-) -> pd.DataFrame:
+) -> None:
     """Generate a column(s) of lat and lon from column(s) of shapely.Point
     objects. Column(s) added to current df being processed
 
@@ -220,10 +220,10 @@ def generate_lat_lon_from_points_cols(
 def calc_distance_between_df_cols(
     df: pd.DataFrame,
     cols_compare: list[tuple[str]] | list[list[str]],
-    new_col_name: str = 'distance'
+    new_col_name: str = "distance",
 ) -> pd.DataFrame:
-    """Calculate the geodesic distance between sets of lat/lon values. See
-    https://geopy.readthedocs.io/en/stable/#module-geopy.distance for more info.
+    """Calculate the geodesic distance between sets of lat/lon values.
+    See https://geopy.readthedocs.io/en/stable/#module-geopy.distance for more info.
 
     Parameters
     ----------
@@ -231,6 +231,8 @@ def calc_distance_between_df_cols(
         df containing two pairs of lat/lon values
     cols_compare: list[[tuple[str]] or list[list[str]]
         list of columns of lat/lon values. Inputted as pairs as a tuple or list
+    new_col_name: str, optional
+        The default is 'distance'.
 
     Returns
     -------
