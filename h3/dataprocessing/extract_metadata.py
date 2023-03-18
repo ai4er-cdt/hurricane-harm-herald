@@ -29,8 +29,8 @@ def filter_files(files: list, filepath: str, search_criteria: str) -> list:
     filepath: str
         path to file, assisting in search criteria process
     search_criteria : str
-        filter out hurricanes, post-event imagery in json format
-        i.e. input "hurricane*pre*json", with *'s as wildcard.
+        filter out hurricanes, post-event imagery in json format.
+        i.e. input `hurricane*pre*json`, supports glob wildcard `*`
 
     Returns
     -------
