@@ -30,7 +30,7 @@ from functools import reduce
 
 from h3 import logger
 from h3.dataprocessing.DataAugmentation import DataAugmentation
-from h3.dataloading.HurricaneDataset import HurricaneDataset
+from h3.dataloading.hurricanedataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.utils.directories import *
 from h3.models.balance_process import main as balance_process_main

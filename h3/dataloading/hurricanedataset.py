@@ -155,9 +155,6 @@ class HurricaneDataset(Dataset):
         return x, label
 
     def __str__(self):
-        return "%s, EF:%s, zoom:%s, augmented:%s" % (
-            self.image_embedding_architecture,
-            sum(map(len, self.EF_features.values())),
-            *self.zoom_levels,
-            self.augmentations
-        )
+        ef_nbr = sum(map(len, self.EF_features.values()))
+        architecture = self.image_embedding_architecture
+        return f"{architecture}, EF:{ef_nbr}, zoom:{self.zoom_levels}, augmented:{self.augmentations}"
