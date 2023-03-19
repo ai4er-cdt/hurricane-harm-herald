@@ -43,7 +43,7 @@ from h3.constants import ALL_EF_FEATURES, ALL_FEATURES_TO_SCALE
 
 def check_files_in_list_exist(
 		file_list: List[str] | List[Path]
-):
+) -> list:
 	"""State which files don't exist and remove from list"""
 	files_found = []
 	for fl in file_list:
