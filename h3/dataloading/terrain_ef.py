@@ -300,7 +300,12 @@ def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarr
 	return elevation
 
 
-def calculate_esa(building_groups: pd.DataFrameGroupBy, coast_points: np.ndarray, dem_urls: list, dis_threshold: int = 2) -> pd.DataFrame:
+def calculate_esa(
+		building_groups: pd.DataFrameGroupBy,
+		coast_points: np.ndarray,
+		dem_urls: list,
+		dis_threshold: int = 2
+) -> pd.DataFrame:
 	esa_df = pd.DataFrame()  # to store the calculated elevation, slope and aspect
 	dem_tif_path_list = [f"{os.path.basename(os.path.splitext(dem_file)[0])}_dem.tif" for dem_file in dem_urls]
 
