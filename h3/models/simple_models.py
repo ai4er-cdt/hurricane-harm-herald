@@ -22,11 +22,11 @@ def logistic_reg(x_train, y_train, x_test, y_test):
 	importance = model.coef_[0]
 	confusion_matrix = metrics.confusion_matrix(y_test, predictions)
 	sns.heatmap(
-		confusion_matrix / np.sum(confusion_matrix), 
-		annot=True, 
-		fmt=".2%", 
-		linewidths=.5, 
-		square=True, 
+		confusion_matrix / np.sum(confusion_matrix),
+		annot=True,
+		fmt=".2%",
+		linewidths=.5,
+		square=True,
 		cmap="Blues_r"
 	)
 	plt.ylabel(r"Actual label")
