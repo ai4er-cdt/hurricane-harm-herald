@@ -97,8 +97,8 @@ def _combine_xbd(
 		The output of the combined file present in the xbd_dir. The file can already exist.
 		The default is "xview2_geotiff.tgz".
 	xbd_part_glob : str, optional
-		glob name of the parts to merge present in the xbd_dir. Use * as a wild-card.
-		The default is "xview2_geotiff.tgz.part-*".
+		glob name of the parts to merge present in the xbd_dir. Use `*` as a wild-card.
+		The default is 'xview2_geotiff.tgz.part-*'.
 	delete_if_check : bool, optional
 		Option to delete the part file after combining. As a safety, it will only delete them if the checksum of
 		the combined file matches the one expected. The default is False.
