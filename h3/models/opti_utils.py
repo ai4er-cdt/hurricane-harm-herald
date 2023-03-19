@@ -41,8 +41,8 @@ def main():
 	img_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
 	img_paths = glob.glob(img_path + '/**/*.png', recursive=True)
 	size = len(img_paths)
-	all = load_full_ram(lst_path=img_paths[:int(size//96)], transform=preprocessing)
-	print(len(all))
+	all_img = load_full_ram(lst_path=img_paths[:int(size//96)], transform=preprocessing)
+	print(len(all_img))
 
 
 if __name__ == "__main__":
