@@ -354,7 +354,7 @@ def calculate_esa(building_groups: pd.DataFrameGroupBy, coast_points: np.ndarray
 	return esa_df
 
 
-def get_terrain_ef(esa_df):
+def get_terrain_ef(esa_df: pd.DataFrame) -> None:
 	terrain_efs = pd.DataFrame({
 		"xbd_observation_lat": esa_df["lat"],
 		"xbd_observation_lon": esa_df["lon"],
