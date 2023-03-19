@@ -15,7 +15,7 @@ def _download_flood():
 def _unpack_flood(filename: str = "NFHL_Key_Layers.gdb.zip"):
 	flood_dir = get_flood_dir()
 	filepath = os.path.join(flood_dir, filename)
-	unpack_file(filepath, "r")
+	unpack_file(filepath)
 
 
 def main():
