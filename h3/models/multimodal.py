@@ -7,22 +7,22 @@ from typing import Literal
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
-import torchvision.models as models
-import torchvision
 import torch
-import os
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim
+import torchvision
+from pytorch_lightning.utilities.types import EVAL_DATALOADERS
+from torch import Tensor
 from torchvision import transforms
+import torchvision.models as models
+
+from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchmetrics import Accuracy
-from PIL import Image
-import numpy as np
-import pandas as pd
-import torch.nn.functional as F
 from torchvision.models import ViT_L_16_Weights, vit_l_16
 from torchvision.models import swin_v2_b, Swin_V2_B_Weights
-import random
+
 import h3.models.SatMAE.utils
 
 """initialize the image embedding block"""
