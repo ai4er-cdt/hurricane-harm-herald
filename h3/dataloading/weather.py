@@ -69,7 +69,7 @@ def find_fetch_closest_station_files(
 
         ignore_csvs = []
         # for each xbd observation in group
-        for index, obs in tqdm.tqdm(group.iterrows(), total=len(group)):
+        for index, obs in tqdm(group.iterrows(), total=len(group)):
             # limit stations spatially
             obs_lat_lons = [obs['lat'], obs['lon']]
             df_station_spatial_time_lim = general_df_utils.limit_df_spatial_range(
@@ -535,7 +535,7 @@ def determine_ecmwf_values_from_points_df(
         df_flat = general_df_utils.standardise_df(df_flat)
 
         # iterate through each row in the xbd event df
-        for i, row in tqdm.tqdm(group.iterrows(), total=len(group)):
+        for i, row in tqdm(group.iterrows(), total=len(group)):
             poi = Point(row.lon, row.lat)
             # further restrict df for specific point
             df_flat_specific = general_df_utils.limit_df_spatial_range(df_flat, [row.lat, row.lon], min_number=1)
@@ -691,7 +691,7 @@ def fetch_era5_data(
         file_paths = '/'.join((dir_path, f'*.{format}'))
 
         xa_dict = {}
-        for file_path in tqdm.tqdm(glob.glob(file_paths)):
+        for file_path in tqdm(glob.glob(file_paths)):
             # get name of file
             file_name = file_path.split('/')[-1]
             # read into xarray
@@ -755,7 +755,7 @@ def generate_xbd_event_xa_dict(
     file_names = [fl for fl in os.listdir(nc_dir_path) if fl.endswith(".nc")]
 
     # assign xarrays to labelled dictionary
-    for event_name, date in tqdm.tqdm(event_info.items()):
+    for event_name, date in tqdm(event_info.items()):
         # find index of file with date matching event
         index = [idx for idx, s in enumerate(file_names) if date in s][0]
         # generate file path from file name
