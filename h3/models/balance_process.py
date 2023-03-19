@@ -12,7 +12,7 @@ def check_files_in_list_exist(file_list: Union[List[str], List[Path]]):
     files_found = []
     for fl in file_list:
         # attempt conversion to Path object if necessary
-        if type(fl) != Path:
+        if not isinstance(fl, Path):
             try:
                 fl = Path(fl)
             except TypeError:
