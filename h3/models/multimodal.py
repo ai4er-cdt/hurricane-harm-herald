@@ -521,7 +521,8 @@ class OverallModel(pl.LightningModule):
 		# Z1_prediction, Z2_prediction, ..., concat_prediction = self.forward(x)
 		# loss = self._compute_losses(Z1_prediction, Z2_prediction, ..., concat_prediction, y).mean() # maybe normalize the loss?
 
-		train_loss = self.all_gather(loss)  # what does all_gather do?
+		# all_gather(), gather tensors or collections of tensors from multiple processes.
+		train_loss = self.all_gather(loss)
 		self.log("train/loss", train_loss.mean(), logger=True, on_epoch=True)
 		self.log("train accuracy", acc, logger=True, on_epoch=True)
 
