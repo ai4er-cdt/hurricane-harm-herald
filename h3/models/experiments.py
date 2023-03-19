@@ -115,7 +115,7 @@ def run_predict(
 		num_workers: int = 0,
 		persistent_w: bool = False
 ):
-	# model.eval()
+	model.eval()
 
 	scaled_test_df = test_df.copy()
 	test_save_path = os.path.join(get_pickle_dir(), f'test_df_{pkl_name}.pickle')
@@ -463,7 +463,9 @@ def main():
 	architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"]
 	architecture = "ResNet18"
 	spatial = True
-	ckp_name = f"{architecture}_{*zooms,}_b{int(balanced)}_{spatial}_EF{len(ef)}"
+	ckp_name = f"{architecture}_{*zooms,}_b{int(balanced)}_s{spatial}_EF{len(ef)}"
+	# ckp_name = f"{architecture}_{*zooms,}_balanced_True"
+
 	hurricanes = {
 		"test": ["MICHAEL", "MATTHEW"],
 		"train": ["MICHAEL", "MATTHEW"]
