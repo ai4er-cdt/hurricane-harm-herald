@@ -8,6 +8,18 @@ from h3 import logger
 
 
 def guarantee_existence(path: str) -> str:
+	"""Function to guarantee the existence of a path, and returns its absolute path.
+
+	Parameters
+	----------
+	path : str
+		Path (in str) to guarantee the existence.
+
+	Returns
+	-------
+	str
+		The absolute path.
+	"""
 	if not os.path.exists(path):
 		os.makedirs(path)
 	return os.path.abspath(path)
@@ -17,6 +29,11 @@ def get_sha1(filepath: str) -> str:
 	"""
 	As the files are big using this method that uses buffers
 	https://stackoverflow.com/a/22058673/9931399
+
+	Parameters
+	----------
+	filepath : str
+		Filepath of the file to calculate the SHA1.
 	"""
 	BUF_SIZE = 65536    # chunks of 64kb
 	sha1 = hashlib.sha1()
