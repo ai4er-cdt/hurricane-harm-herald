@@ -1,6 +1,11 @@
 h3.models package
 =================
 
+.. automodule:: h3.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -56,14 +61,6 @@ h3.models.vision\_transformer module
 ------------------------------------
 
 .. automodule:: h3.models.vision_transformer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: h3.models
    :members:
    :undoc-members:
    :show-inheritance:

@@ -29,8 +29,8 @@ def filter_files(files: list, filepath: str, search_criteria: str) -> list:
     filepath: str
         path to file, assisting in search criteria process
     search_criteria : str
-        filter out hurricanes, post-event imagery in json format
-        i.e. input "hurricane*pre*json", with *'s as wildcard.
+        filter out hurricanes, post-event imagery in json format.
+        i.e. input `hurricane*pre*json`, supports glob wildcard `*`
 
     Returns
     -------
@@ -227,8 +227,10 @@ def overlapping_polygons(geoms, p):
     return pd.Series(overlap.index[overlap])
 
 
-def extract_damage_allfiles_ensemble(filepaths_dict: dict,
-                                     crs: str):
+def extract_damage_allfiles_ensemble(
+        filepaths_dict: dict,
+        crs: str,
+):
     """
     Filters all pre and post label files for hurricanes, extracts the metadata
     from the post and pre json files. Takes damage information from post and
@@ -236,7 +238,7 @@ def extract_damage_allfiles_ensemble(filepaths_dict: dict,
 
     Parameters
     ----------
-     directory_files : dict
+     filepaths_dict : dict
         .json files in xBD data folder to filter organised by their folder.
         These files are a value for the holdout, tier1, tier3 and test folder
         as a key.
@@ -289,9 +291,10 @@ def load_and_save_df(filepaths_dict: dict, output_dir: str, reload_pickle: bool 
     xBD data, extracts the points and polygons in both xy coordinates,
     referring to the corresponding imagery file, and the longitude and
     latitude.
+
     Parameters
     ----------
-    directory_files : dict
+    filepaths_dict : dict
         pathnames in a dictionary for the holdout, tier1, tier3 and test
         folder.
     output_dir : str
@@ -361,6 +364,7 @@ def main():
                                     tier3_filepath, test_filepath])
     df_pre_post_hurr_xy, df_pre_post_hurr_ll = load_and_save_df(filepaths_dict, output_dir)
     return df_pre_post_hurr_xy, df_pre_post_hurr_ll
+
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,11 @@
 h3.dataprocessing package
 =========================
 
+.. automodule:: h3.dataprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -40,14 +45,6 @@ h3.dataprocessing.pre\_processing module
 ----------------------------------------
 
 .. automodule:: h3.dataprocessing.pre_processing
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: h3.dataprocessing
    :members:
    :undoc-members:
    :show-inheritance:

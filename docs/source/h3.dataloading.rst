@@ -1,6 +1,11 @@
 h3.dataloading package
 ======================
 
+.. automodule:: h3.dataloading
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -60,18 +65,18 @@ h3.dataloading.terrain\_ef module
    :undoc-members:
    :show-inheritance:
 
-h3.dataloading.xbd module
--------------------------
+h3.dataloading.weather module
+-----------------------------
 
-.. automodule:: h3.dataloading.xbd
+.. automodule:: h3.dataloading.weather
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+h3.dataloading.xbd module
+-------------------------
 
-.. automodule:: h3.dataloading
+.. automodule:: h3.dataloading.xbd
    :members:
    :undoc-members:
    :show-inheritance:

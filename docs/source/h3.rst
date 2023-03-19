@@ -1,6 +1,11 @@
 h3 package
 ==========
 
+.. automodule:: h3
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -28,14 +33,6 @@ h3.constants module
 -------------------
 
 .. automodule:: h3.constants
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: h3
    :members:
    :undoc-members:
    :show-inheritance:

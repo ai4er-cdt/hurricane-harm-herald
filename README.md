@@ -3,6 +3,7 @@
 *Owen Allemang, Lisanne Blok, Ruari Marshall-Hawkes, Orlando Timmerman, Peisong Zheng*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
+[![docs](https://github.com/ai4er-cdt/hurricane-harm-herald/actions/workflows/sphinx.yml/badge.svg)](https://ai4er-cdt.github.io/hurricane-harm-herald/)
 
 The destruction caused by hurricanes has huge social and economic impact. Between 1980-2008, 57\% of economic losses from worldwide natural disasters stem from storms making landfall across continental US and the Caribbean. Hurricanes comprise the bulk of these. In continental US alone, 206 hurricane landfalls between 1900 and 2017 caused on average over \$20 billion in annual damage (Normalised from the 2018 to the 2022 dollar value). Development in vulnerable areas driven by population growth and increasing wealth increases average year-on-year losses. In addition, anthropogenic global warming correlates with the fractional proportion of high-intensity extreme weather events globally, including hurricanes and their associated environmental hazards such as storm surges.
 
@@ -12,6 +13,8 @@ containing over 700,000 building annotations and labels.
 **Hurricane Harm Herald (3H)** uses a novel multimodal machine learning approach to predict the damage extent to buildings in response to forecasted weather features associated with major hurricanes (categories 3 to 5, as classified by the Saffir-Simpson scale). The tool uses openly accessible datasets to produce a building-level damage forecast map for regions of NA presently at risk of hurricanes. It is hoped that this may be made available for community-level decision making to increase the long-term resilience of neighbourhoods, prepare defences in response to forecasts of imminent storms, and provide preliminary direction for rescue workers following events for which damage assessments are not immediately available. The tool may also be useful to inform insurance policy. 
 
 ## Documentation
+
+Functions documentation is available (https://ai4er-cdt.github.io/hurricane-harm-herald/)
 
 The `notebooks` folder contains interactive walk-throughs of data loading and visualisation, and model training and testing. The accompanying written report is in progress and will be uploaded to the repository once complete.
 
@@ -29,25 +32,6 @@ The team would like to thank Robert Muir-Wood for proposing the project, and Dom
 
 
 ---
-
-
-## Environment setup
-
-During development we used `Python`'s `miniconda` and installed packages via `conda-forge`. This is recommended as it helps control dependencies and ensures the latest stable versions of packages are installed without intering with your existing repositories.
-
-Our minimum `Python` version is `3.9`, which can be downloaded from [here](https://www.python.org/downloads/).
-
-To get started, make sure you have `Python` version `3.9+` running, and have downloaded both `pip` ([here](https://pypi.org/project/pip/)) and `conda` ([here](https://conda.io/projects/conda/en/stable/user-guide/install/download.html)).
-
-- First, initialize `conda` by running `conda create -n $ENV_NAME` within your project root directory (see below for directory setup). This will create an `anaconda` virtual environment ready to install dependencies.
-- Second, install `pip` via `conda activate $ENV_NAME` && `conda install pip`.
-
-Now you are in your virtual environment you can install the packages required to train and run the baseline model. These packages are kept in this repository's requirements.txt file. Install these packages using `pip install -r requirements.txt`.
-
-
-## Loading the datasets
-
-
 
 ## Environment setup
 
@@ -69,6 +53,12 @@ conda env create -f environment_no_gpu.yml
 
 ### PIP
 You may want to install it in a virtual environment.
+
+```shell
+pip install -e .
+```
+
+If you want to only install the requirements.
 ```shell
 pip install -r requirement.txt
 ```
@@ -86,36 +76,38 @@ Download the dataset from https://xview2.org/ (you will need to register for an 
 
 After downloading, the data will be organised in the directories as follows:
 
-/data/datasets/xBD_data/geotiffs/
+`/data/datasets/xBD_data/geotiffs/`
 
- ├── tier1
- │      ├── images
- │      │      └── <image_id>.png
- │      │      └── ...
- │      └── labels
- │             └── <image_id>.json
- │             └── ...
+```
+ ├── tier1  
+ │      ├── images  
+ │      │      └── <image_id>.png  
+ │      │      └── ...  
+ │      └── labels  
+ │             └── <image_id>.json  
+ │             └── ...  
  ├── tier3
- │      ├── images
- │      │      └── <image_id>.png
- │      │      └── ...
- │      └── labels
- │             └── <image_id>.json
- │             └── ...
- ├── test
- │      ├── images
- │      │      └── <image_id>.png
- │      │      └── ...
- │      └── labels
- │             └── <image_id>.json
- │             └── ...
- └── holdout
-        ├── images
-        │      └── <image_id>.png
-        │      └── ...
-        └── labels
-               └── <image_id>.json
-               └── ...
+ │      ├── images  
+ │      │      └── <image_id>.png  
+ │      │      └── ...  
+ │      └── labels  
+ │             └── <image_id>.json  
+ │             └── ...  
+ ├── test  
+ │      ├── images  
+ │      │      └── <image_id>.png  
+ │      │      └── ...  
+ │      └── labels  
+ │             └── <image_id>.json  
+ │             └── ...  
+ └── holdout  
+        ├── images  
+        │      └── <image_id>.png  
+        │      └── ...  
+        └── labels  
+               └── <image_id>.json  
+               └── ...  
+```
 
 ### DEM
 
@@ -128,6 +120,7 @@ Once your account created, have your credential on hand to input them when neede
 
 Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track Data, and ERA5-Land Reanalysis can be downloaded by running the `download_weather_data.ipynb` notebook. This will be downloaded in the following file structure:
 
+```
  ├── weather_data
  │      ├── ecmwf_era5
  │      │      └── <image_id>.png
@@ -138,7 +131,7 @@ Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track
  │      ├── global_isd
  │             └── <image_id>.png
  │             └── ...
-
+```
 
 ## Contributors
 

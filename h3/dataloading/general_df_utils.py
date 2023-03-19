@@ -128,10 +128,10 @@ def exclude_df_rows_by_range(
     col_names : list[str]
         e.g. ['col1', ..., 'colN']
         list of column names to be restricted by their relevant...
-    value_bounds : list[ |[tuple[float], list[float]] ]
+    value_bounds : list[ [tuple[float], list[float]] ]
         e.g. [ (start_val1,end_val1), ..., (start_valN,end_valN) ]
         list of tuples (or lists) specifying minimum and maximum values to allow
-    buffer : |[ list[float], list[tuple[float,str]] ] = 0
+    buffer : [ list[float], list[tuple[float,str]] ] = 0
         add buffer on either side of value_bounds. Defaults to no buffer. Useful
         for specifying weather station observations must exist some time before
         and after the event of interest
@@ -158,7 +158,7 @@ def concat_df_cols(
     df: pd.DataFrame,
     concatted_col_name: str,
     cols_to_concat: list[str],
-    delimiter: str = ''
+    delimiter: str = ""
 ) -> pd.DataFrame:
     """Concatenate columns in a pd.DataFrame into a new column of strings linked
     by 'delimiter'.capitalize()
@@ -171,7 +171,7 @@ def concat_df_cols(
         name of new concatenated column
     cols_to_concat : list[str]
         names of columns to concatenate (in desired order)
-    delimiter : str = ''
+    delimiter : str, optional
         character to insert in between column values. Defaults to empty string
 
     Returns
@@ -188,7 +188,7 @@ def concat_df_cols(
 def generate_lat_lon_from_points_cols(
     df: pd.DataFrame,
     points_cols: list[str]
-) -> pd.DataFrame:
+) -> None:
     """Generate a column(s) of lat and lon from column(s) of shapely.Point
     objects. Column(s) added to current df being processed
 
@@ -220,17 +220,19 @@ def generate_lat_lon_from_points_cols(
 def calc_distance_between_df_cols(
     df: pd.DataFrame,
     cols_compare: list[tuple[str]] | list[list[str]],
-    new_col_name: str = 'distance'
+    new_col_name: str = "distance",
 ) -> pd.DataFrame:
-    """Calculate the geodesic distance between sets of lat/lon values. See
-    https://geopy.readthedocs.io/en/stable/#module-geopy.distance for more info.
+    """Calculate the geodesic distance between sets of lat/lon values.
+    See https://geopy.readthedocs.io/en/stable/#module-geopy.distance for more info.
 
     Parameters
     ----------
     df: pd.DataFrame
         df containing two pairs of lat/lon values
-    cols_compare: list[[tuple[str]] | list[list[str]]
+    cols_compare: list[[tuple[str]] or list[list[str]]
         list of columns of lat/lon values. Inputted as pairs as a tuple or list
+    new_col_name: str, optional
+        The default is 'distance'.
 
     Returns
     -------
@@ -374,7 +376,7 @@ def limit_df_spatial_range(
     ----------
     df : pd.DataFrame
         df containing 'lat' and 'lon' columns
-    centre_coords : list[float] | tuple[float]
+    centre_coords : list[float] or tuple[float]
         geographical centre about which to restrict df
     min_number : int = None
         minimum number of rows in df to be returned
