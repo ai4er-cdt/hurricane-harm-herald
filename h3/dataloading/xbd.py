@@ -79,7 +79,7 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 		logger.info(f"{filepath} does not exist.\nDownload them here: https://xview2.org/")
 		return False
 	if checksum:
-		assert get_sha1(filepath) == SHA1[filename], f"{filename} failed sha1 checksum"
+		assert get_sha1(filepath) == SHA1_xbd[filename], f"{filename} failed sha1 checksum"
 	return True
 
 
