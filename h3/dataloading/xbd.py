@@ -84,9 +84,9 @@ def check_xbd(filepath: str, checksum: bool = False) -> bool:
 
 
 def _combine_xbd(
-		output_filename: str = "xview2_geotiff.tgz",
-		xbd_part_glob: str = "xview2_geotiff.tgz.part-*",
-		delete_if_check: bool = False
+	output_filename: str = "xview2_geotiff.tgz",
+	xbd_part_glob: str = "xview2_geotiff.tgz.part-*",
+	delete_if_check: bool = False,
 ) -> None:
 	"""
 	Combine the different parts of xbd to one file (compressed).
@@ -137,10 +137,10 @@ def _unpack_xbd(filename: str = "xview2_geotiff.tgz") -> None:
 
 
 def get_xbd(
-		checksum: bool = False,
-		clean_after_merge: bool = False,
-		unpack_tar: bool = True,
-		combined_name: str = "xview2_geotiff.tgz"
+	checksum: bool = False,
+	clean_after_merge: bool = False,
+	unpack_tar: bool = True,
+	combined_name: str = "xview2_geotiff.tgz",
 ) -> None:
 	"""Wrapper function to check part files, combine and unpack them."""
 	xbd_dir = get_xbd_dir()
