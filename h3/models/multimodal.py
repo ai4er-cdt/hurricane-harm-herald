@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+import os
+import random
+from typing import Literal
+
+import numpy as np
+import pandas as pd
 import pytorch_lightning as pl
 import torchvision.models as models
 import torchvision
@@ -24,7 +30,7 @@ import h3.models.SatMAE.utils
 
 
 class ImageEncoder(pl.LightningModule):
-	def __init__(self, image_embedding_architecture):
+	def __init__(self, image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"]):
 		super().__init__()
 
 		if image_embedding_architecture == "ResNet18":
@@ -96,7 +102,7 @@ class ImageEncoder(pl.LightningModule):
 
 
 class GenericEncoder(pl.LightningModule):
-	def __init__(self, num_input_features, num_output_features, dropout_rate):
+	def __init__(self, num_input_features: int, num_output_features: int, dropout_rate: float):
 		super().__init__()
 
 		self.l1 = nn.Linear(num_input_features, num_output_features)
@@ -117,7 +123,7 @@ class GenericEncoder(pl.LightningModule):
 
 
 class ClassificationLayer(pl.LightningModule):
-	def __init__(self, num_input_features, num_output_classes, output_activation):
+	def __init__(self, num_input_features: int, num_output_classes: int, output_activation: str | None):
 		super().__init__()
 
 		if output_activation == "sigmoid":  # use Sigmoid for binary classification
@@ -231,7 +237,7 @@ class OverallModel(pl.LightningModule):
 			self,
 			training_dataset,
 			validation_dataset,
-			image_embedding_architecture: str = "ResNet18",
+			image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"] = "ResNet18",
 			dropout_rate: float = 0.2,
 			general_lr: float = 1e-4,
 			image_encoder_lr: float = 0,
@@ -248,9 +254,8 @@ class OverallModel(pl.LightningModule):
 			image_only_model: bool = False,
 			num_workers: int = 0,
 			persistent_w: bool = False,
-			loss_function_str: str = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
-			output_activation: str | None = None  # CELoss expects unnormalized logits
-
+			loss_function_str: Literal["BCELoss", "CELoss", "MSE"] = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
+			output_activation:  Literal["sigmoid", "softmax", "relu"] | None = None  # CELoss expects unnormalized logits
 	) -> None:
 		super().__init__()
 
@@ -541,7 +546,7 @@ class OverallModel(pl.LightningModule):
 
 		return train_loss
 
-	def validation_step(self, batch, *args, **kwargs):
+	def validation_step(self, batch, *args, **kwargs) -> Tensor | dict | list | tuple:
 		x, y = batch
 
 		concat_predictions, image_feature_predictions = self.forward(x)
@@ -558,7 +563,7 @@ class OverallModel(pl.LightningModule):
 		self.log("val accuracy", acc, logger=True, on_epoch=True)
 		return val_loss
 
-	def train_dataloader(self):
+	def train_dataloader(self) -> EVAL_DATALOADERS:
 		loader = DataLoader(
 			self.training_dataset,
 			batch_size=self.batch_size,
@@ -569,7 +574,7 @@ class OverallModel(pl.LightningModule):
 		)
 		return loader
 
-	def val_dataloader(self):
+	def val_dataloader(self) -> EVAL_DATALOADERS:
 		loader = DataLoader(
 			self.validation_dataset,
 			batch_size=self.batch_size,
