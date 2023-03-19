@@ -7,18 +7,18 @@ from h3 import utils
 
 
 def standardise_df(
-    df: pd.DataFrame,
-    date_cols: list[str] = None,
-    new_point_col_name: str = 'geometry'
+    df: pd.DataFrame, date_cols: list[str] = None, new_point_col_name: str = "geometry"
 ) -> pd.DataFrame:
     """Apply various formatting functions to make any df behave as you'd expect.
 
     Parameters
     ----------
     df : pd.DataFrame
-        any pandas df
-    date_cols : list[str], optional
+        any pandas df.
+    date_cols : list of str, optional
         list of column names containing date values. Default is None.
+    new_point_col_name : str, optional
+        Name of the new column to create. The default is `geometry`.
 
     Returns
     -------
@@ -28,37 +28,37 @@ def standardise_df(
     # makeall headers lower case
     df.columns = df.columns.str.lower()
     # remove any whitespace from headers
-    df.columns = df.columns.str.replace(' ', '_')
+    df.columns = df.columns.str.replace(" ", "_")
     # if any columns with dates provided
     if date_cols:
         df[date_cols] = df[date_cols].apply(pd.to_datetime)
 
-    if 'geometry' in df.columns:
+    if "geometry" in df.columns:
         # if geometry column not containing shapely Point objects
         if not type(df.geometry.iloc[0]) == shapely.geometry.point.Point:
             df.geometry = df.geometry.apply(
-                lambda x: utils.geometry_ops.convert_point_string_to_point(x))
+                lambda x: utils.geometry_ops.convert_point_string_to_point(x)
+            )
             # generate lat-lon columns from any Point objects
-            df = generate_lat_lon_from_points_cols(df, ['geometry'])
+            df = generate_lat_lon_from_points_cols(df, ["geometry"])
 
-    if set(['lat', 'lon']).issubset(df.columns):
+    if {"lat", "lon"}.issubset(df.columns):
         # make geometry column of shapely Point objects
         df = points_from_df_lat_lon_cols(df, point_col_name=new_point_col_name)
     # common variation
-    elif set(['lat', 'long']).issubset(df.columns):
-        df.rename(columns={'long': 'lon'}, inplace=True)
+    elif {"lat", "long"}.issubset(df.columns):
+        df.rename(columns={"long": "lon"}, inplace=True)
         df = points_from_df_lat_lon_cols(df, point_col_name=new_point_col_name)
 
     return df
 
 
-def points_from_df_lat_lon_cols(
-    df: pd.DataFrame,
-    point_col_name: str = 'geometry'
-) -> pd.DataFrame:
+def points_from_df_lat_lon_cols(df: pd.DataFrame, point_col_name: str = "geometry") -> pd.DataFrame:
     """TODO: docstring"""
-    df[point_col_name] = df.apply(lambda row: shapely.geometry.point.Point(
-        row['lon'], row['lat']), axis=1)
+    df[point_col_name] = df.apply(
+        lambda row: shapely.geometry.point.Point(row["lon"], row["lat"]),
+        axis=1
+    )
 
     return df
 
@@ -67,7 +67,7 @@ def exclude_df_rows_symmetrically_around_value(
     df: pd.DataFrame,
     col_names: list[str],
     poi: list[float] | list[pd.Timestamp],
-    buffer_val: list[float] | list[tuple[float, str]]
+    buffer_val: list[float] | list[tuple[float, str]],
 ) -> pd.DataFrame:
     """Return a pd.DataFrame which excludes rows outside a range of +/- 1 buffer.
     Buffer can be floats objects, or can specify a period of time. Handy e.g.
@@ -114,7 +114,7 @@ def exclude_df_rows_by_range(
     df: pd.DataFrame,
     col_names: list[str],
     value_bounds: list[tuple[float]] | list[float],
-    buffer: list[float] | list[tuple[float, str]] = 0
+    buffer: list[float] | list[tuple[float, str]] = 0,
 ) -> pd.DataFrame:
     """Return pd.DataFrame composed of only rows containing only values in
     columns listed in col_names within the range of value_bounds +/- optional
@@ -158,7 +158,7 @@ def concat_df_cols(
     df: pd.DataFrame,
     concatted_col_name: str,
     cols_to_concat: list[str],
-    delimiter: str = ""
+    delimiter: str = "",
 ) -> pd.DataFrame:
     """Concatenate columns in a pd.DataFrame into a new column of strings linked
     by 'delimiter'.capitalize()
@@ -187,7 +187,7 @@ def concat_df_cols(
 
 def generate_lat_lon_from_points_cols(
     df: pd.DataFrame,
-    points_cols: list[str]
+    points_cols: list[str],
 ) -> None:
     """Generate a column(s) of lat and lon from column(s) of shapely.Point
     objects. Column(s) added to current df being processed
@@ -207,11 +207,11 @@ def generate_lat_lon_from_points_cols(
     """
     for i, col in enumerate(points_cols):
         if len(points_cols) == 1:
-            lon_col_name = 'lon'
-            lat_col_name = 'lat'
+            lon_col_name = "lon"
+            lat_col_name = "lat"
         else:
-            lon_col_name = f'lon{i+1}'
-            lat_col_name = f'lat{i+1}'
+            lon_col_name = f"lon{i + 1}"
+            lat_col_name = f"lat{i + 1}"
 
         df[lon_col_name] = df[col].apply(lambda p: p.x)
         df[lat_col_name] = df[col].apply(lambda p: p.y)
@@ -241,7 +241,7 @@ def calc_distance_between_df_cols(
     """
     if not len(cols_compare) == 2:
         raise ValueError(
-            'Cannot compare more or fewer than two sets of lat/lon values at a time')
+            "Cannot compare more or fewer than two sets of lat/lon values at a time")
 
     df[new_col_name] = df.apply(
         lambda x: geopy.distance.geodesic(
@@ -255,7 +255,7 @@ def find_index_closest_point_in_col(
     poi: shapely.Point,
     points_df: pd.DataFrame,
     points_df_geom_col: str,
-    which_closest: int = 0
+    which_closest: int = 0,
 ) -> int:
     """Find the df index of the closest point object to poi in the df object.
 
@@ -282,9 +282,9 @@ def find_index_closest_point_in_col(
 
 def calculate_first_last_dates_from_df(
     df: pd.DataFrame,
-    time_buffer: tuple[float, str] = [0, 'h'],
-    date_col_name: list[str] = None
-) -> tuple[pd.Timestamp]:
+    time_buffer: tuple[float, str] = (0, "h"),
+    date_col_name: list[str] = None,
+) -> tuple[pd.Timestamp, pd.Timestamp]:
     """Calculate the first and last dates from a df, with a time buffer before
     and after.
 
@@ -317,14 +317,14 @@ def calculate_first_last_dates_from_df(
             date_col = df.columns[df.apply(
                 pd.api.types.is_datetime64_any_dtype)].tolist()[0]
         except TypeError():
-            print('No column containing datetime64 objects found')
+            print("No column containing datetime64 objects found")
     else:
         # check if column provided contains datetime objects
         if pd.api.types.is_datetime64_any_dtype(df[date_col_name]):
             date_col = df[date_col_name]
         else:
             raise ValueError(
-                'Column provided as date_col_name does not contain datetime objects')
+                "Column provided as date_col_name does not contain datetime objects")
 
     # if date column type has a timezone detailed
     if pd.api.types.is_datetime64tz_dtype(df[date_col]):
@@ -341,16 +341,13 @@ def calculate_first_last_dates_from_df(
     return start, end
 
 
-def calc_means_df_cols(
-    df: pd.DataFrame,
-    col_names: list[str]
-) -> pd.DataFrame:
+def calc_means_df_cols(df: pd.DataFrame, col_names: list[str]) -> list[float]:
     """Return mean values of prescribed columns in df
 
     Parameters
     ----------
     df : pd.DataFrame
-    col_names : list[str]
+    col_names : list of str
         list of columns to calculate mean
     Returns
     -------
@@ -366,8 +363,8 @@ def limit_df_spatial_range(
     df: pd.DataFrame,
     centre_coords: list[float] | tuple[float],
     min_number: int = None,
-    distance_buffer: float = None,
-    verbose: bool = False
+    distance_buffer: float | None = None,
+    verbose: bool = False,
 ) -> pd.DataFrame:
     """Restrict df to within +/- a lat-lon distance, or to a min_number number
     of rows.
@@ -375,44 +372,44 @@ def limit_df_spatial_range(
     Parameters
     ----------
     df : pd.DataFrame
-        df containing 'lat' and 'lon' columns
-    centre_coords : list[float] or tuple[float]
-        geographical centre about which to restrict df
+        df containing 'lat' and 'lon' columns.
+    centre_coords : iterable of float
+        geographical centre about which to restrict df.
     min_number : int = None
         minimum number of rows in df to be returned
     distance_buffer : float = None
         distance from geographical centre within which points in df should be
-        returned
+        returned.
     verbose : bool = False (don't show message re expansion of distance_buffer)
-        choose whether or not to show that distance_buffer was expanded
+        choose whether or not to show that distance_buffer was expanded.
 
     Returns
     -------
     pd.DataFrame
         spatially limited df
     """
-    if not set(['lat', 'lon']).issubset(df.columns):
-        raise ValueError('Columns by name of lat and lon not found in df')
+    if not {"lat", "lon"}.issubset(df.columns):
+        raise ValueError("Columns by name of lat and lon not found in df")
 
     # if choosing to find closest N points at any distance away
     if distance_buffer is None:
         # set arbitrarily small distance buffer
         distance_buffer = 1
         df_spatial_lim = exclude_df_rows_symmetrically_around_value(
-            df, ['lat', 'lon'], centre_coords,
+            df, ["lat", "lon"], centre_coords,
             [distance_buffer, distance_buffer])
         # expand distance buffer until minimum number reached
         while len(df_spatial_lim) <= min_number:
             distance_buffer += 1
             df_spatial_lim = exclude_df_rows_symmetrically_around_value(
-                df, ['lat', 'lon'], centre_coords,
+                df, ["lat", "lon"], centre_coords,
                 [distance_buffer, distance_buffer])
             if verbose is True:
-                print(f'Spatial search expanded to +/- {distance_buffer} degrees')
+                print(f"Spatial search expanded to +/- {distance_buffer} degrees")
     # if choosing to find closest stations only up to a certain distance
     else:
         df_spatial_lim = exclude_df_rows_symmetrically_around_value(
-            df, ['lat', 'lon'], centre_coords,
+            df, ["lat", "lon"], centre_coords,
             [distance_buffer, distance_buffer])
 
     return df_spatial_lim
@@ -421,25 +418,26 @@ def limit_df_spatial_range(
 def station_availability(
     df_stations: pd.DataFrame,
     df_noaa_weather_event: pd.DataFrame,
-    time_buffer: list[float, str] = [0, 'h'],
-    available: bool = True
+    time_buffer: tuple[float, str] = (0, "h"),
+    available: bool = True,
 ) -> pd.DataFrame:
     """
     Filter dataframe by time to return only stations with observation present.
     Defaults to available
     """
 
-    start, end = calculate_first_last_dates_from_df(
-        df_noaa_weather_event, time_buffer)
+    start, end = calculate_first_last_dates_from_df(df_noaa_weather_event, time_buffer)
 
     if available:
         # return available stations
         df_station_time_lim = df_stations[
-            ((df_stations['begin'] <= start) & (df_stations['end'] >= end))]
+            ((df_stations["begin"] <= start) & (df_stations["end"] >= end))
+        ]
     else:
         # limit stations df to those operational within +/- 1 time_buffer
         # either side of event
         df_station_time_lim = df_stations[
-            ~((df_stations['begin'] <= start) & (df_stations['end'] >= end))]
+            ~((df_stations["begin"] <= start) & (df_stations["end"] >= end))
+        ]
 
     return df_station_time_lim
