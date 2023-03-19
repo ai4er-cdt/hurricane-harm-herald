@@ -144,7 +144,7 @@ def get_xbd(
 ) -> None:
 	"""Wrapper function to check part files, combine and unpack them."""
 	xbd_dir = get_xbd_dir()
-	all_part_name = list(SHA1.keys())[1:]
+	all_part_name = list(SHA1_xbd.keys())[1:]
 	extracted_path = os.path.join(xbd_dir, "geotiffs")
 
 	for name in all_part_name:
