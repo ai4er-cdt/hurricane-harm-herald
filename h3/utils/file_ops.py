@@ -70,22 +70,8 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 		os.remove(filepath)
 
 
-def check_all_downloads():
-	from h3.dataloading.terrain_ef import check_dem_files, check_coastlines_file
-	from h3.dataloading.xbd import get_xbd
-	from h3.dataloading.storm_surge import check_storm
-	logger.info("Checking coastline files")
-	check_coastlines_file()
-	logger.info("Checking DEM files")
-	check_dem_files()
-	logger.info("Checking xBD files")
-	get_xbd()
-	logger.info("Checking storm surge files")
-	check_storm()
-
-
 def main():
-	check_all_downloads()
+	pass
 
 
 if __name__ == "__main__":
