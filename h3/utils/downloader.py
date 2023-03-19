@@ -80,6 +80,7 @@ def _get_response(url: str) -> HTTPResponse:
 	except urllib.error.HTTPError:
 		import base64
 		from http.cookiejar import CookieJar
+
 		cj = CookieJar()
 		opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
 		request = urllib.request.Request(url)
