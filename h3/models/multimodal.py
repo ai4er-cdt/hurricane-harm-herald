@@ -140,7 +140,7 @@ class ClassificationLayer(pl.LightningModule):
 			self.activation = F.relu
 			self.l1 = self.l1 = nn.Linear(num_input_features, 1)
 
-		elif output_activation == None:
+		elif output_activation is None:
 			self.activation = nn.Identity()
 			self.l1 = self.l1 = nn.Linear(num_input_features, num_output_classes)
 
