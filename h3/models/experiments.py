@@ -33,7 +33,7 @@ from h3.dataprocessing.data_augmentation import DataAugmentation
 from h3.dataloading.hurricanedataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.utils.directories import *
-from h3.models.balance_process import main as balance_process_main
+from h3.models.balance_process import balance_process
 from h3.utils.simple_functions import rich_table
 
 from h3.constants import RF_BEST_EF_FEATURES, RF_BEST_FEATURES_TO_SCALE
@@ -261,7 +261,7 @@ def run_model(
 		if os.path.exists(ECMWF_filtered_pickle_path):
 			ECMWF_balanced_df = pd.read_pickle(ECMWF_filtered_pickle_path)
 		else:
-			ECMWF_balanced_df = balance_process_main(data_dir, "ECMWF")
+			ECMWF_balanced_df = balance_process(data_dir, "ECMWF")
 
 		# remove unclassified class
 		ECMWF_balanced_df = ECMWF_balanced_df[ECMWF_balanced_df.damage_class != 4]
@@ -274,7 +274,7 @@ def run_model(
 		if os.path.exists(filtered_pickle_path):
 			df = pd.read_pickle(filtered_pickle_path)
 		else:
-			df = balance_process_main(data_dir)
+			df = balance_process(data_dir)
 		# This is the balanced_df
 
 	else:

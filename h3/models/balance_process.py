@@ -115,8 +115,8 @@ def data_loader(data_dir: str, ECMWF):
     return all_df_no_dups
 
 
-def main(data_dir, ECMWF=False):
-    """Randomly samples the merged dataframe ]
+def balance_process(data_dir, ECMWF: str | None = None):
+    """Randomly samples the merged dataframe
 
     Parameters
     ----------
@@ -157,4 +157,4 @@ def main(data_dir, ECMWF=False):
 
 if __name__ == '__main__':
     data_dir = get_data_dir()
-    main(data_dir)
+    balance_process(data_dir)
