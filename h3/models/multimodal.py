@@ -162,70 +162,51 @@ class OverallModel(pl.LightningModule):
 	----------
 	training_dataset : torch.utils.data.Dataset
 		Contains the data used for training
-
 	validation_dataset : torch.utils.data.Dataset
 		Contains the data used for training
-
-	image_embedding_architecture : str
-		Determines the image embedding architecture used. Possible values are:
-			- 'ResNet18'
-			- 'ViT_L_16'
-			- 'Swin_V2_B'
-
+	image_embedding_architecture : {'ResNet18', 'ViT_L_16', 'Swin_V2_B'}, optional
+		Determines the image embedding architecture used. The default is 'ResNet18'.
 	num_input_channels : int
 		The number of channels in the input images.
-
 	EF_features : dict(String: List(String))
 		A dictionary mapping from type of EF to a list of strings of names of the EFs.
 		E.g., {"weather": ["precip", "wind_speed"], "soil": ["clay", "sand"]}
-
 	dropout_rate : float
 		The dropout probability
-
 	image_encoder_lr : float
 		The learning rate for the image encoder. If 0, then image encoder weights are frozen.
-
 	general_lr : float
 		The learning rate for all other parts of the model.
-
 	batch_size : int
 		The batch size used during training and validation steps.
-
 	weight_decay : float
 		Adam weight decay (L2 penalty)
-
 	lr_scheduler_patience : int
 		The number of epochs of validation loss plateau before lr is decreased.
-
 	num_image_feature_encoder_features : int
 		The number of features output from the encoder that operates on the
 		features produced by the image encoder
-
 	num_output_classes : int
 		The number of output classes. Set to 1 for regression.
-
-	zoom_levels : List[str]
+	zoom_levels : list of str
 		A list containing the different image zoom levels.
-
 	class_weights: torch.FloatTensor
 		A tensor containing a weights to be applied to each class in the
 		cross entropy loss function.
-
-	image_only_model: Boolean
+	image_only_model: bool, optional
 		If true, then the model behaves as if there were no EFs, and only the
-		images are used to make predictions.
-
-	loss_function_str : str
-		Determines the loss function used. Possible values are:
-			- 'BCELoss' : Binary Cross Entropy Loss, for binary classification
-			- 'CELoss' : Cross Entropy Loss, for multiclass classification
-			- 'MSE' : Mean Squared Error, for regression
-
-	output_activation : str
-		Determines the output activation function used. Possible values are:
-			- 'sigmoid' : Sigmoid, for binary classification
-			- 'softmax' : Softmax, for multiclass classification
-			- 'relu' : ReLU, for regression
+		images are used to make predictions. The default is False.
+	loss_function_str : {'BCELoss', 'CELoss', 'MSE'}, optional
+		Determines the loss function used.
+		- 'BCELoss' : Binary Cross Entropy Loss, for binary classification
+		- 'CELoss'  : Cross Entropy Loss, for multiclass classification
+		- 'MSE'     : Mean Squared Error, for regression
+		The default is 'CELoss'.
+	output_activation : {'sigmoid', 'softmax', 'relu'}, optional
+		Determines the output activation function used. The default is None.
+		- 'sigmoid' : for binary classification
+		- 'softmax' : for multiclass classification
+		- 'relu'    : for regression
 
 
 	Attributes
