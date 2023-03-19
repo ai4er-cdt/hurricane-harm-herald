@@ -88,7 +88,7 @@ def _get_response(url: str) -> HTTPResponse:
 		user, password = _credential_helper(base_url=os.path.dirname(url))
 
 		base64string = base64.b64encode((user + ":" + password).encode("ascii"))
-		request.add_header("Authorization", "Basic {}".format(base64string.decode("ascii")))
+		request.add_header("Authorization", f"Basic {base64string.decode('ascii')}")
 		response = opener.open(request)
 	except urllib.error.URLError:
 		# work around to be able to dl the 10m coastline without issue
