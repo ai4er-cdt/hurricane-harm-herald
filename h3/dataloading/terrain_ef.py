@@ -235,8 +235,7 @@ def get_distance_coast(buildings: np.ndarray, coast_points: np.ndarray) -> tuple
 
 
 def get_dem_urls(building_groups: DataFrameGroupBy) -> list:
-	"""
-	Generate the list of DEM to download from Land Processes Distributed Active Archive Center (LP DAAC):
+	"""Generate the list of DEM to download from Land Processes Distributed Active Archive Center (LP DAAC):
 	https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/.
 
 	Parameters
@@ -280,8 +279,7 @@ def lonlat2xy(lon: list, lat: list, transform: affine.Affine) -> tuple:
 
 
 def get_elevation(lon: list, lat: list, dem: rasterio.DatasetReader) -> np.ndarray:
-	"""
-	Return the elevation values for the given (lon, lat) coordinates from the provided DEM raster dataset.
+	"""Return the elevation values for the given (lon, lat) coordinates from the provided DEM raster dataset.
 
 	Parameters
 	----------
