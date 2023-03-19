@@ -56,7 +56,7 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 def check_all_downloads():
 	from h3.dataloading.terrain_ef import check_dem_files, check_coastlines_file
 	from h3.dataloading.xbd import get_xbd
-	from h3.dataloading.strom_surge import check_storm
+	from h3.dataloading.storm_surge import check_storm
 	logger.info("Checking coastline files")
 	check_coastlines_file()
 	logger.info("Checking DEM files")
