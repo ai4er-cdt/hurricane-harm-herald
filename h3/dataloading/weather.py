@@ -1,19 +1,26 @@
-import pandas as pd
-import urllib
+from __future__ import annotations
+
+from typing import Tuple, Dict, Any, List
+
+import cdsapi
+import glob
+import os
+import urllib.request
+import re
+
+import geopy
 import numpy as np
+import pandas as pd
+import xarray as xr
+
+from shapely.geometry.point import Point
 from tqdm import tqdm
+
 from h3.dataloading import general_df_utils
+from h3.dataprocessing import extract_metadata
 from h3.utils import directories
 from h3.utils.simple_functions import pad_number_with_zeros
-import os
-import re
-import xarray as xr
-import geopy
-import glob
-from shapely.geometry.point import Point
 from h3.utils.file_ops import guarantee_existence
-from h3.dataprocessing import extract_metadata
-import cdsapi
 
 
 def find_fetch_closest_station_files(
