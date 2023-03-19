@@ -159,5 +159,5 @@ def main():
 	sort_disaster_to_dir()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()
