@@ -394,7 +394,7 @@ class OverallModel(pl.LightningModule):
 			image_feature_predictions.append(self.image_feature_classifiers[i](embeddings_to_concat[i]))
 
 		if not self.image_only_model:
-			# put the embedded EFs into the the list
+			# put the embedded EFs into the list
 			for key in self.EF_features:
 				embeddings_to_concat.append(self.ef_encoders[key](inputs[key]))
 
