@@ -26,9 +26,7 @@ def check_files_in_list_exist(file_list: Union[List[str], List[Path]]):
     return files_found
 
 
-def read_and_merge_pkls(
-    pkl_paths: Union[List[str], List[Path]]
-) -> pd.DataFrame:
+def read_and_merge_pkls(pkl_paths: list[str] | list[Path]) -> pd.DataFrame:
     """Read in pkl files from list of file paths and merge on index"""
     # check all files exist
     pkl_paths_present = check_files_in_list_exist(pkl_paths)
@@ -79,22 +77,32 @@ def data_loader(data_dir: str, ECMWF):
         Merged dataframe from all the pickled dataframes with EFs of interest.
     """
     # data_dir = get_data_dir()
-   
+
     # ecmwf weather EFs
-    df_ecmwf_xbd_pkl_path = os.path.join(data_dir,
-                                         "EFs/weather_data/ecmwf/xbd_ecmwf_points.pkl")
+    df_ecmwf_xbd_pkl_path = os.path.join(
+        data_dir,
+        "EFs/weather_data/ecmwf/xbd_ecmwf_points.pkl"
+    )
     # NOAA weather EFs
-    df_noaa_xbd_pkl_path = os.path.join(data_dir,
-                                        "EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl")
+    df_noaa_xbd_pkl_path = os.path.join(
+        data_dir,
+        "EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl"
+    )
     # terrain efs
-    df_terrain_efs_path = os.path.join(data_dir,
-                                       "processed_data/Terrian_EFs.pkl")
+    df_terrain_efs_path = os.path.join(
+        data_dir,
+        "processed_data/Terrian_EFs.pkl"
+    )
     # flood, storm surge and soil properties
-    df_topographic_efs_path = os.path.join(data_dir,
-                                           "processed_data/df_points_posthurr_flood_risk_storm_surge_soil_properties.pkl")
+    df_topographic_efs_path = os.path.join(
+        data_dir,
+        "processed_data/df_points_posthurr_flood_risk_storm_surge_soil_properties.pkl"
+    )
     # distance to track, interpolated to different resolutions (ADD LATER)
-    df_distance_to_track = os.path.join(data_dir,
-                                        "processed_data/shortest_dis2hurricanes_varying_res.pkl")
+    df_distance_to_track = os.path.join(
+        data_dir,
+        "processed_data/shortest_dis2hurricanes_varying_res.pkl"
+    )
 
     # based on feature importance
     if ECMWF == "ECMWF":
@@ -146,11 +154,15 @@ def balance_process(data_dir, ECMWF: str | None = None):
     balanced_df = pd.concat(n_sampled_dfs)
 
     if ECMWF == "ECMWF":
-        output_path = os.path.join(output_dir,
-                                   "filtered_lnglat_ECMWF_damage.pkl")
+        output_path = os.path.join(
+            output_dir,
+            "filtered_lnglat_ECMWF_damage.pkl"
+        )
     else:
-        output_path = os.path.join(output_dir,
-                                   "filtered_lnglat_pre_pol_post_damage.pkl")
+        output_path = os.path.join(
+            output_dir,
+            "filtered_lnglat_pre_pol_post_damage.pkl"
+        )
     balanced_df.to_pickle(output_path)
     return balanced_df
 
