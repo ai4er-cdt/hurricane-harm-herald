@@ -97,7 +97,8 @@ def exclude_df_rows_symmetrically_around_value(
     """
 
     # check lists same lengths
-    utils.simple_functions.checklistLengthsEqual([col_names, poi, buffer_val])
+    # utils.simple_functions.checklistLengthsEqual([col_names, poi, buffer_val])
+    assert len(col_names) == len(poi) == len(buffer_val)
 
     for i, col in enumerate(col_names):
         if type(poi[i]) == pd.Timestamp:
@@ -142,7 +143,8 @@ def exclude_df_rows_by_range(
     restricted pd.DataFrame object (sub-set of original df)
     """
     # check lists same lengths
-    utils.simple_functions.checklistLengthsEqual([col_names, value_bounds])
+    # utils.simple_functions.checklistLengthsEqual([col_names, value_bounds])
+    assert len(col_names) == len(value_bounds)
 
     for i, col in enumerate(col_names):
         if type(value_bounds[i][0]) == pd.Timestamp:
