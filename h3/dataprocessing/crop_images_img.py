@@ -25,7 +25,7 @@ def polygon_mask(img_array, polygon, im_size: int):
 
     Parameters
     ----------
-    img : dataset object
+    img_array : dataset object
         pre-event image file aligning with the building polygon.
     polygon : object
         polygon containing the outline of the building.
@@ -145,7 +145,6 @@ def crop_images(image_array, img_metadata, polygon_df, zoom_level: int, pixel_nu
     if (y_offset + size_limit > y_max or y_offset - size_limit < y_min or
             x_offset + size_limit > x_max or x_offset - size_limit < x_min):
 
-        # image_array = img.read()
         # padding around image, add dimensions around offset to all sides
         pad = ((0, 0), (size_limit, size_limit), (size_limit, size_limit))
         padded = np.pad(image_array, pad_width=pad)
@@ -160,7 +159,6 @@ def crop_images(image_array, img_metadata, polygon_df, zoom_level: int, pixel_nu
             (padded_x_offset-size_limit):(padded_x_offset+size_limit)]
 
     else:
-        # image_array = img.read()
         roi = image_array[:, (y_offset-size_limit):(y_offset+size_limit),
                           (x_offset-size_limit):(x_offset+size_limit)]
 
@@ -189,7 +187,7 @@ def crop_images(image_array, img_metadata, polygon_df, zoom_level: int, pixel_nu
     #     src.write(resized_img)
 
 
-def save_image(output_path, resized_img, img_metadata):
+def save_image(output_path: str, resized_img, img_metadata):
     with rio.open(output_path, "w", **img_metadata) as src:
         # Read the data from the window and write it to the output raster
         src.write(resized_img)
