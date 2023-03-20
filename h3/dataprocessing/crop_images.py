@@ -1,24 +1,15 @@
+import os
+from os.path import exists
+
+import cv2
 import numpy as np
 import pandas as pd
-
-import os
-import rasterio as rio
-import cv2
 import scipy.ndimage
-from os.path import exists
+import rasterio as rio
 
 from h3.utils.directories import get_xbd_dir
 from h3.utils.directories import get_data_dir
 from h3.dataprocessing.extract_metadata import extract_damage_allfiles_ensemble
-
-
-CLASSES_DICT = {
-    "no-damage": 0,
-    "minor-damage": 1,
-    "major-damage": 2,
-    "destroyed": 3,
-    "un-classified": 4
-}
 
 
 def extract_coords(row):
@@ -51,7 +42,7 @@ def polygon_mask(img, polygon, im_size: int):
     return image_mask
 
 
-def mask_to_bb(Y):
+def mask_to_bb(Y: np.ndarray) -> np.ndarray:
     """Takes a filled building mask and converts it into a
     rectangular bounding box.
 
@@ -77,7 +68,7 @@ def mask_to_bb(Y):
 
 
 def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
-                im_size: int, output_path: str):
+                im_size: int, output_path: str) -> None:
     """Crops imagery based on the building polygon and the desired pixel size.
     It can zoom in to certain levels, whilst maintaining the pixel size by
     bilinear interpolation. The building will be centered in the image and all
@@ -191,7 +182,7 @@ def crop_images(img, polygon_df, zoom_level: int, pixel_num: int,
         src.write(resized_img)
 
 
-def image_processing(zoom_levels: list, pixel_num: int):
+def image_processing(zoom_levels: list, pixel_num: int) -> None:
     """Loads images and crops them based on the required zoom levels
     and the required imagery input pixel size for the model.
 
@@ -228,9 +219,11 @@ def image_processing(zoom_levels: list, pixel_num: int):
     else:
         fulldirectory_files = [os.path.join(filepath, file)
                                for file in os.listdir(filepath)]
-        polygons_df = extract_damage_allfiles_ensemble(fulldirectory_files,
-                                                       filepath,
-                                                       "xy")
+        polygons_df = extract_damage_allfiles_ensemble(
+            fulldirectory_files,
+            filepath,
+            "xy"
+        )
     for building_num in range(len(polygons_df)):
         building_geometry = (polygons_df.iloc[building_num]["geometry"])
         # find image name
