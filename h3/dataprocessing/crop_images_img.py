@@ -269,7 +269,7 @@ def image_processing(zoom_levels: list, pixel_num: int):
                     #    zoom_dir,
                     #    (img_name.strip(".png")+"_zoom" + str(zoom_level) +
                     #     "_" + img_num))
-                    output_path = os.path.join(zoom_dir, (img_num))
+                    output_path = os.path.join(zoom_dir, img_num)
                     crop_images(img, polygon_for_img, zoom_level, pixel_num,
                                 image_size, output_path)
 
