@@ -3,6 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import geopy
 import shapely
+
 from h3 import utils
 
 
@@ -78,12 +79,12 @@ def exclude_df_rows_symmetrically_around_value(
     ----------
     df : pd.DataFrame
         pd.DataFrame containing values to potentially exclude
-    col_names : list[str]
+    col_names : list of str
         list of strings specifying the names of the columns of interest
-    poi : [ list[float], list[pd.Timestamp] ]
+    poi : list of float or list of pd.Timestamp
         points of interest (value about which any exclusion will be centred).
         One value for each relevant column.
-    buffer : [ list[float], list[tuple[float,str]] ]
+    buffer_val : list of float or list of tuple[float,str]
         distance from poi to be excluded. In the case that poi is a Timestamp
         object, a string specifying the unit of time is necessary e.g. 'h' for
         hours (either as a tuple or list). See
