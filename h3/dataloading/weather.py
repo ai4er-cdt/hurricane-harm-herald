@@ -485,9 +485,11 @@ def generate_and_save_era5_pkl(
 def generate_era5_pkl(
     distance_buffer: float = 5
 ) -> pd.DataFrame:
+
+    # set correct destination for file downloads
     download_dest_dir = directories.get_ecmwf_data_dir()
-    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_ecmwf_files(download_dest_dir, distance_buffer)
     # download ecmwf grib files to separate directories within /datasets/weather/ecmwf/
+    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_ecmwf_files(download_dest_dir, distance_buffer)
     # group ecmwf xarray files into dictionary indexed by name of weather event
     xbd_event_xa_dict = generate_xbd_event_xa_dict(download_dest_dir, df_noaa_xbd_hurricanes)
     # generate df for all xbd points' closest maximum era5 values
