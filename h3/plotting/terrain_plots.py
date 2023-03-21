@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import rasterio as rio
 import richdem as rd
+import pandas as pd
 
 from pandas.core.groupby import DataFrameGroupBy
 from typing import Literal
@@ -17,6 +18,7 @@ from typing import Literal
 from h3 import logger
 from h3.dataloading.terrain_ef import get_buildings_bounding_box, get_coastpoints_range, get_distance_coast
 from h3.utils.directories import get_dem_dir
+from h3.dataloading import general_df_utils
 
 
 def plot_coastline(coast_points: list) -> None:
@@ -211,7 +213,12 @@ def plot_dem(dem_urls: list) -> None:
     plt.show()
 
 
-def plot_map_location(building_groups, dem_tif_path_list, dem_tif_short_name_list,  terrain_attribute: Literal["dem", "slope", "aspect"]):
+def plot_map_location(
+    building_groups,
+    dem_tif_path_list,
+    dem_tif_short_name_list,
+    terrain_attribute: Literal["dem", "slope", "aspect"]
+):
     # plot dem map and building locations
     # Set the number of columns and rows for the plot
     num_cols = 3
@@ -308,7 +315,7 @@ def plot_hurricane_event_tracks(
 
     # fig, axs = plt.subplots(num_rows, 2, figsize=[12*num_rows,12]);
     fig, axs = plt.subplots(num_rows, 2, figsize=[12*num_rows, 12], dpi=300,
-                            subplot_kw={'projection': cart.crs.PlateCarree()})
+                            subplot_kw={'projection': ccrs.PlateCarree()})
 
     axs = axs.ravel()
 
@@ -325,8 +332,8 @@ def plot_hurricane_event_tracks(
         # axs[i].set_xlabel('longitude'), axs[i].set_ylabel('latitude')
         axs[i].set_aspect('equal', adjustable='datalim')
         # gdf_coastlines.plot(ax=axs[i], color='grey', alpha=1, linewidth=0.5)
-        axs[i].add_feature(cart.feature.LAND.with_scale('10m'))
-        axs[i].add_feature(cart.feature.OCEAN.with_scale('10m'))
+        axs[i].add_feature(cfeature.LAND.with_scale('10m'))
+        axs[i].add_feature(cfeature.OCEAN.with_scale('10m'))
 
         gdf_noaa_hurricanes = gpd.GeoDataFrame(df_noaa_hurricanes[df_noaa_hurricanes['name'] == event_name])
         gdf_noaa_hurricanes.plot(ax=axs[i], color='blue', markersize=100, alpha=0.3, label='NOAA hurricane observation')
@@ -334,23 +341,25 @@ def plot_hurricane_event_tracks(
         if df_xbd_points is not None:
             gdf_xbd_points = gpd.GeoDataFrame(df_xbd_points[df_xbd_points['disaster_name'] == event_name])
             gdf_xbd_points.plot(ax=axs[i], color='red', markersize=0.5, alpha=1, label='xbd observation')
-            av_lat, av_lon = calc_means_df_cols(gdf_xbd_points, ['lat', 'lon'])
+            av_lat, av_lon = general_df_utils.calc_means_df_cols(gdf_xbd_points, ['lat', 'lon'])
 
             # if limiting plot to a show at least 'min_number_weather' datapoints
             if min_number_weather:
                 # ensure that at least 'min_number_weather' hurricane observation points are in the image
-                gdf_noaa_hurricanes = limit_df_spatial_range(
+                gdf_noaa_hurricanes = general_df_utils.limit_df_spatial_range(
                     gdf_noaa_hurricanes, [av_lat, av_lon], min_number=min_number_weather)
 
             if df_stations is not None:
                 gdf_stations = gpd.GeoDataFrame(
                     df_stations, geometry=gpd.points_from_xy(df_stations.lon, df_stations.lat), crs="EPSG:4326")
                 # inactive weather stations
-                gdf_stations_inactive = station_availability(gdf_stations, gdf_noaa_hurricanes, available=False)
+                gdf_stations_inactive = general_df_utils.station_availability(
+                    gdf_stations, gdf_noaa_hurricanes, available=False)
                 gdf_stations_inactive.plot(
                     ax=axs[i], color='darkorange', markersize=10, label='inactive weather station')
                 # active weather stations
-                gdf_stations_active = station_availability(gdf_stations, gdf_noaa_hurricanes, available=True)
+                gdf_stations_active = general_df_utils.station_availability(
+                    gdf_stations, gdf_noaa_hurricanes, available=True)
                 gdf_stations_active.plot(
                     ax=axs[i], color='lime', markersize=10, alpha=1, label='active weather station')
 
@@ -366,7 +375,7 @@ def plot_hurricane_event_tracks(
         axs[i].set_xlabel('Latitude (°)')
         axs[i].set_xlabel('Longitude (°)')
 
-        
+
 def main():
     from h3.dataloading.terrain_ef import get_coastlines
     coast_points = get_coastlines()
