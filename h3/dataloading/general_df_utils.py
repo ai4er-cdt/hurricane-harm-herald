@@ -39,8 +39,9 @@ def standardise_df(
             df.geometry = df.geometry.apply(
                 lambda x: convert_point_string_to_point(x)   # TODO: this function is not implemented
             )
-            # generate lat-lon columns from any Point objects
-            df = generate_lat_lon_from_points_cols(df, ["geometry"])
+
+        # generate lat-lon columns from any Point objects in column called 'geometry'
+        df = generate_lat_lon_from_points_cols(df, ["geometry"])
 
     if {"lat", "lon"}.issubset(df.columns):
         # make geometry column of shapely Point objects
