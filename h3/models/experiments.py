@@ -226,7 +226,7 @@ def run_model(
 	else:
 		# weather
 		df_noaa_xbd_pkl_path = os.path.join(
-			data_dir, 'EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl'
+			data_dir, "EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl"
 		)
 		# terrain efs
 		df_terrain_efs_path = os.path.join(
