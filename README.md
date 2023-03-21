@@ -22,9 +22,6 @@ The `notebooks` folder contains interactive walk-throughs of data loading and vi
 
 There is currently no opportunity to contribute to the project since it forms an assessed part of the AI4ER MRes year.
 
-## License
-
-This project falls under the MIT license.
 
 ## Acknowledgements
 
