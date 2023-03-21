@@ -35,12 +35,10 @@ def read_and_merge_pkls(pkl_paths: list[str] | list[Path]) -> pd.DataFrame:
     pkl_paths_present = check_files_in_list_exist(pkl_paths)
     df_list = [pd.read_pickle(pkl) for pkl in pkl_paths_present]
 
-    return reduce(lambda df1,df2: pd.merge(df1,df2,left_index=True,right_index=True), df_list)
+    return reduce(lambda df1, df2: pd.merge(df1, df2, left_index=True, right_index=True), df_list)
 
 
-def drop_cols_containing_lists(
-    df: pd.DataFrame
-) -> pd.DataFrame:
+def drop_cols_containing_lists(df: pd.DataFrame) -> pd.DataFrame:
     """It seemed like the best solution at the time: and to be fair,
     I can't really think of better...
     N.B. for speed, only looks at values in first row – if there is a
@@ -50,17 +48,15 @@ def drop_cols_containing_lists(
     return df
 
 
-def rename_and_drop_duplicated_cols(
-    df: pd.DataFrame
-) -> pd.DataFrame:
+def rename_and_drop_duplicated_cols(df: pd.DataFrame) -> pd.DataFrame:
     """Drop columns which are copies of others and rename the 'asdf_x'
     headers which would have resulted"""
     # need to ensure no bad types first
     df = drop_cols_containing_lists(df)
     # remove duplicated columns
     dropped_df = df.T.drop_duplicates().T
-    # rename columns for clarity (especially those which are shared between dfs). Will be able to remove most with better
-    # column naming further up the process
+    # rename columns for clarity (especially those which are shared between dfs).
+    # Will be able to remove most with better column naming further up the process
     new_col_names = {col: col.replace('_x', '') for col in dropped_df.columns if col.endswith('_x')}
     return dropped_df.rename(columns=new_col_names)
 
@@ -111,13 +107,12 @@ def data_loader(data_dir: str, ECMWF: str) -> pd.DataFrame:
 
     # based on feature importance
     if ECMWF == "ECMWF":
-        all_pkl_paths = [df_ecmwf_xbd_pkl_path, df_noaa_xbd_pkl_path, 
-                         df_terrain_efs_path,
-                         df_topographic_efs_path]
+        all_pkl_paths = [df_ecmwf_xbd_pkl_path, df_noaa_xbd_pkl_path,
+                         df_terrain_efs_path, df_topographic_efs_path]
     else:
         all_pkl_paths = [df_noaa_xbd_pkl_path, df_terrain_efs_path,
                          df_topographic_efs_path]
- 
+
     all_EF_df = read_and_merge_pkls(all_pkl_paths)
     all_df_no_dups = rename_and_drop_duplicated_cols(all_EF_df)
     # drop r_max_wind as it is a column full of NaNs
@@ -139,7 +134,7 @@ def balance_process(data_dir, ECMWF: str | None = None):
     Returns
     -------
     dataframe
-        EFs dataframe, balanced with value count of the destroyed damage class. 
+        EFs dataframe, balanced with value count of the destroyed damage class.
     """
     # output_dir = get_metadata_pickle_dir()
     output_dir = os.path.join(data_dir, "processed_data/metadata_pickle")
