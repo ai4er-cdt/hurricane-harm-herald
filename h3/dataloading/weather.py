@@ -147,9 +147,9 @@ def check_is_file_downloaded(
     potential_file_path = "/".join((download_dest_dir, csv_filename)) + ".csv"
     if os.path.exists(potential_file_path):
         # downloaded
+        print(f"{csv_filename} already downloaded.")
         return True
     else:
-        print(f"{csv_filename} already downloaded.")
         return False
 
 
