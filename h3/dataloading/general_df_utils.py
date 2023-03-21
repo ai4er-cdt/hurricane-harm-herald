@@ -3,6 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import geopy
 import shapely
+import re
 
 from h3 import utils
 
