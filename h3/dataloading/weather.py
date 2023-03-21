@@ -251,6 +251,7 @@ def generate_noaa_best_track_pkl(
         # Restrict NOAA data to xbd events
         xbd_hurricane_names = ["MICHAEL", "MATTHEW", "FLORENCE", "HARVEY"]
         noaa_df = return_most_recent_events_by_name(noaa_df, xbd_hurricane_names)
+    noaa_df = general_df_utils.standardise_df(noaa_df)
 
     return noaa_df
 
