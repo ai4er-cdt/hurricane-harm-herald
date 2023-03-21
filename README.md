@@ -68,10 +68,25 @@ pip install -r requirement.txt
 
 There are several datasets used to test and train our model. The following sections describe how to download each dataset. Due to the size of data, it's recommended to use a remote storage service, for example a [Google Drive](https://www.google.co.uk/intl/en-GB/drive/).
 
+The overall file structure should be as follows:
+
+```
+ ├── data
+ │      ├── datasets
+ │      │      └── xBD_data
+ │      │      └── DEM_data
+ │      │      └── storm_surge_flood_data
+ │      │      └── DEM_data
+ │      │      └── weather_data
+ │      │           └── ecmwf_era5
+ │      │           └── noaa_best_track
+ │      │           └── global_isd
+ │      │           └── noaa_best_track
+
 ### xBD pre- and post-event satellite damage-annotated imagery 
 [xBD](https://openaccess.thecvf.com/content_CVPRW_2019/papers/cv4gc/Gupta_Creating_xBD_A_Dataset_for_Assessing_Building_Damage_from_Satellite_CVPRW_2019_paper.pdf) is the dataset used in the xView2 challenge, providing pre- and post-event RGB satellite imagery with over 700,000 building polygons. 
 
-Download the dataset from https://xview2.org/ (you will need to register for an account) and put the files in `./data/datasets/XBD_data`.  
+Download the dataset from https://xview2.org/ (you will need to register for an account) and put the files in `./data/datasets/xBD_data`.  
 <i>Note: </i> The uncompressed data is about 130GB.
 
 After downloading, the data will be organised in the directories as follows:
@@ -109,16 +124,16 @@ After downloading, the data will be organised in the directories as follows:
                └── ...  
 ```
 
-### DEM
+### DEM 
 
 To download the DEM files, you need an account here: https://urs.earthdata.nasa.gov/users/new/  
-Once your account created, have your credential on hand to input them when needed  
+Once your account has been created, have your credentials on hand to input them when needed  
 (The credentials will be stored in `./data/credentials.json`)
 
 
 ### Weather Data
 
-Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track Data, and ERA5-Land Reanalysis can be downloaded by running the `download_weather_data.ipynb` notebook. This will be downloaded in the following file structure:
+Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track data, and ERA5-Land Reanalysis can be downloaded by running the `download_weather_data.ipynb` notebook. This will be downloaded in the following file structure:
 
 ```
  ├── weather_data
@@ -132,6 +147,8 @@ Weather data from the Global Integrated Surface Dataset, NOAA HURDAT2 Best Track
  │             └── <image_id>.png
  │             └── ...
 ```
+
+
 
 ## Contributors
 
