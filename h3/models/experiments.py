@@ -35,47 +35,14 @@ from h3.models.multimodal import OverallModel
 from h3.utils.directories import *
 from h3.models.balance_process import balance_process
 from h3.utils.simple_functions import rich_table
+from h3.utils.dataframe_utils import read_and_merge_pkls, rename_and_drop_duplicated_cols
 
 from h3.constants import RF_BEST_EF_FEATURES, RF_BEST_FEATURES_TO_SCALE
 from h3.constants import ALL_EF_FEATURES, ALL_FEATURES_TO_SCALE
 
 
-def read_and_merge_pkls(
-		pkl_paths: List[str] | List[Path]
-) -> pd.DataFrame:
-	"""Read in pkl files from list of file paths and merge on index"""
-	# check all files exist
-	pkl_paths_present = check_files_in_list_exist(pkl_paths)
-	df_list = [pd.read_pickle(pkl) for pkl in pkl_paths_present]
-
-	return reduce(lambda df1, df2: pd.merge(df1, df2, left_index=True, right_index=True), df_list)
-
-
-def rename_and_drop_duplicated_cols(
-		df: pd.DataFrame
-) -> pd.DataFrame:
-	"""Drop columns which are copies of others and rename the 'asdf_x' headers which would have resulted"""
-	# need to ensure no bad types first
-	df = drop_cols_containing_lists(df)
-	# remove duplicated columns
-	dropped_df = df.T.drop_duplicates().T   # this a small bottleneck
-	# rename columns for clarity (especially those which are shared between dfs). Will be able to remove most with better
-	# column naming further up the process
-	new_col_names = {col: col.replace('_x', '') for col in dropped_df.columns if col.endswith('_x')}
-
-	return dropped_df.rename(columns=new_col_names)
-
-
-def drop_cols_containing_lists(
-		df: pd.DataFrame
-) -> pd.DataFrame:
-	"""It seemed like the best solution at the time: and to be fair, I can't really think of better...
-	N.B. for speed, only looks at values in first row – if there is a multi-type column, this would be the least of
-	our worries...
-	"""
-	df = df.loc[:, df.iloc[0].apply(lambda x: type(x) != list)]
-
-	return df
+def existing_model_to_json():
+	pass
 
 
 def run_predict(
