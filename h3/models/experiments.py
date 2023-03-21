@@ -104,10 +104,10 @@ def run_predict(
 			prediction = model(x)
 			predictions_list.append(prediction)
 
-	pickle_save_path = os.path.join(get_pickle_dir(), f'{pkl_name}_predi.pickle')
+	pickle_save_path = os.path.join(get_pickle_dir(), f"{pkl_name}_predi.pickle")
 	logger.info("Pickling the saved data")
 
-	with open(pickle_save_path, 'wb') as handle:
+	with open(pickle_save_path, "wb") as handle:
 		pickle.dump(predictions_list, handle)
 
 
@@ -322,7 +322,7 @@ def run_model(
 		logger.info("Setting the trainer using GPU")
 		trainer = pl.Trainer(
 			max_epochs=max_epochs,
-			accelerator='gpu',
+			accelerator="gpu",
 			log_every_n_steps=log_every_n_steps,
 			callbacks=[checkpoint_callback, early_stop_callback, RichProgressBar(refresh_rate=10)],
 			logger=tensor_logger,
