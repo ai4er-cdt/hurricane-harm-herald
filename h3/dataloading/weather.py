@@ -456,7 +456,7 @@ def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
         # read it
         df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), "xbd_points.pkl"))
     # standardise xbd_points.pkl future processing
-    df_xbd_points = general_df_utils.standardise_df(df_xbd_points)
+    df_xbd_points = general_df_utils.standardise_xbd_obs_df(df_xbd_points)
 
     # get info necessary for fetching era5 data
     event_api_info, start_end_dates, areas = return_relevant_event_info(
