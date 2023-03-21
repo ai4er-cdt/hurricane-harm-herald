@@ -82,34 +82,37 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 		os.remove(filepath)
 
 
-def model_run_to_json(start_time, end_time, **run_parameters) -> None:
+def model_run_to_json(start_time: str | None, end_time: str | None, **run_parameters) -> None:
 	from h3.utils.directories import get_datasets_dir
 	model_json_file = os.path.join(get_datasets_dir(), "model_runs.json")
 
 	if os.path.exists(model_json_file):
 		with open(model_json_file, "r") as f:
 			models_json = json.load(f)
-
-	new_id = str(max(map(int, list(models_json.keys()))) + 1)
+		new_id = str(max(map(int, list(models_json.keys()))) + 1)
 
 	new_run_json = {
 		"checkpoint_name": run_parameters["ckp_name"],
 		"start_date": start_time,
 		"end_date": end_time,
 		"split_val_train_test": run_parameters["split_val_train_test"],
-		"EF_features": run_parameters["ef_features"],
+		"EF_features": {
+			"nbr": sum(map(len, run_parameters["ef_features"].values())),
+			"values": run_parameters["ef_features"]
+		},
 		"architecture": run_parameters["image_embedding_architecture"],
 		"zoom_levels": run_parameters["zoom_levels"],
 		"is_balanced": run_parameters["balanced"],
 		"max_epochs": run_parameters["max_epochs"],
-		"is_augmented": run_parameters["use_augmentation"],
+		"is_augmented": bool(run_parameters["use_augmentation"]),
 		"ram_load": run_parameters["ram_load"],
 		"is_spatial": run_parameters["spatial"],
 		"hurricanes": run_parameters["hurricanes"],
 		"precision": run_parameters["precision"],
 		"torch_float32_precision": run_parameters["torch_float32_precision"],
 		"image_only": run_parameters["image_only_model"],
-		"loss_function": run_parameters["loss_function_str"]
+		"loss_function": run_parameters["loss_function_str"],
+		"from_checkpoint": run_parameters["from_checkpoint"]
 	}
 
 	with open(model_json_file, "w") as f:
