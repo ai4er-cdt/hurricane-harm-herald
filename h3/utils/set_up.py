@@ -60,5 +60,5 @@ def check_if_data_file_exists(
         print(f"{file_name} found at correct location: {file_path}.")
         return True
     else:
-        print("{file_name} not found at correct location: {file_path}.")
+        print(f"{file_name} not found at correct location: {file_path}.")
         return False
