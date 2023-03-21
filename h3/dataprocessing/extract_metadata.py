@@ -4,6 +4,7 @@ import os
 import fnmatch
 import json
 
+import geopandas
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -13,8 +14,7 @@ from tqdm import tqdm
 
 from typing import Literal
 from h3.constants import DMG_CLASSES_DICT
-from h3.utils.directories import get_metadata_pickle_dir, get_xbd_hlabel_dir, \
-    get_xbd_dir
+from h3.utils.directories import get_metadata_pickle_dir, get_xbd_dir
 
 
 # extract pre-event hurricane imagery
@@ -52,7 +52,7 @@ def extract_point(building):
 
     Parameters
     ----------
-    building : object
+    building :
         polygon information in shapely coordinates.
 
     Returns
@@ -70,7 +70,7 @@ def extract_polygon(building):
 
     Parameters
     ----------
-    building : object
+    building :
         polygon shapely coordinates.
 
     Returns
@@ -103,7 +103,7 @@ def extract_metadata(
 
     Returns
     -------
-    Geodataframe
+    GeoDataFrame
         contains polygons of json file, corresponding metadata.
     """
     # json_file = open(json_link)
@@ -144,30 +144,32 @@ def extract_metadata(
     if crs == "xy":
         df = gpd.GeoDataFrame(
             damage_location,
-            columns=["point_lnglat", "polygon_lnglat", "point_xy", "geometry",
-                     "damage_class", "disaster_name", "image_name",
-                     "capture_date", "json_link"])
-
+            columns=["point_lnglat", "polygon_lnglat", "point_xy",
+                     "geometry", "damage_class", "disaster_name",
+                     "image_name", "capture_date", "json_link"]
+        )
     else:
         df = gpd.GeoDataFrame(
             damage_location,
-            columns=["geometry", "polygon_lnglat", "point_xy", "polygon_xy",
-                     "damage_class", "disaster_name", "image_name",
-                     "capture_date", "json_link"])
+            columns=["geometry", "polygon_lnglat", "point_xy",
+                     "polygon_xy", " damage_class", "disaster_name",
+                     "image_name", "capture_date", "json_link"]
+        )
     df["capture_date"] = pd.to_datetime(df["capture_date"])
     df["geometry"] = df["geometry"].apply(wkt.loads)
     return df
 
 
-def extract_damage_allfiles_separate(filepaths_dict: dict,
-                                     crs: str, event: Literal["pre", "post"]):
+def extract_damage_allfiles_separate(
+        filepaths_dict: dict, crs: str, event: Literal["pre", "post"]
+) -> geopandas.GeoDataFrame:
     """
     Filters all label files for hurricanes, extracts the metadata,
     concatenates all files for post and pre images separately.
 
     Parameters
     ----------
-    directory_files : dict
+    filepaths_dict : dict
         .json files in xBD data folder to filter organised by their folder.
         These files are a value for the holdout, tier1, tier3 and test folder
         as a key.
@@ -178,7 +180,7 @@ def extract_damage_allfiles_separate(filepaths_dict: dict,
 
     Returns
     -------
-    geodataframe
+    GeoDataFrame
         two geodataframes with a summary of metadata for all
         hurricane events with labels.
     """
@@ -190,23 +192,30 @@ def extract_damage_allfiles_separate(filepaths_dict: dict,
     dataframes_list = []
     for directory in filepaths_dict:
         filepath_list = (filepaths_dict[directory])
-        full_hurr_json_files = filter_files(filepath_list,
-                                            directory,
-                                            search_criterium)
+        full_hurr_json_files = filter_files(
+            filepath_list,
+            directory,
+            search_criterium
+        )
         if len(full_hurr_json_files) > 0:
             for file in tqdm(full_hurr_json_files,
                              desc=f"Extracting metadata for {event}"
                              "hurricane"):
-                loc_and_damage_df = extract_metadata(file, DMG_CLASSES_DICT,
-                                                     crs, event)
+                loc_and_damage_df = extract_metadata(
+                    file,
+                    DMG_CLASSES_DICT,
+                    crs,
+                    event
+                )
                 dataframes_list.append(loc_and_damage_df)
-    rdf = gpd.GeoDataFrame(pd.concat(dataframes_list,
-                                     ignore_index=True))
+    rdf = gpd.GeoDataFrame(
+        pd.concat(dataframes_list, ignore_index=True)
+    )
     return rdf
 
 
 # check if polygons from pre and post overlap
-def overlapping_polygons(geoms, p):
+def overlapping_polygons(geoms, p) -> pd.Series:
     """Checks if polygons from pre- and post-event imagery overlap.
     If they do, the damage class from post-event dataframe can be allocated
     to the pre-event polygon.
@@ -215,12 +224,12 @@ def overlapping_polygons(geoms, p):
     ----------
     geoms : series
         post-event geodataframe geometry column containing the polygon
-    p : object
+    p : polygon
         pre-event polygon extracted from geodataframe
 
     Returns
     -------
-    series
+    pd.Series
         column in post-event dataframe containing which row number the
         post-event polygon matches with in the pre-event dataframe.
     """
@@ -231,7 +240,7 @@ def overlapping_polygons(geoms, p):
 def extract_damage_allfiles_ensemble(
         filepaths_dict: dict,
         crs: str,
-):
+) -> geopandas.GeoDataFrame:
     """
     Filters all pre and post label files for hurricanes, extracts the metadata
     from the post and pre json files. Takes damage information from post and
@@ -248,7 +257,7 @@ def extract_damage_allfiles_ensemble(
 
     Returns
     -------
-    geodataframe
+    GeoDataFrame
         geodataframes with a summary of metadata for all
         pre-event hurricane events with post-event labels.
     """
@@ -286,7 +295,9 @@ def extract_damage_allfiles_ensemble(
     return pre_rdf
 
 
-def load_and_save_df(filepaths_dict: dict, output_dir: str, reload_pickle: bool = False):
+def load_and_save_df(
+        filepaths_dict: dict, output_dir: str, reload_pickle: bool = False
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Loads the json label files for all hurricanes in the "hold" section of the
     xBD data, extracts the points and polygons in both xy coordinates,
