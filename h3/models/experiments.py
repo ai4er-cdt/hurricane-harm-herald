@@ -8,6 +8,7 @@ import pandas as pd
 import pytorch_lightning as pl
 import torch
 
+from collections import defaultdict
 from datetime import datetime
 from tqdm.rich import tqdm
 from typing import  Literal
@@ -35,8 +36,21 @@ from h3.constants import RF_BEST_EF_FEATURES, RF_BEST_FEATURES_TO_SCALE
 from h3.constants import ALL_EF_FEATURES, ALL_FEATURES_TO_SCALE
 
 
-def existing_model_to_json():
-	pass
+def existing_model_to_json(ckp_path: str) -> None:
+	model = OverallModel.load_from_checkpoint(ckp_path, training_dataset=None, validation_dataset=None)
+	param = model.hparams
+	start_time = None
+	end_time = None
+	param["from_checkpoint"] = True
+	param["ckp_name"] = ckp_path
+	param["split_val_train_test"] = None
+	# TODO: fix this, does it cover all possible loss_function?
+	param["balanced"] = True if param["loss_function_str"] == "weighted_CELoss" else False
+	model_param = defaultdict(lambda: None, param)
+	# for backward compatible, TODO: fix
+	if model_param["ef_features"] is None:
+		model_param["ef_features"] = model_param["EF_features"]
+	model_run_to_json(start_time, end_time, **model_param)
 
 
 def run_predict(
@@ -343,8 +357,8 @@ def run_model(
 				get_checkpoint_dir(),
 				ckp_name
 			),
-			train_dataset=train_df,
-			val_dataset=val_df,
+			train_dataset=train_df,     # TODO: this doesn't seem correct and should be train_dataset
+			val_dataset=val_df,         # TODO: idem
 			test_df=test_df,
 			scaler=scaler,
 			feature_to_scale=features_to_scale,
@@ -388,7 +402,7 @@ def run_model(
 	if predict:
 		run_predict(
 			model=model,
-			test_df=test_df,
+			test_df=test_df,    # TODO: check if this is correct, I think it is
 			scaler=scaler,
 			features_to_scale=features_to_scale,
 			ef_features=ef_features,
@@ -411,7 +425,7 @@ def main():
 	architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"]
 	architecture = "ResNet18"
 	spatial = True
-	ckp_name = f"{architecture}_{*zooms,}_b{int(balanced)}_s{spatial}_EF{len(ef)}"
+	ckp_name = f"{architecture}_{*zooms,}_b{int(balanced)}_s{spatial}_EF{len(features_scale)}"
 	# ckp_name = f"{architecture}_{*zooms,}_balanced_True"
 
 	hurricanes = {
