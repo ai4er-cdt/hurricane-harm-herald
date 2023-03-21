@@ -21,7 +21,7 @@ from h3.dataprocessing import extract_metadata
 from h3.utils import directories
 from h3.utils.simple_functions import pad_number_with_zeros
 from h3.utils.file_ops import guarantee_existence
-
+from h3.utils.set_up import check_if_data_file_exists
 
 def find_fetch_closest_station_files(
     df_xbd_points: pd.DataFrame,
