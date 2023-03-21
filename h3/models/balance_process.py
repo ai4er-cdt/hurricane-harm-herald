@@ -10,7 +10,7 @@ from h3.constants import DMG_CLASSES_DICT
 from h3.utils.directories import get_data_dir, get_metadata_pickle_dir
 
 
-def check_files_in_list_exist(file_list: Union[List[str], List[Path]]):
+def check_files_in_list_exist(file_list: list[str] | list[Path]):
     """State which files don't exist and remove from list"""
     files_found = []
     for fl in file_list:
@@ -65,7 +65,7 @@ def rename_and_drop_duplicated_cols(
     return dropped_df.rename(columns=new_col_names)
 
 
-def data_loader(data_dir: str, ECMWF):
+def data_loader(data_dir: str, ECMWF: str) -> pd.DataFrame:
     """Loads NOAA weather, terrain and soil EFS from the pickle file,
     merges them and drops the duplicates.
 
@@ -74,9 +74,11 @@ def data_loader(data_dir: str, ECMWF):
     data_dir : str
         Path to the datasets, input either the google drive path or the local
         path.
+    ECMWF : str
+
     Returns
     -------
-    Dataframe
+    pd.DataFrame
         Merged dataframe from all the pickled dataframes with EFs of interest.
     """
     # data_dir = get_data_dir()
