@@ -74,7 +74,7 @@ def run_predict(
 	scaled_test_df = test_df.copy()
 	test_save_path = os.path.join(get_pickle_dir(), f"test_df_{pkl_name}.pickle")
 	with open(test_save_path, "wb") as handle:
-		pickle.dump(test_save_path, handle)
+		pickle.dump(scaled_test_df, handle)
 
 	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
 
