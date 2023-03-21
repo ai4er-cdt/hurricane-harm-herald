@@ -4,6 +4,7 @@ from h3 import logger
 from h3.dataloading.storm_surge import check_storm
 from h3.dataloading.terrain_ef import check_dem_files, check_coastlines_file
 from h3.dataloading.xbd import get_xbd
+from h3.utils import directories
 
 
 def check_all_downloads():
