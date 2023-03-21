@@ -207,6 +207,9 @@ class OverallModel(pl.LightningModule):
 		- 'sigmoid' : for binary classification
 		- 'softmax' : for multiclass classification
 		- 'relu'    : for regression
+	annealing_t_max : int, optional
+		T_max for the Cosine annealing of the lr_scheduler.
+		The default is 30.
 
 
 	Attributes
@@ -215,28 +218,29 @@ class OverallModel(pl.LightningModule):
 	"""
 
 	def __init__(
-			self,
-			training_dataset,
-			validation_dataset,
-			image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"] = "ResNet18",
-			dropout_rate: float = 0.2,
-			general_lr: float = 1e-4,
-			image_encoder_lr: float = 0,
-			batch_size: int = 32,
-			weight_decay: float = 0.0,
-			lr_scheduler_patience: int = 2,
-			num_input_channels: int = 3,
-			EF_features=None,
-			num_concat_encoder_features: int = 100,
-			num_image_feature_encoder_features: int = 56,
-			num_output_classes: int = 4,
-			zoom_levels: None | list = None,
-			class_weights=None,
-			image_only_model: bool = False,
-			num_workers: int = 0,
-			persistent_w: bool = False,
-			loss_function_str: Literal["BCELoss", "CELoss", "MSE"] = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
-			output_activation:  Literal["sigmoid", "softmax", "relu"] | None = None  # CELoss expects unnormalized logits
+		self,
+		training_dataset,
+		validation_dataset,
+		image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"] = "ResNet18",
+		dropout_rate: float = 0.2,
+		general_lr: float = 1e-4,
+		image_encoder_lr: float = 0,
+		batch_size: int = 32,
+		weight_decay: float = 0.0,
+		lr_scheduler_patience: int = 2,
+		num_input_channels: int = 3,
+		EF_features=None,
+		num_concat_encoder_features: int = 100,
+		num_image_feature_encoder_features: int = 56,
+		num_output_classes: int = 4,
+		zoom_levels: None | list = None,
+		class_weights=None,
+		image_only_model: bool = False,
+		num_workers: int = 0,
+		persistent_w: bool = False,
+		loss_function_str: Literal["BCELoss", "CELoss", "MSE"] = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
+		output_activation:  Literal["sigmoid", "softmax", "relu"] | None = None,  # CELoss expects unnormalized logits
+		annealing_t_max: int = 30
 	) -> None:
 		super().__init__()
 
@@ -349,6 +353,7 @@ class OverallModel(pl.LightningModule):
 
 		self.training_dataset = training_dataset
 		self.validation_dataset = validation_dataset
+		self.annealing_t_max = annealing_t_max
 
 		# balanced accuracy (i think)
 		self.accuracy = Accuracy(task='multiclass', average='macro', num_classes=num_output_classes)
@@ -500,7 +505,7 @@ class OverallModel(pl.LightningModule):
 		optimizer = torch.optim.Adam(parameters)
 		lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
 			optimizer,
-			T_max=30,
+			T_max=self.annealing_t_max,
 			eta_min=1e-4
 		)
 		return {
