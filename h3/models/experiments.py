@@ -193,6 +193,12 @@ def run_model(
 
 	if balanced_data:
 		loss_function = "CELoss"
+	else:
+		loss_function = "weighted_CELoss"
+
+	# TODO: replace with loaders function
+	if balanced_data:
+		loss_function = "CELoss"
 		ECMWF_filtered_pickle_path = os.path.join(
 			get_metadata_pickle_dir(),
 			"filtered_lnglat_ECMWF_damage.pkl"
