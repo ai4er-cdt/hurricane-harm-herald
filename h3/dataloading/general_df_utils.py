@@ -233,6 +233,8 @@ def generate_lat_lon_from_points_cols(
         df[lon_col_name] = df[col].apply(lambda p: p.x)
         df[lat_col_name] = df[col].apply(lambda p: p.y)
 
+    return df
+
 
 def calc_distance_between_df_cols(
     df: pd.DataFrame,
