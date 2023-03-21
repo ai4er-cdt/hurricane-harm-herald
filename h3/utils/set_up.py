@@ -35,7 +35,7 @@ def check_if_data_file_exists(
 
     # xBD data points
     if file_name == "xbd_points.pkl":
-        xbd_points_dir = directories.get_xbd_data_dir()
+        xbd_points_dir = directories.get_xbd_dir()
         file_path = os.path.join(xbd_points_dir, file_name)
     # NOAA HURDAT2 Best Track data (all hurricanes, and xBD hurricanes only)
     elif file_name == "noaa_hurricanes.pkl" or file_name == "noaa_xbd_hurricanes.pkl":
