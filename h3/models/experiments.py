@@ -11,7 +11,7 @@ import torch
 from collections import defaultdict
 from datetime import datetime
 from tqdm.rich import tqdm
-from typing import  Literal
+from typing import Literal
 
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks import ModelCheckpoint
