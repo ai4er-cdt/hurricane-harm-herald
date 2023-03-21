@@ -231,6 +231,8 @@ def check_exists_else_generate(
             # standardise
             df = general_df_utils.standardise_xbd_obs_df(df)
             save_pkl_to_structured_dir(df, "xbd_points.pkl")
+    else:
+        df = 
 
     return df
 
@@ -989,6 +991,18 @@ def save_pkl_to_structured_dir(
     None
     """
 
+    save_dir_path = get_save_dir_path_from_pkl_name(pkl_name)
+
+    save_dest = os.path.join(save_dir_path, pkl_name)
+    df_to_pkl.to_pickle(save_dest)
+    print(f"{pkl_name} saved successfully to directory: {save_dir_path}")
+
+
+def get_save_dir_path_from_pkl_name(
+    pkl_name: str
+) -> str:
+    """TODO: docstring"""
+    
     if pkl_name == "noaa_xbd_hurricanes.pkl" or pkl_name == "noaa_hurricanes.pkl":
         save_dir_path = directories.get_noaa_data_dir()
 
@@ -1004,6 +1018,4 @@ def save_pkl_to_structured_dir(
     else:
         raise ValueError(f"Unrecognised pkl name: {pkl_name}")
 
-    save_dest = os.path.join(save_dir_path, pkl_name)
-    df_to_pkl.to_pickle(save_dest)
-    print(f"{pkl_name} saved successfully to directory: {save_dir_path}")
+    return save_dir_path
