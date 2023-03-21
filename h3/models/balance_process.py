@@ -1,10 +1,13 @@
-from h3.utils.directories import get_data_dir, get_metadata_pickle_dir
-import pandas as pd
+from __future__ import annotations
+
 import os
-from typing import List, Union
+import pandas as pd
+
 from pathlib import Path
 from functools import reduce
+
 from h3.constants import DMG_CLASSES_DICT
+from h3.utils.directories import get_data_dir, get_metadata_pickle_dir
 
 
 def check_files_in_list_exist(file_list: Union[List[str], List[Path]]):
