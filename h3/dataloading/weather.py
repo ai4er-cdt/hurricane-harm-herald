@@ -549,7 +549,8 @@ def determine_ecmwf_values_from_points_df(
     df_points : pd.DataFrame
         A pandas DataFrame containing latitude, longitude, and disaster name columns
     distance_buffer : float
-        A float value representing the distance buffer in degrees
+        A float value representing the distance buffer in degrees. This sets the limit for which weather data is
+        searched for about each average lat-lon for each disaster
 
     Returns
     -------
