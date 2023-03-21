@@ -121,8 +121,7 @@ def url_download(url: str, path: str, task: int = 1, total: int = 1) -> None:
 		unit_scale=True,
 		# format to have current/total size with the full unit, e.g. 60kB/6MB
 		# https://github.com/tqdm/tqdm/issues/952
-		bar_format="{l_bar}{bar}| {n_fmt}{unit}/{total_fmt}{unit}"
-		           " [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
+		bar_format="{l_bar}{bar}| {n_fmt}{unit}/{total_fmt}{unit} [{elapsed}<{remaining}, {rate_fmt}{postfix}]"
 	)
 	with pbar as t:
 		with open(path, "wb") as file:
