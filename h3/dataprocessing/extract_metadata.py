@@ -82,8 +82,9 @@ def extract_polygon(building):
     return building_polygon
 
 
-def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
-                     event_type: str):
+def extract_metadata(
+        json_link: str, classes_dict: dict, crs: str, event_type: str
+) -> geopandas.GeoDataFrame:
     """
     Extracts location in xy and long-lat format, gives damage name, class and
     date.
@@ -134,7 +135,7 @@ def extract_metadata(json_link: str, CLASSES_DICT: dict, crs: str,
             damage_num = np.NaN
         else:
             damage_class = building_lnglat["properties"]["subtype"]
-            damage_num = CLASSES_DICT[damage_class]
+            damage_num = classes_dict[damage_class]
 
         damage_location.append([
             lnglat_point, lnglat_polygon, xy_point,
