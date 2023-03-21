@@ -96,8 +96,8 @@ def _get_response(url: str) -> HTTPResponse:
 		ssl._create_default_https_context = ssl._create_unverified_context
 		req = urllib.request.Request(url)
 		req.add_header(
-			'user-agent',
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+			"user-agent",
+			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 		)
 		response = urllib.request.urlopen(req)
 	return response
