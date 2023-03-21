@@ -433,25 +433,29 @@ def return_most_recent_events_by_name(df: pd.DataFrame, event_names: list[str]) 
     return df_sorted.loc[df["tag"].isin(recent_tags)]
 
 
-def download_ecmwf_files(download_dest_dir: str, distance_buffer: float = 5):
+def download_ecmwf_files(download_dest_dir: str, distance_buffer: float = 2):
     """Load in ecmwf grib files from online"""
 
-    # if file doesn"t exist at correct directory, generate it
-    if os.path.exists(os.path.join(directories.get_noaa_data_dir(), "noaa_xbd_hurricanes.pkl")):
+    # if noaa_xbd_hurricanes pkl doesn't exist at correct directory
+    if not check_if_data_file_exists("noaa_xbd_hurricanes.pkl"):
+        # generate it
+        isd_metadata_path = os.path.join(directories.get_h3_data_files_dir(), 'hurdat2-1851-2021-meta.txt')
+        noaa_xbd_hurricanes = weather.generate_and_save_noaa_best_track_pkl(isd_metadata_path, xbd_hurricanes_only=True)
+    else:
+        # read it
         df_noaa_xbd_hurricanes = pd.read_pickle(
             os.path.join(directories.get_noaa_data_dir(), "noaa_xbd_hurricanes.pkl"))
-    else:
-        df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
-            os.path.join(directories.get_h3_data_files_dir(), "hurdat2-1851-2021-meta.txt"), xbd_hurricanes_only=True)
-        # save noaa pkl
-        save_pkl_to_structured_dir(df_noaa_xbd_hurricanes, )
 
-    if os.path.exists(os.path.join(directories.get_xbd_dir(), "xbd_data_points.pkl")):
-        df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), "xbd_data_points.pkl"))
-    else:
+    # if xbd_data_points pkl doesn't exist at correct directory
+    if not check_if_data_file_exists('xbd_points.pkl'):
+        # generate it
         _, df_xbd_points = extract_metadata.main()
-        save_pkl_to_structured_dir(df_xbd_points, "df_xbd_points.pkl")
+        save_pkl_to_structured_dir(df_xbd_points, "xbd_points.pkl")
+    else:
+        # read it
+        df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), "xbd_points.pkl"))
 
+    # get info necessary for fetching era5 data
     event_api_info, start_end_dates, areas = return_relevant_event_info(
         df_xbd_points,
         df_noaa_xbd_hurricanes,
@@ -932,7 +936,7 @@ def save_pkl_to_structured_dir(
     elif pkl_name == "ecmwf_params.pkl":
         save_dir_path = directories.get_ecmwf_data_dir()
 
-    elif pkl_name == "df_xbd_points.pkl":
+    elif pkl_name == "xbd_points.pkl":
         save_dir_path = directories.get_xbd_dir()
 
     else:
