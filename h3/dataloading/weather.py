@@ -924,3 +924,4 @@ def save_pkl_to_structured_dir(
 
     save_dest = os.path.join(save_dir_path, pkl_name)
     df_to_pkl.to_pickle(save_dest)
+    print(f"{pkl_name} saved successfully to directory: {save_dir_path}")
