@@ -57,8 +57,8 @@ def check_if_data_file_exists(
     # Soil composition data
 
     if os.path.exists(file_path):
-        print(f"{file_name} found at correct location: {file_path}.")
+        print(f"{file_name} found at correct location: {file_path}")
         return True
     else:
-        print(f"{file_name} not found at correct location: {file_path}.")
+        print(f"{file_name} not found at correct location: {file_path}")
         return False
