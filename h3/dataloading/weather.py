@@ -435,7 +435,7 @@ def return_most_recent_events_by_name(df: pd.DataFrame, event_names: list[str]) 
 
 
 def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
-    """Load in ecmwf grib files from online"""
+    """Load in era5 grib files from online"""
 
     # if noaa_xbd_hurricanes pkl doesn't exist at correct directory
     if not check_if_data_file_exists("noaa_xbd_hurricanes.pkl"):
@@ -466,7 +466,7 @@ def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
     weather_keys = ["d2m", "t2m", "tp", "sp", "slhf", "e", "pev", "ro", "ssro", "sro", "u10", "v10"]
     weather_params = return_full_weather_param_strings(weather_keys)
 
-    # call api to download ecmwf weather files
+    # call api to download era5 weather files
     fetch_era5_data(
         weather_params=weather_params,
         start_end_dates=start_end_dates,
@@ -492,19 +492,19 @@ def generate_era5_pkl(
 ) -> pd.DataFrame:
 
     # set correct destination for file downloads
-    download_dest_dir = directories.get_ecmwf_data_dir()
-    # download ecmwf grib files to separate directories within /datasets/weather/ecmwf/
+    download_dest_dir = directories.get_era5_data_dir()
+    # download era5 grib files to separate directories within /datasets/weather/era5/
     df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_era5_gribs(download_dest_dir, distance_buffer)
-    # group ecmwf xarray files into dictionary indexed by name of weather event
+    # group era5 xarray files into dictionary indexed by name of weather event
     xbd_event_xa_dict = generate_xbd_event_xa_dict(download_dest_dir, df_noaa_xbd_hurricanes)
     # generate df for all xbd points' closest maximum era5 values
-    df_ecmwf_xbd_points = determine_ecmwf_values_from_points_df(
+    df_era5_xbd_points = determine_era5_values_from_points_df(
         xbd_event_xa_dict,
         weather_keys=weather_keys,
         df_points=df_xbd_points,
         )
 
-    return df_ecmwf_xbd_points
+    return df_era5_xbd_points
 
 
 # def merge_grib_files_to_nc(
@@ -539,7 +539,7 @@ def generate_era5_pkl(
 #     print(f"{nc_file_name} saved successfully")
 
 
-def determine_ecmwf_values_from_points_df(
+def determine_era5_values_from_points_df(
     xa_dict: dict,
     weather_keys: list[str],
     df_points: pd.DataFrame,
@@ -660,7 +660,7 @@ def return_full_weather_param_strings(
 def generate_times_from_start_end(
     start_end_dates: list[tuple[pd.Timestamp]]
 ) -> dict:
-    """Generate dictionary containing ecmwf time values from list of start and end dates.
+    """Generate dictionary containing era5 time values from list of start and end dates.
 
     TODO: update so can span multiple months accurately (will involve several api calls)
     """
@@ -820,7 +820,7 @@ def return_relevant_event_info(
     distance_buffer: float = 5,
     verbose: bool = True
 ) -> tuple[dict[Any, list[list[Any]]], list[list[Any]], list[list[Any]]]:
-    """Return the date and geography spans relevvant to each hurricane event in a format conducive to ECMWF API call
+    """Return the date and geography spans relevvant to each hurricane event in a format conducive to era5 API call
 
     Parameters
     ----------
@@ -934,8 +934,8 @@ def save_pkl_to_structured_dir(
     if pkl_name == "noaa_xbd_hurricanes.pkl" or pkl_name == "noaa_hurricanes.pkl":
         save_dir_path = directories.get_noaa_data_dir()
 
-    elif pkl_name == "ecmwf_params.pkl":
-        save_dir_path = directories.get_ecmwf_data_dir()
+    elif pkl_name == "era5_params.pkl":
+        save_dir_path = directories.get_era5_data_dir()
 
     elif pkl_name == "xbd_points.pkl":
         save_dir_path = directories.get_xbd_dir()
