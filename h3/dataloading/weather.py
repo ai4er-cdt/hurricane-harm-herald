@@ -21,6 +21,7 @@ from h3.dataprocessing import extract_metadata
 from h3.utils import directories
 from h3.utils.simple_functions import pad_number_with_zeros
 from h3.utils.file_ops import guarantee_existence
+from h3.utils.set_up import check_if_data_file_exists
 
 
 def find_fetch_closest_station_files(
@@ -179,6 +180,38 @@ def generate_weather_stations_df(
 
     return df_stations
 
+
+def generate_and_save_noaa_best_track_pkl(
+    noaa_meta_txt_file_path: str,
+    xbd_hurricanes_only: bool = False
+) -> pd.DataFrame:
+    """Wrapper for generate_noaa_best_track_pkl. Generates a pandas DataFrame from a NOAA best track text file. Then 
+    saves this to the correct directory: data/dataset/weather/noaa with the correct filename.
+
+    The function takes in a file path to a NOAA best track text file, and reads in the data.
+    It then preprocesses the data, reformats it into a pandas DataFrame, and returns the DataFrame.
+
+    Parameters
+    ----------
+    noaa_meta_txt_file_path : str
+        File path to the NOAA best track text file. This can be found in the H3 GitHub repository at
+        /h3/data_files/hurdat2-1851-2021-meta.txt
+
+    Returns
+    -------
+    None
+    """
+    df = generate_noaa_best_track_pkl(noaa_meta_txt_file_path, xbd_hurricanes_only)
+    noaa_data_dir = directories.get_noaa_data_dir()
+    if xbd_hurricanes_only:
+        file_name = 'noaa_xbd_hurricanes.pkl'
+    else:
+        file_name = 'noaa_hurricanes.pkl'
+        
+    save_pkl_to_structured_dir(df, file_name)
+
+    return df
+        
 
 def generate_noaa_best_track_pkl(
     noaa_meta_txt_file_path: str,
@@ -401,25 +434,29 @@ def return_most_recent_events_by_name(df: pd.DataFrame, event_names: list[str]) 
     return df_sorted.loc[df["tag"].isin(recent_tags)]
 
 
-def download_ecmwf_files(download_dest_dir: str, distance_buffer: float = 5):
-    """Load in ecmwf grib files from online"""
+def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
+    """Load in era5 grib files from online"""
 
-    # if file doesn"t exist at correct directory, generate it
-    if os.path.exists(os.path.join(directories.get_noaa_data_dir(), "noaa_xbd_hurricanes.pkl")):
+    # if noaa_xbd_hurricanes pkl doesn't exist at correct directory
+    if not check_if_data_file_exists("noaa_xbd_hurricanes.pkl"):
+        # generate it
+        isd_metadata_path = os.path.join(directories.get_h3_data_files_dir(), 'hurdat2-1851-2021-meta.txt')
+        noaa_xbd_hurricanes = weather.generate_and_save_noaa_best_track_pkl(isd_metadata_path, xbd_hurricanes_only=True)
+    else:
+        # read it
         df_noaa_xbd_hurricanes = pd.read_pickle(
             os.path.join(directories.get_noaa_data_dir(), "noaa_xbd_hurricanes.pkl"))
-    else:
-        df_noaa_xbd_hurricanes = generate_noaa_best_track_pkl(
-            os.path.join(directories.get_h3_data_files_dir(), "hurdat2-1851-2021-meta.txt"), xbd_hurricanes_only=True)
-        # save noaa pkl
-        save_pkl_to_structured_dir(df_noaa_xbd_hurricanes, )
 
-    if os.path.exists(os.path.join(directories.get_xbd_dir(), "xbd_data_points.pkl")):
-        df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), "xbd_data_points.pkl"))
-    else:
+    # if xbd_data_points pkl doesn't exist at correct directory
+    if not check_if_data_file_exists('xbd_points.pkl'):
+        # generate it
         _, df_xbd_points = extract_metadata.main()
-        save_pkl_to_structured_dir(df_xbd_points, "df_xbd_points.pkl")
+        save_pkl_to_structured_dir(df_xbd_points, "xbd_points.pkl")
+    else:
+        # read it
+        df_xbd_points = pd.read_pickle(os.path.join(directories.get_xbd_dir(), "xbd_points.pkl"))
 
+    # get info necessary for fetching era5 data
     event_api_info, start_end_dates, areas = return_relevant_event_info(
         df_xbd_points,
         df_noaa_xbd_hurricanes,
@@ -429,7 +466,7 @@ def download_ecmwf_files(download_dest_dir: str, distance_buffer: float = 5):
     weather_keys = ["d2m", "t2m", "tp", "sp", "slhf", "e", "pev", "ro", "ssro", "sro", "u10", "v10"]
     weather_params = return_full_weather_param_strings(weather_keys)
 
-    # call api to download ecmwf weather files
+    # call api to download era5 weather files
     fetch_era5_data(
         weather_params=weather_params,
         start_end_dates=start_end_dates,
@@ -439,20 +476,35 @@ def download_ecmwf_files(download_dest_dir: str, distance_buffer: float = 5):
     return df_xbd_points, df_noaa_xbd_hurricanes, weather_keys
 
 
-def generate_ecmwf_pkl(distance_buffer: float = 5) -> pd.DataFrame:
-    download_dest_dir = directories.get_ecmwf_data_dir()
-    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_ecmwf_files(download_dest_dir, distance_buffer)
-    # download ecmwf grib files to separate directories within /datasets/weather/ecmwf/
-    # group ecmwf xarray files into dictionary indexed by name of weather event
+def generate_and_save_era5_pkl(
+    distance_buffer: float = 5
+) -> pd.DataFrame:
+    """Wrapper for generate_era5_pkl which also saves the output df to the correct folder location
+    """
+    df = generate_era5_pkl(distance_buffer)
+
+    save_pkl_to_structured_dir(df, 'era5_xbd_values.pkl')
+    return df
+
+
+def generate_era5_pkl(
+    distance_buffer: float = 5
+) -> pd.DataFrame:
+
+    # set correct destination for file downloads
+    download_dest_dir = directories.get_era5_data_dir()
+    # download era5 grib files to separate directories within /datasets/weather/era5/
+    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_era5_gribs(download_dest_dir, distance_buffer)
+    # group era5 xarray files into dictionary indexed by name of weather event
     xbd_event_xa_dict = generate_xbd_event_xa_dict(download_dest_dir, df_noaa_xbd_hurricanes)
     # generate df for all xbd points' closest maximum era5 values
-    df_ecmwf_xbd_points = determine_ecmwf_values_from_points_df(
+    df_era5_xbd_points = determine_era5_values_from_points_df(
         xbd_event_xa_dict,
         weather_keys=weather_keys,
         df_points=df_xbd_points,
         )
 
-    return df_ecmwf_xbd_points
+    return df_era5_xbd_points
 
 
 # def merge_grib_files_to_nc(
@@ -487,7 +539,7 @@ def generate_ecmwf_pkl(distance_buffer: float = 5) -> pd.DataFrame:
 #     print(f"{nc_file_name} saved successfully")
 
 
-def determine_ecmwf_values_from_points_df(
+def determine_era5_values_from_points_df(
     xa_dict: dict,
     weather_keys: list[str],
     df_points: pd.DataFrame,
@@ -504,7 +556,8 @@ def determine_ecmwf_values_from_points_df(
     df_points : pd.DataFrame
         A pandas DataFrame containing latitude, longitude, and disaster name columns
     distance_buffer : float
-        A float value representing the distance buffer in degrees
+        A float value representing the distance buffer in degrees. This sets the limit for which weather data is
+        searched for about each average lat-lon for each disaster
 
     Returns
     -------
@@ -607,7 +660,7 @@ def return_full_weather_param_strings(
 def generate_times_from_start_end(
     start_end_dates: list[tuple[pd.Timestamp]]
 ) -> dict:
-    """Generate dictionary containing ecmwf time values from list of start and end dates.
+    """Generate dictionary containing era5 time values from list of start and end dates.
 
     TODO: update so can span multiple months accurately (will involve several api calls)
     """
@@ -767,7 +820,7 @@ def return_relevant_event_info(
     distance_buffer: float = 5,
     verbose: bool = True
 ) -> tuple[dict[Any, list[list[Any]]], list[list[Any]], list[list[Any]]]:
-    """Return the date and geography spans relevvant to each hurricane event in a format conducive to ECMWF API call
+    """Return the date and geography spans relevvant to each hurricane event in a format conducive to era5 API call
 
     Parameters
     ----------
@@ -860,14 +913,31 @@ def maximise_area_through_rounding(
     return maximised, minimised
 
 
-def save_pkl_to_structured_dir(df_to_pkl: pd.DataFrame, pkl_name: str) -> None:
+def save_pkl_to_structured_dir(
+    df_to_pkl: pd.DataFrame, 
+    pkl_name: str
+) -> None:
+    """Save pkl file based on name to correct directory
+    
+    Parameters
+    ----------
+    df_to_pkl : pd.DataFrame
+        pd.DataFrame to be pickled
+    pkl_name : str
+        name of output pkl file
+    
+    Returns
+    -------
+    None
+    """
+
     if pkl_name == "noaa_xbd_hurricanes.pkl" or pkl_name == "noaa_hurricanes.pkl":
         save_dir_path = directories.get_noaa_data_dir()
 
-    elif pkl_name == "ecmwf_params.pkl":
-        save_dir_path = directories.get_ecmwf_data_dir()
+    elif pkl_name == "era5_params.pkl":
+        save_dir_path = directories.get_era5_data_dir()
 
-    elif pkl_name == "df_xbd_points.pkl":
+    elif pkl_name == "xbd_points.pkl":
         save_dir_path = directories.get_xbd_dir()
 
     else:
@@ -875,3 +945,4 @@ def save_pkl_to_structured_dir(df_to_pkl: pd.DataFrame, pkl_name: str) -> None:
 
     save_dest = os.path.join(save_dir_path, pkl_name)
     df_to_pkl.to_pickle(save_dest)
+    print(f"{pkl_name} saved successfully to directory: {save_dir_path}")
