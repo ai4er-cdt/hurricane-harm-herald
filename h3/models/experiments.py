@@ -52,13 +52,14 @@ def run_predict(
 		zoom_levels: list | None = None,
 		image_embedding_architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"] = "ResNet18",
 		num_workers: int = 0,
-		persistent_w: bool = False
+		persistent_w: bool = False,
+		trainer=None,
 ):
 	model.eval()
 
 	scaled_test_df = test_df.copy()
-	test_save_path = os.path.join(get_pickle_dir(), f'test_df_{pkl_name}.pickle')
-	with open(test_save_path, 'wb') as handle:
+	test_save_path = os.path.join(get_pickle_dir(), f"test_df_{pkl_name}.pickle")
+	with open(test_save_path, "wb") as handle:
 		pickle.dump(test_save_path, handle)
 
 	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
@@ -150,24 +151,24 @@ def load_model_predict(
 
 
 def run_model(
-		ef_features: dict[list[str]] = RF_BEST_EF_FEATURES,
-		features_to_scale: list[str] = RF_BEST_FEATURES_TO_SCALE,
-		split_val_train_test: list | None = None,
-		zoom_levels: list | None = None,
-		balanced_data: bool = False,
-		max_epochs: int = 30,
-		log_every_n_steps: int = 100,
-		image_embedding_architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"] = "ResNet18",
-		use_augmentation: bool = True,
-		ram_load: bool = False,
-		num_worker: int = 4,
-		precision: int | str = "16-mixed",
-		torch_float32_precision: Literal["highest", "high", "medium"] = "highest",   # TODO: call it with medium
-		predict: bool = True,
-		ckp_name: str | None = None,
-		spatial: bool = False,
-		hurricanes: dict[str, list[str]] | None = None,
-		load_only: bool = False
+	ef_features: dict[list[str]] = RF_BEST_EF_FEATURES,
+	features_to_scale: list[str] = RF_BEST_FEATURES_TO_SCALE,
+	split_val_train_test: list | None = None,
+	zoom_levels: list | None = None,
+	balanced_data: bool = False,
+	max_epochs: int = 30,
+	log_every_n_steps: int = 100,
+	image_embedding_architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"] = "ResNet18",
+	use_augmentation: bool = True,
+	ram_load: bool = False,
+	num_worker: int = 4,
+	precision: int | str = "16-mixed",
+	torch_float32_precision: Literal["highest", "high", "medium"] = "highest",   # TODO: call it with medium
+	predict: bool = True,
+	ckp_name: str | None = None,
+	spatial: bool = False,
+	hurricanes: dict[str, list[str]] | None = None,
+	load_only: bool = False
 ) -> None:
 
 	cuda_device = torch.cuda.is_available()
