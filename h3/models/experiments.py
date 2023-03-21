@@ -48,7 +48,7 @@ def existing_model_to_json(ckp_path: str) -> None:
 	# TODO: fix this, does it cover all possible loss_function?
 	param["balanced"] = True if param["loss_function_str"] == "weighted_CELoss" else False
 	model_param = defaultdict(lambda: None, param)
-	# for backward compatible, TODO: fix
+	# for backward compatible
 	if model_param["ef_features"] is None:
 		model_param["ef_features"] = model_param["EF_features"]
 	model_run_to_json(start_time, end_time, **model_param)
