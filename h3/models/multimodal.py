@@ -196,11 +196,12 @@ class OverallModel(pl.LightningModule):
 	image_only_model: bool, optional
 		If true, then the model behaves as if there were no EFs, and only the
 		images are used to make predictions. The default is False.
-	loss_function_str : {'BCELoss', 'CELoss', 'MSE'}, optional
+	loss_function_str : {'BCELoss', 'CELoss', 'MSE', 'weighted_CELoss'}, optional
 		Determines the loss function used.
-		- 'BCELoss' : Binary Cross Entropy Loss, for binary classification
-		- 'CELoss'  : Cross Entropy Loss, for multiclass classification
-		- 'MSE'     : Mean Squared Error, for regression
+		- 'BCELoss'         : Binary Cross Entropy Loss, for binary classification.
+		- 'CELoss'          : Cross Entropy Loss, for multiclass classification.
+		- 'MSE'             : Mean Squared Error, for regression.
+		- 'weighted_CELoss' : Cross Entropy Loss for unbalanced data.
 		The default is 'CELoss'.
 	output_activation : {'sigmoid', 'softmax', 'relu'}, optional
 		Determines the output activation function used. The default is None.
@@ -238,7 +239,7 @@ class OverallModel(pl.LightningModule):
 		image_only_model: bool = False,
 		num_workers: int = 0,
 		persistent_w: bool = False,
-		loss_function_str: Literal["BCELoss", "CELoss", "MSE"] = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
+		loss_function_str: Literal["BCELoss", "CELoss", "MSE", "weighted_CELoss"] = "CELoss",  # maybe use focal loss for unbalanced multiclass as in GaLeNet
 		output_activation:  Literal["sigmoid", "softmax", "relu"] | None = None,  # CELoss expects unnormalized logits
 		annealing_t_max: int = 30
 	) -> None:
