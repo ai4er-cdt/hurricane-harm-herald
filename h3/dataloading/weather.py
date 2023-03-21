@@ -433,7 +433,7 @@ def return_most_recent_events_by_name(df: pd.DataFrame, event_names: list[str]) 
     return df_sorted.loc[df["tag"].isin(recent_tags)]
 
 
-def download_ecmwf_files(download_dest_dir: str, distance_buffer: float = 2):
+def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
     """Load in ecmwf grib files from online"""
 
     # if noaa_xbd_hurricanes pkl doesn't exist at correct directory
@@ -493,7 +493,7 @@ def generate_era5_pkl(
     # set correct destination for file downloads
     download_dest_dir = directories.get_ecmwf_data_dir()
     # download ecmwf grib files to separate directories within /datasets/weather/ecmwf/
-    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_ecmwf_files(download_dest_dir, distance_buffer)
+    df_xbd_points, df_noaa_xbd_hurricanes, weather_keys = download_era5_gribs(download_dest_dir, distance_buffer)
     # group ecmwf xarray files into dictionary indexed by name of weather event
     xbd_event_xa_dict = generate_xbd_event_xa_dict(download_dest_dir, df_noaa_xbd_hurricanes)
     # generate df for all xbd points' closest maximum era5 values
