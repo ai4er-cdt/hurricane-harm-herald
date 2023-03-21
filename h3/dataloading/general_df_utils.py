@@ -5,8 +5,6 @@ import geopy
 import shapely
 import re
 
-from h3 import utils
-
 
 def standardise_df(
     df: pd.DataFrame, date_cols: list[str] = None, new_point_col_name: str = "geometry"
@@ -39,7 +37,7 @@ def standardise_df(
         # if geometry column not containing shapely Point objects
         if not type(df.geometry.iloc[0]) == shapely.geometry.point.Point:
             df.geometry = df.geometry.apply(
-                lambda x: utils.geometry_ops.convert_point_string_to_point(x)   # TODO: this function is not implemented
+                lambda x: convert_point_string_to_point(x)   # TODO: this function is not implemented
             )
             # generate lat-lon columns from any Point objects
             df = generate_lat_lon_from_points_cols(df, ["geometry"])
