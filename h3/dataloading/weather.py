@@ -1019,4 +1019,4 @@ def get_save_dir_path_from_pkl_name(
     else:
         raise ValueError(f"Unrecognised pkl name: {pkl_name}")
 
-    return save_dir_path
+    return os.path.join(save_dir_path, pkl_name)
