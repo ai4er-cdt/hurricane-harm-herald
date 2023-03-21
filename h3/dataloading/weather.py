@@ -476,13 +476,13 @@ def generate_and_save_era5_pkl(
 ) -> pd.DataFrame:
     """Wrapper for generate_era5_pkl which also saves the output df to the correct folder location
     """
-    df = generate_ecmwf_pkl(distance_buffer)
+    df = generate_era5_pkl(distance_buffer)
 
     save_pkl_to_structured_dir(df, 'era5_xbd_values.pkl')
     return df
 
 
-def generate_ecmwf_pkl(
+def generate_era5_pkl(
     distance_buffer: float = 5
 ) -> pd.DataFrame:
     download_dest_dir = directories.get_ecmwf_data_dir()
