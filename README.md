@@ -82,6 +82,7 @@ The overall file structure should be as follows:
  │      │           └── noaa_best_track
  │      │           └── global_isd
  │      │           └── noaa_best_track
+```
 
 ### xBD pre- and post-event satellite damage-annotated imagery 
 [xBD](https://openaccess.thecvf.com/content_CVPRW_2019/papers/cv4gc/Gupta_Creating_xBD_A_Dataset_for_Assessing_Building_Damage_from_Satellite_CVPRW_2019_paper.pdf) is the dataset used in the xView2 challenge, providing pre- and post-event RGB satellite imagery with over 700,000 building polygons. 
