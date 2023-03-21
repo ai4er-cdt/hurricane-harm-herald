@@ -27,6 +27,7 @@ from h3.dataprocessing.data_augmentation import DataAugmentation
 from h3.dataloading.hurricanedataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.models.balance_process import balance_process
+from h3.models.loaders import get_df
 from h3.utils.directories import *
 from h3.utils.dataframe_utils import read_and_merge_pkls, rename_and_drop_duplicated_cols
 from h3.utils.file_ops import model_run_to_json
@@ -193,7 +194,6 @@ def run_model(
 	zoom_levels = zoom_levels or ["1"]
 	split_val_train_test = split_val_train_test or [0.7, 0.2, 0.1]
 
-	data_dir = get_datasets_dir()
 	img_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
 
 	train_test_value = split_val_train_test[2]
@@ -211,53 +211,7 @@ def run_model(
 	else:
 		loss_function = "weighted_CELoss"
 
-	# TODO: replace with loaders function
-	if balanced_data:
-		ECMWF_filtered_pickle_path = os.path.join(
-			get_metadata_pickle_dir(),
-			"filtered_lnglat_ECMWF_damage.pkl"
-		)
-
-		if os.path.exists(ECMWF_filtered_pickle_path):
-			ECMWF_balanced_df = pd.read_pickle(ECMWF_filtered_pickle_path)
-		else:
-			ECMWF_balanced_df = balance_process(data_dir, "ECMWF")
-
-		# remove unclassified class
-		ECMWF_balanced_df = ECMWF_balanced_df[ECMWF_balanced_df.damage_class != 4]
-		ECMWF_balanced_df["id"] = ECMWF_balanced_df.index
-
-		filtered_pickle_path = os.path.join(
-			get_metadata_pickle_dir(),
-			"filtered_lnglat_pre_pol_post_damage.pkl"
-		)
-		if os.path.exists(filtered_pickle_path):
-			df = pd.read_pickle(filtered_pickle_path)
-		else:
-			df = balance_process(data_dir)
-		# This is the balanced_df
-
-	else:
-		# weather
-		df_noaa_xbd_pkl_path = os.path.join(
-			data_dir, "EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl"
-		)
-		# terrain efs
-		df_terrain_efs_path = os.path.join(
-			get_processed_data_dir(),
-			"Terrian_EFs.pkl"
-		)
-		# flood and soil properties
-		df_topographic_efs_path = os.path.join(
-			get_processed_data_dir(),
-			"df_points_posthurr_flood_risk_storm_surge_soil_properties.pkl"
-		)
-		pkl_paths = [df_noaa_xbd_pkl_path, df_topographic_efs_path, df_terrain_efs_path]
-		EF_df = read_and_merge_pkls(pkl_paths)
-		df = rename_and_drop_duplicated_cols(EF_df)
-
-	df = df[df.damage_class != 4]
-	df["id"] = df.index
+	df = get_df(balanced_data)
 
 	if spatial:
 		train_event_names = hurricanes["train"]
