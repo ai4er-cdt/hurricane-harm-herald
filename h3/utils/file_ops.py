@@ -27,13 +27,21 @@ def guarantee_existence(path: str) -> str:
 
 def get_sha1(filepath: str) -> str:
 	"""
-	As the files are big using this method that uses buffers
-	https://stackoverflow.com/a/22058673/9931399
+	As the files are big using this method that uses buffers.
 
 	Parameters
 	----------
 	filepath : str
 		Filepath of the file to calculate the SHA1.
+
+	Returns
+	-------
+	str
+		The SHA1 of the file.
+
+	References
+	----------
+	https://stackoverflow.com/a/22058673/9931399
 	"""
 	BUF_SIZE = 65536    # chunks of 64kb
 	sha1 = hashlib.sha1()
@@ -46,9 +54,8 @@ def get_sha1(filepath: str) -> str:
 	return sha1.hexdigest()
 
 
-def unpack_file(filepath: str, clean: bool = False, file_format: None | str = None):
-	"""
-	Unpack an archive file.
+def unpack_file(filepath: str, clean: bool = False, file_format: None | str = None) -> None:
+	"""Unpack an archive file.
 	It is quite slow for big files
 
 	Parameters
@@ -60,6 +67,10 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 	file_format : str, optional
 		The archive format. If None it will use the file extension.
 		See shutil.unpack_archive()
+
+	Notes
+	-----
+	It is quite slow for big files.
 	"""
 	# TODO: this is a bit slow, and not verbose
 	logger.info(f"Unpacking {os.path.basename(filepath)}\nThis can take some time")
