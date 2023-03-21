@@ -153,13 +153,24 @@ def check_is_file_downloaded(
         return False
 
 
+def generate_and_save_weather_stations_pkl(
+    lat_lon_range: list[list[float]] = [[0, 40], [-110, -50]]
+) -> pd.DataFrame:
+    """Wrapper for generate_weather_stations_df which saves the generated df in the correct location"""
+
+    df_stations = generate_weather_stations_df(lat_lon_range)
+    pkl_name = "isd_xbd_params.pkl"
+    save_pkl_to_structured_dir(df_stations, pkl_name)
+
+    return df_stations
+
+
 def generate_weather_stations_df(
-    stations_meta_csv_file_path: str,
     lat_lon_range: list[list[float]] = [[0, 40], [-110, -50]]
 ):
     """Generate a df of valid weather stations within lat_lon_range of interest. Requires a path to the metadata file,
     which is found in the H3 GitHub repository at /h3/data_files/isd-metadata.csv
-    This file is sourced from NOAA TODO: permalink
+    This file is sourced from NOAA
 
     Parameters
     ----------
@@ -167,6 +178,7 @@ def generate_weather_stations_df(
         path to historic weather stations metadata
     lat_lon_range : list[float] defaults to [0, 40, -110, -50]
     """
+    stations_meta_csv_file_path = os.path.join(directories.get_h3_data_files_dir(), 'isd-metadata.csv')
     # load df with dates specified
     df_stations_all = general_df_utils.standardise_df(
         pd.read_csv(stations_meta_csv_file_path, parse_dates=["BEGIN", "END"]))
@@ -178,7 +190,49 @@ def generate_weather_stations_df(
     # generating filename of hourly weather data
     df_stations = general_df_utils.concat_df_cols(df_stations_lim, "csv_filenames", ["usaf", "wban"])
 
-    return df_stations
+    df_dict = check_data_files_exist_else_generate(['xbd_points.pkl', 'noaa_xbd_hurricanes.pkl'])
+    df_xbd_points = df_dict['xbd_points.pkl']
+    df_noaa_xbd_hurricanes = df_dict['noaa_xbd_hurricanes.pkl']
+    download_dest_dir = os.path.join(directories.get_isd_data_dir(), 'stations_csvs')
+
+    df_stations_xbd_params = find_fetch_closest_station_files(
+        df_xbd_points, df_noaa_xbd_hurricanes, df_stations, download_dest_dir)
+
+    return df_stations_xbd_params
+
+
+def check_data_files_exist_else_generate(
+    pkl_names: list(str)
+) -> dict:
+    df_dict = dict()
+    for pkl in pkl_names:
+        df = check_exists_else_generate(pkl)
+        df_dict.update({pkl: df})
+
+    return df_dict
+
+
+def check_exists_else_generate(
+    pkl_name: str
+):
+
+    # if doesn't exist at correct location
+    if not check_if_data_file_exists(pkl_name):
+        if pkl_name == 'noaa_xbd_hurricanes.pkl':
+            isd_metadata_path = os.path.join(directories.get_h3_data_files_dir(), 'hurdat2-1851-2021-meta.txt')
+            df = weather.generate_and_save_noaa_best_track_pkl(
+                                                                isd_metadata_path, xbd_hurricanes_only=True)
+        elif pkl_name == 'noaa_hurricanes.pkl':
+            isd_metadata_path = os.path.join(directories.get_h3_data_files_dir(), 'hurdat2-1851-2021-meta.txt')
+            df = weather.generate_and_save_noaa_best_track_pkl(
+                                                                isd_metadata_path, xbd_hurricanes_only=False)
+        elif pkl_name == 'xbd_points.pkl':
+            _, df = extract_metadata.main()
+            # standardise
+            df = general_df_utils.standardise_xbd_obs_df(df)
+            save_pkl_to_structured_dir(df, "xbd_points.pkl")
+
+    return df
 
 
 def generate_and_save_noaa_best_track_pkl(
@@ -943,6 +997,9 @@ def save_pkl_to_structured_dir(
 
     elif pkl_name == "xbd_points.pkl":
         save_dir_path = directories.get_xbd_dir()
+
+    elif pkl_name == "isd_xbd_params.pkl":
+        save_dir_path = directories.get_isd_data_dir()
 
     else:
         raise ValueError(f"Unrecognised pkl name: {pkl_name}")
