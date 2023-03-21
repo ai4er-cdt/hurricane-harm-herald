@@ -109,7 +109,7 @@ def find_fetch_closest_station_files(
                     # if file not downloaded
                     if not check_is_file_downloaded(csv_filename, download_dest_dir):
                         try:
-                            download_dest = download_dest_dir + ".".join((csv_filename, "csv"))
+                            download_dest = download_dest_dir + '/' + ".".join((csv_filename, "csv"))
                             urllib.request.urlretrieve(url, download_dest)
                             stations_list.append(csv_filename)
                         except: # noqa
@@ -141,13 +141,15 @@ def generate_station_url(
 
 def check_is_file_downloaded(
     csv_filename: str,
-    download_dest_dir: str
+    download_dest_dir: str,
+    verbose: bool = False
 ) -> bool:
     """True if already downloaded, False if not"""
     potential_file_path = "/".join((download_dest_dir, csv_filename)) + ".csv"
     if os.path.exists(potential_file_path):
         # downloaded
-        print(f"{csv_filename} already downloaded.")
+        if verbose:
+            print(f"{csv_filename} already downloaded.")
         return True
     else:
         return False
