@@ -212,7 +212,6 @@ class OverallModel(pl.LightningModule):
 		T_max for the Cosine annealing of the lr_scheduler.
 		The default is 30.
 
-
 	Attributes
 	----------
 	Describe the attributes here, e.g. image_encoder, classification, augment
