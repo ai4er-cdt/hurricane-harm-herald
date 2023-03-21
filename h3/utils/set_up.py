@@ -9,14 +9,14 @@ import os
 
 
 def check_all_downloads():
-	logger.info("Checking coastline files")
-	check_coastlines_file()
-	logger.info("Checking DEM files")
-	check_dem_files()
-	logger.info("Checking xBD files")
-	get_xbd()
-	logger.info("Checking storm surge files")
-	check_storm()
+    logger.info("Checking coastline files")
+    check_coastlines_file()
+    logger.info("Checking DEM files")
+    check_dem_files()
+    logger.info("Checking xBD files")
+    get_xbd()
+    logger.info("Checking storm surge files")
+    check_storm()
 
 
 def check_if_data_file_exists(
