@@ -43,8 +43,8 @@ def check_if_data_file_exists(
         file_path = os.path.join(noaa_dir, file_name)
     # ECMWF ERA5 data
     elif file_name == "era5_xbd_values.pkl":
-        ecmwf_dir = directories.get_ecmwf_data_dir()
-        file_path = os.path.join(ecmwf_dir, file_name)
+        era5_dir = directories.get_era5_data_dir()
+        file_path = os.path.join(era5_dir, file_name)
     # Global ISD data
     elif file_name == "stations_xbd_values.pkl":
         isd_dir = directories.get_isd_data_dir()
