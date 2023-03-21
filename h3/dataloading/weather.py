@@ -191,9 +191,9 @@ def generate_weather_stations_df(
     df_stations = general_df_utils.concat_df_cols(df_stations_lim, "csv_filenames", ["usaf", "wban"])
 
     df_dict = check_data_files_exist_else_generate(['xbd_points.pkl', 'noaa_xbd_hurricanes.pkl'])
-    df_xbd_points = df_dict['xbd_points.pkl']
+    df_xbd_points = general_df_utils.standardise_xbd_obs_df(df_dict['xbd_points.pkl'])
     df_noaa_xbd_hurricanes = df_dict['noaa_xbd_hurricanes.pkl']
-    download_dest_dir = os.path.join(directories.get_isd_data_dir(), 'stations_csvs')
+    download_dest_dir = os.path.join(directories.get_isd_csvs_dir())
 
     df_stations_xbd_params = find_fetch_closest_station_files(
         df_xbd_points, df_noaa_xbd_hurricanes, df_stations, download_dest_dir)
