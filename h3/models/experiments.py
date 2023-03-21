@@ -38,28 +38,6 @@ from h3.utils.simple_functions import rich_table
 
 from h3.constants import RF_BEST_EF_FEATURES, RF_BEST_FEATURES_TO_SCALE
 from h3.constants import ALL_EF_FEATURES, ALL_FEATURES_TO_SCALE
-# from line_profiler_pycharm import profile
-
-
-def check_files_in_list_exist(
-		file_list: List[str] | List[Path]
-) -> list:
-	"""State which files don't exist and remove from list"""
-	files_found = []
-	for fl in file_list:
-		# attempt conversion to Path object if necessary
-		if type(fl) != Path:
-			try:
-				fl = Path(fl)
-			except TypeError:
-				print(f'{fl} could not be converted to Path object')
-
-		if fl.is_file():
-			files_found += fl,
-		else:
-			print(f'{fl} not found. Removing from list.')
-
-	return files_found
 
 
 def read_and_merge_pkls(

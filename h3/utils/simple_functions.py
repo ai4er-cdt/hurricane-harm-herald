@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from pathlib import Path
+from typing import List
+
 from rich.console import Console
 from rich.table import Table
 from rich.text import Text
@@ -64,3 +67,24 @@ def pad_number_with_zeros(
 		number = ''.join(('0', number))
 
 	return number
+
+
+def check_files_in_list_exist(
+		file_list: List[str] | List[Path]
+) -> list:
+	"""State which files don't exist and remove from list."""
+	files_found = []
+	for fl in file_list:
+		# attempt conversion to Path object if necessary
+		if type(fl) != Path:
+			try:
+				fl = Path(fl)
+			except TypeError:
+				print(f"{fl} could not be converted to Path object")
+
+		if fl.is_file():
+			files_found += fl,  # TODO: check this with append
+		else:
+			print(f"{fl} not found. Removing from list.")
+
+	return files_found
