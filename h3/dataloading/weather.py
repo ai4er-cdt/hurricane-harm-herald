@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Tuple, Dict, Any, List
+from typing import Any
 
 import cdsapi
 import glob
@@ -16,7 +16,7 @@ import xarray as xr
 from shapely.geometry.point import Point
 from tqdm import tqdm
 
-from h3.dataloading import general_df_utils
+from h3.dataloading import general_df_utils, weather
 from h3.dataprocessing import extract_metadata
 from h3.utils import directories
 from h3.utils.simple_functions import pad_number_with_zeros
@@ -185,7 +185,7 @@ def generate_and_save_noaa_best_track_pkl(
     noaa_meta_txt_file_path: str,
     xbd_hurricanes_only: bool = False
 ) -> pd.DataFrame:
-    """Wrapper for generate_noaa_best_track_pkl. Generates a pandas DataFrame from a NOAA best track text file. Then 
+    """Wrapper for generate_noaa_best_track_pkl. Generates a pandas DataFrame from a NOAA best track text file. Then
     saves this to the correct directory: data/dataset/weather/noaa with the correct filename.
 
     The function takes in a file path to a NOAA best track text file, and reads in the data.
@@ -202,16 +202,16 @@ def generate_and_save_noaa_best_track_pkl(
     None
     """
     df = generate_noaa_best_track_pkl(noaa_meta_txt_file_path, xbd_hurricanes_only)
-    noaa_data_dir = directories.get_noaa_data_dir()
+    # noaa_data_dir = directories.get_noaa_data_dir()
     if xbd_hurricanes_only:
         file_name = 'noaa_xbd_hurricanes.pkl'
     else:
         file_name = 'noaa_hurricanes.pkl'
-        
+
     save_pkl_to_structured_dir(df, file_name)
 
     return df
-        
+
 
 def generate_noaa_best_track_pkl(
     noaa_meta_txt_file_path: str,
@@ -441,7 +441,8 @@ def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
     if not check_if_data_file_exists("noaa_xbd_hurricanes.pkl"):
         # generate it
         isd_metadata_path = os.path.join(directories.get_h3_data_files_dir(), 'hurdat2-1851-2021-meta.txt')
-        noaa_xbd_hurricanes = weather.generate_and_save_noaa_best_track_pkl(isd_metadata_path, xbd_hurricanes_only=True)
+        df_noaa_xbd_hurricanes = weather.generate_and_save_noaa_best_track_pkl(
+                                                                isd_metadata_path, xbd_hurricanes_only=True)
     else:
         # read it
         df_noaa_xbd_hurricanes = pd.read_pickle(
@@ -916,18 +917,18 @@ def maximise_area_through_rounding(
 
 
 def save_pkl_to_structured_dir(
-    df_to_pkl: pd.DataFrame, 
+    df_to_pkl: pd.DataFrame,
     pkl_name: str
 ) -> None:
     """Save pkl file based on name to correct directory
-    
+
     Parameters
     ----------
     df_to_pkl : pd.DataFrame
         pd.DataFrame to be pickled
     pkl_name : str
         name of output pkl file
-    
+
     Returns
     -------
     None
