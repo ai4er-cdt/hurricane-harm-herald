@@ -458,3 +458,21 @@ def station_availability(
         ]
 
     return df_station_time_lim
+
+
+def convert_point_string_to_point(
+    point_string: str
+) -> shapely.geometry.Point:
+    """Convert string of Point object to actual Point object
+
+    Parameters
+    ----------
+    point_string : str
+
+    Returns
+    -------
+    shapely.geometry.Point
+    """
+    coords = [float(coord) for coord in re.findall(r'-?\d+\.\d+', point_string)]
+
+    return shapely.geometry.Point(coords)
