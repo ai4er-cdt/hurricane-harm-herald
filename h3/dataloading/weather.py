@@ -180,6 +180,36 @@ def generate_weather_stations_df(
     return df_stations
 
 
+def generate_and_save_noaa_best_track_pkl(
+	noaa_meta_txt_file_path: str,
+    xbd_hurricanes_only: bool = False
+) -> None:
+	"""Wrapper for generate_noaa_best_track_pkl. Generates a pandas DataFrame from a NOAA best track text file. Then 
+	saves this to the correct directory: data/dataset/weather/noaa with the correct filename.
+
+    The function takes in a file path to a NOAA best track text file, and reads in the data.
+    It then preprocesses the data, reformats it into a pandas DataFrame, and returns the DataFrame.
+
+    Parameters
+    ----------
+    noaa_meta_txt_file_path : str
+        File path to the NOAA best track text file. This can be found in the H3 GitHub repository at
+        /h3/data_files/hurdat2-1851-2021-meta.txt
+
+    Returns
+    -------
+    None
+    """
+	df = generate_noaa_best_track_pkl(noaa_meta_txt_file_path, xbd_hurricanes_only)
+	noaa_data_dir = directories.get_noaa_data_dir()
+	if xbd_hurricanes_only:
+		file_name = 'noaa_xbd_hurricanes.pkl'
+	else:
+		file_name = 'noaa_hurricanes.pkl'
+		
+	save_pkl_to_structured_dir(df, file_name)
+		
+
 def generate_noaa_best_track_pkl(
     noaa_meta_txt_file_path: str,
     xbd_hurricanes_only: bool = False
