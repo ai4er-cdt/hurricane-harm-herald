@@ -54,6 +54,20 @@ def standardise_df(
     return df
 
 
+def standardise_xbd_obs_df(
+    df: pd.DataFrame
+) -> pd.DataFrame:
+    """Standardise df of xbd point observations. Renames 'disaster_name' column to 'name', and makes each disaster name
+    standalone and capitalised e.g. 'FLORENCE' rather than 'hurricane-florence'
+    """
+
+    # match naming convention with NOAA for ease of comparison later
+    df['disaster_name'] = df['disaster_name'].apply(
+        lambda x: x.split('-')[-1]).str.upper()
+
+    return standardise_df(df, date_cols=['capture_date'])
+
+
 def points_from_df_lat_lon_cols(df: pd.DataFrame, point_col_name: str = "geometry") -> pd.DataFrame:
     """TODO: docstring"""
     df[point_col_name] = df.apply(
