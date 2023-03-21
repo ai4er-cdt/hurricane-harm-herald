@@ -41,7 +41,6 @@ def existing_model_to_json():
 
 def run_predict(
 		model,
-		trainer,
 		test_df: pd.DataFrame,
 		pkl_name: str,
 		scaler,
@@ -171,6 +170,8 @@ def run_model(
 	load_only: bool = False
 ) -> None:
 
+	start_time = datetime.now().strftime("%Y-%M-%d_%H:%M:%S")
+
 	cuda_device = torch.cuda.is_available()
 	if ckp_name is None:
 		ckp_name = f"{image_embedding_architecture}_{*zoom_levels,}_{'balance' if balanced_data else 'unbalanced'}"
@@ -198,7 +199,6 @@ def run_model(
 
 	# TODO: replace with loaders function
 	if balanced_data:
-		loss_function = "CELoss"
 		ECMWF_filtered_pickle_path = os.path.join(
 			get_metadata_pickle_dir(),
 			"filtered_lnglat_ECMWF_damage.pkl"
@@ -224,7 +224,6 @@ def run_model(
 		# This is the balanced_df
 
 	else:
-		loss_function = "weighted_CELoss"
 		# weather
 		df_noaa_xbd_pkl_path = os.path.join(
 			data_dir, 'EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl'
@@ -382,6 +381,9 @@ def run_model(
 	)
 
 	trainer.fit(model)
+
+	end_time = datetime.now().strftime("%Y-%M-%d_%H:%M:%S")
+	model_run_to_json( start_time, end_time, **values)
 
 	if predict:
 		run_predict(
