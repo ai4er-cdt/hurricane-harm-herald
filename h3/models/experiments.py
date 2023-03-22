@@ -88,7 +88,7 @@ def run_predict(
 	with open(test_save_path, "wb") as handle:
 		pickle.dump(scaled_test_df, handle)
 
-	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
+	# scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
 
 	test_dataset = HurricaneDataset(
 		scaled_test_df,
