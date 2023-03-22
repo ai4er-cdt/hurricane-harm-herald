@@ -21,7 +21,7 @@ The `notebooks` folder contains interactive walk-throughs of data loading and vi
 There is currently no opportunity to contribute to the project since it forms an assessed part of the AI4ER Master of Research year.
 
 ## License
-This software is double_licensed:
+This software is double licensed:
 The main codebase is under MIT license, while the SatMAE model is under the Attribution-NonCommercial 4.0 International. The SatMAE code is in `h3.models.SatMAE`, please look at the README there for more information. N.B. the SatMAE code was modified to make it compatible with `numpy=1.24`
 
 ## Acknowledgements
@@ -34,7 +34,7 @@ The team would like to thank Robert Muir-Wood for proposing the project, and Dom
 
 ## Environment setup
 
-During development we used `Python`'s `miniconda` and installed packages via `conda-forge`. This is recommended as it helps control dependencies and ensures the latest stable versions of packages are installed without intering with your existing repositories.
+During development, we used `Python`'s `miniconda` and installed packages via `conda-forge`. This is recommended as it helps control dependencies and ensures the latest stable versions of packages are installed without intering with your existing repositories.
 
 Our minimum `Python` version is `3.9`, which can be downloaded from [here](https://www.python.org/downloads/).
 
