@@ -133,8 +133,8 @@ def run_predict(
 
 def load_model_predict(
 		path: str,
-		train_dataset: pd.DataFrame,
-		val_dataset: pd.DataFrame,
+		train_dataset,
+		val_dataset,
 		test_df: pd.DataFrame,
 		scaler,
 		feature_to_scale,
@@ -327,8 +327,8 @@ def run_model(
 				get_checkpoint_dir(),
 				ckp_name
 			),
-			train_dataset=train_df,     # TODO: this doesn't seem correct and should be train_dataset
-			val_dataset=val_df,         # TODO: idem
+			train_dataset=train_dataset,
+			val_dataset=train_dataset,
 			test_df=test_df,
 			scaler=scaler,
 			feature_to_scale=features_to_scale,
