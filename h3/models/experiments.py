@@ -30,7 +30,7 @@ from h3.models.balance_process import balance_process
 from h3.models.loaders import get_df
 from h3.utils.directories import *
 from h3.utils.dataframe_utils import read_and_merge_pkls, rename_and_drop_duplicated_cols
-from h3.utils.file_ops import model_run_to_json
+from h3.utils.file_ops import model_run_to_json, get_non_empty_subfolder
 from h3.utils.simple_functions import rich_table
 
 from h3.constants import RF_BEST_EF_FEATURES, RF_BEST_FEATURES_TO_SCALE
@@ -147,9 +147,10 @@ def load_model_predict(
 		num_workers,
 		persistent_w
 ):
-	name = os.listdir(os.path.join(path, "epoch=29-val"))
+	stop_epoch = get_non_empty_subfolder(path)
+	name = os.listdir(os.path.join(path, stop_epoch))
 	model = OverallModel.load_from_checkpoint(
-		os.path.join(path, "epoch=29-val", name[0]),
+		os.path.join(path, stop_epoch, name[0]),
 		training_dataset=train_dataset,
 		validation_dataset=val_dataset
 	)
