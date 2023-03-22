@@ -120,7 +120,27 @@ def model_run_to_json(start_time: str | None, end_time: str | None, run_paramete
 	logger.info("Writing parameters to json file")
 	with open(model_json_file, "w") as f:
 		models_json[new_id] = new_run_json
-		json.dump(models_json, f)
+		json.dump(models_json, f, indent=2)
+
+
+def get_non_empty_folder(path: str) -> str | None:
+	"""Returns the name of the non-empty subfolder within the given path.
+
+	Assuming one and only one of the subfolders is non-empty.
+
+	Parameters
+	----------
+	path: str
+		path of the directory containing the subfolders.
+
+	Returns
+	-------
+	str or None
+		The name of the non-empty subfolder, or None if no non-empty subfolder is found.
+	"""
+	for folder in os.listdir(path):
+		if len(os.listdir(os.path.join(path, folder))):
+			return folder
 
 
 def main():
