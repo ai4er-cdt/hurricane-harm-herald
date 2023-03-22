@@ -86,6 +86,8 @@ def model_run_to_json(start_time: str | None, end_time: str | None, **run_parame
 	from h3.utils.directories import get_datasets_dir
 	model_json_file = os.path.join(get_datasets_dir(), "model_runs.json")
 
+	new_id = 0
+
 	if os.path.exists(model_json_file):
 		with open(model_json_file, "r") as f:
 			models_json = json.load(f)
