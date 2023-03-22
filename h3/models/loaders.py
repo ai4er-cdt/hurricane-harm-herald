@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import pandas as pd
+import pickle
 import torch
 
 from typing import Literal
@@ -15,7 +16,7 @@ from sklearn.utils.class_weight import compute_class_weight
 from h3 import logger
 from h3.dataloading.hurricane_dataset import HurricaneDataset
 from h3.models.balance_process import balance_process
-from h3.utils.directories import get_metadata_pickle_dir, get_processed_data_dir, get_datasets_dir
+from h3.utils.directories import get_metadata_pickle_dir, get_processed_data_dir, get_datasets_dir, get_pickle_dir
 from h3.utils.dataframe_utils import read_and_merge_pkls, rename_and_drop_duplicated_cols
 
 
@@ -159,4 +160,23 @@ def df_to_dataset(
 	return dataset
 
 
+def save_test_df(balanced, spatial, hurricanes, split_val_train_test, features_to_scale, scaler):
+	df = get_df(balanced)
+	# hurricanes = {
+	# 	"test": ["MICHAEL", "MATTHEW"],
+	# 	"train": ["MICHAEL", "MATTHEW"]
+	# }
+	train_df, val_df, test_df = train_val_test_df(
+		df,
+		split_val_train_test=split_val_train_test,
+		spatial=False,
+		hurricanes=hurricanes
+	)
+	b_string = "balanced" if balanced else "unbalanced"
+	s_string = "spatial" if spatial else "non-spatial"
+	splits = "".join(map(lambda x: str(int(x * 100)), split_val_train_test))
+	name = f"test_df_{b_string}_{s_string}_{splits}.pickle"
 
+	_, _, scaled_test_df = scale_df(train_df, val_df, test_df, features_to_scale, scaler)
+	with open(os.path.join(get_pickle_dir(), name), "wb") as handle:
+		pickle.dump(scaled_test_df, handle)
