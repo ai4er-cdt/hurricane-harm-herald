@@ -223,7 +223,6 @@ def run_model(
 	frame = inspect.currentframe()
 	args, _, _, values = inspect.getargvalues(frame)
 	rich_table(args, values, title="Model Parameters")
-	logger.info(f"Cuda: {cuda_device}")
 
 	if balanced_data:
 		loss_function = "CELoss"
