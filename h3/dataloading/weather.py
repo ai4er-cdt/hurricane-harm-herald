@@ -62,7 +62,7 @@ def find_fetch_closest_station_files(
 
     # pre-assign column of values for assignment
     df_xbd_points[["event_start", "event_end"]] = np.nan
-    df_xbd_points[["closest_stations", "stations_lat_lons"]] = np.nan
+    df_xbd_points[["closest_stations", "station_lat", "station_lon"]] = np.nan
 
     # group by event in df_xbd_points
     df_xbd_points_grouped = df_xbd_points.groupby("disaster_name")
@@ -109,7 +109,7 @@ def find_fetch_closest_station_files(
                     # if file not downloaded
                     if not check_is_file_downloaded(csv_filename, download_dest_dir):
                         try:
-                            download_dest = download_dest_dir + ".".join((csv_filename, "csv"))
+                            download_dest = download_dest_dir + '/' + ".".join((csv_filename, "csv"))
                             urllib.request.urlretrieve(url, download_dest)
                             stations_list.append(csv_filename)
                         except: # noqa
@@ -120,14 +120,41 @@ def find_fetch_closest_station_files(
 
             # append list of stations
             df_xbd_points["closest_stations"].iloc[index] = stations_list
+            df_xbd_points["station_lat"].iloc[index] = group.lat.loc[index]
+            df_xbd_points["station_lon"].iloc[index] = group.lon.loc[index]
             # append start and end dates
             df_xbd_points["event_start"].iloc[index] = start
             df_xbd_points["event_end"].iloc[index] = end
+            df_xbd_points
 
         # remove station rows which don"t exist
         df_stations = df_stations.loc[~df_stations["csv_filenames"].isin(ignore_csvs)]
 
     return df_xbd_points
+
+
+def calc_distance_between_closest_station_and_xbd_point(df_xbd_stations: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate the distance between closest weather station and xbd observation.
+    Not generalisable outside of this.
+    """
+
+    df_xbd_stations['distance_to_closest'] = np.nan
+    # for each row in df_xbd_stations_info
+    for i_row, row in tqdm(df_xbd_stations.iterrows(), total=len(df_xbd_stations)):
+        # find station
+        station = row['closest_stations'][0]
+        # fetch lat lon of station
+        station_lat = df_xbd_stations[df_xbd_stations['csv_filenames'] == station]['lat'].values[0]
+        station_lon = df_xbd_stations[df_xbd_stations['csv_filenames'] == station]['lon'].values[0]
+        # calculate distance between [closest] station and point
+        distance = geopy.distance.distance(
+            (row['lat'], row['lon']),
+            (station_lat, station_lon)).km
+        # add distance to new column
+        df_xbd_stations['distance_to_closest'].iloc[i_row] = distance
+
+    return df_xbd_stations
 
 
 def generate_station_url(
@@ -141,15 +168,17 @@ def generate_station_url(
 
 def check_is_file_downloaded(
     csv_filename: str,
-    download_dest_dir: str
+    download_dest_dir: str,
+    verbose: bool = False
 ) -> bool:
     """True if already downloaded, False if not"""
     potential_file_path = "/".join((download_dest_dir, csv_filename)) + ".csv"
     if os.path.exists(potential_file_path):
         # downloaded
+        if verbose:
+            print(f"{csv_filename} already downloaded.")
         return True
     else:
-        print(f"{csv_filename} already downloaded.")
         return False
 
 
@@ -191,9 +220,9 @@ def generate_weather_stations_df(
     df_stations = general_df_utils.concat_df_cols(df_stations_lim, "csv_filenames", ["usaf", "wban"])
 
     df_dict = check_data_files_exist_else_generate(['xbd_points.pkl', 'noaa_xbd_hurricanes.pkl'])
-    df_xbd_points = df_dict['xbd_points.pkl']
+    df_xbd_points = general_df_utils.standardise_xbd_obs_df(df_dict['xbd_points.pkl'])
     df_noaa_xbd_hurricanes = df_dict['noaa_xbd_hurricanes.pkl']
-    download_dest_dir = os.path.join(directories.get_isd_data_dir(), 'stations_csvs')
+    download_dest_dir = os.path.join(directories.get_isd_csvs_dir())
 
     df_stations_xbd_params = find_fetch_closest_station_files(
         df_xbd_points, df_noaa_xbd_hurricanes, df_stations, download_dest_dir)
@@ -490,6 +519,30 @@ def return_most_recent_events_by_name(df: pd.DataFrame, event_names: list[str]) 
     recent_tags = df_sorted.groupby("name").first().tag
 
     return df_sorted.loc[df["tag"].isin(recent_tags)]
+
+
+def calculate_distances_between_group_rows(group: pd.core.groupby.DataFrameGroupBy) -> pd.core.groupby.DataFrameGroupBy:
+    group['distance_between_observations'] = [np.nan] + [
+            geopy.distance.distance(
+                (group.iloc[i].lat, group.iloc[i].lon), (group.iloc[i+1].lat, group.iloc[i+1].lon)).km
+            for i in range(len(group)-1)
+            ]
+    return group
+
+
+def calculate_distances_between_rows(df: pd.DataFrame) -> pd.DataFrame:
+    return df.groupby('tag').apply(calculate_distances_between_group_rows).reset_index(drop=True)
+
+
+def calculate_average_speed_between_rows(
+    df: pd.DataFrame,
+    distance_col_name: str = 'distance_between_observations'
+) -> pd.DataFrame:
+    """Divide the distance travelled between six-hourly observations by 6 to return the average speed between
+    observations in km/h.
+    """
+    df['average_trajectory_speed'] = df[distance_col_name].divide(6)
+    return df
 
 
 def download_era5_gribs(download_dest_dir: str, distance_buffer: float = 2):
@@ -1019,4 +1072,4 @@ def get_save_dir_path_from_pkl_name(
     else:
         raise ValueError(f"Unrecognised pkl name: {pkl_name}")
 
-    return save_dir_path
+    return os.path.join(save_dir_path, pkl_name)

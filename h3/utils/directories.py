@@ -116,5 +116,10 @@ def get_noaa_data_dir() -> str:
 
 
 def get_isd_data_dir() -> str:
-    """./data/datasets/weather/noaa"""
+    """./data/datasets/weather/isd"""
     return guarantee_existence(os.path.join(get_weather_data_dir(), "isd"))
+
+
+def get_isd_csvs_dir() -> str:
+    """./data/datasets/weather/isd/isd_csvs"""
+    return guarantee_existence(os.path.join(get_isd_data_dir(), "isd_csvs"))
