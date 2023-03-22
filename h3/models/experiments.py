@@ -97,7 +97,6 @@ def run_predict(
 		image_embedding_architecture=image_embedding_architecture,
 		zoom_levels=zoom_levels,
 		augmentations=augmentations,
-
 	)
 	#
 	# test_loader = DataLoader(
@@ -368,7 +367,7 @@ def run_model(
 	trainer.fit(model)
 
 	end_time = datetime.now().strftime("%Y-%M-%d_%H:%M:%S")
-	model_run_to_json( start_time, end_time, **values)
+	model_run_to_json(start_time, end_time, **values)
 
 	if predict:
 		run_predict(
