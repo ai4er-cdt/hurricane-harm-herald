@@ -200,11 +200,13 @@ def run_model(
 	start_time = datetime.now().strftime("%Y-%M-%d_%H:%M:%S")
 
 	cuda_device = torch.cuda.is_available()
-	if ckp_name is None:
-		ckp_name = f"{image_embedding_architecture}_{*zoom_levels,}_{'balance' if balanced_data else 'unbalanced'}"
 
 	zoom_levels = zoom_levels or ["1"]
 	split_val_train_test = split_val_train_test or [0.7, 0.2, 0.1]
+
+	if ckp_name is None:
+		ckp_name = f"{image_embedding_architecture}_{*zoom_levels,}_{'balance' if balanced_data else 'unbalanced'}"
+		# f"{architecture}_{*zoom_levels,}_b{int(balanced)}_s{spatial}_EF{len(features_scale)}"
 
 	img_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
 
@@ -402,7 +404,7 @@ def main():
 	architecture: Literal["ResNet18", "SatMAE", "Swin_V2_B"]
 	architecture = "ResNet18"
 	spatial = True
-	ckp_name = f"{architecture}_{*zooms,}_b{int(balanced)}_s{spatial}_EF{len(features_scale)}"
+	ckp_name = f"{architecture}_{','.join(map(str, zooms))}_b{int(balanced)}_s{spatial}_EF{len(features_scale)}"
 	# ckp_name = f"{architecture}_{*zooms,}_balanced_True"
 
 	hurricanes = {
