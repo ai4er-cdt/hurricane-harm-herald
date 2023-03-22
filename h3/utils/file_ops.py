@@ -82,7 +82,7 @@ def unpack_file(filepath: str, clean: bool = False, file_format: None | str = No
 		os.remove(filepath)
 
 
-def model_run_to_json(start_time: str | None, end_time: str | None, **run_parameters) -> None:
+def model_run_to_json(start_time: str | None, end_time: str | None, run_parameters) -> None:
 	from h3.utils.directories import get_datasets_dir
 	model_json_file = os.path.join(get_datasets_dir(), "model_runs.json")
 
