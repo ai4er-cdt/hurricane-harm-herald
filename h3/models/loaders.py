@@ -96,9 +96,16 @@ def train_val_test_df(
 		train_event_names = hurricanes["train"]
 		test_event_names = hurricanes["test"]
 		train_df = df[df["disaster_name"].isin(train_event_names)]
-		test_df = df[df["disaster_name"].isin(test_event_names)]    # TODO: this problematic
-		train_val_val_spatial = split_val_train_test[1] + split_val_train_test[2]
-		train_df, val_df = train_test_split(train_df, test_size=train_val_val_spatial, random_state=1)
+		if train_event_names == test_event_names:
+			# this won't solve the issue when only one hurricane matches
+			# same training and test, spliting the dataset in to 70 20 10
+			train_df, test_df = train_test_split(train_df, test_size=train_test_value, random_state=1)
+		else:
+			# otherwise, test is everything in df for test hurricanes
+			# and the split is 70 20 10 with 10 left over
+			test_df = df[df["disaster_name"].isin(test_event_names)]    # TODO: this problematic
+			train_df, _ = train_test_split(train_df, test_size=train_test_value, random_state=1)
+		train_df, val_df = train_test_split(train_df, test_size=train_val_value, random_state=1)
 	else:
 		train_df, test_df = train_test_split(df, test_size=train_test_value, random_state=1)
 		train_df, val_df = train_test_split(train_df, test_size=train_val_value, random_state=1)
