@@ -218,9 +218,6 @@ def run_model(
 
 	img_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
 
-	train_test_value = split_val_train_test[2]
-	train_val_value = split_val_train_test[1] / split_val_train_test[0]
-
 	augmentations = DataAugmentation() if use_augmentation else None
 
 	frame = inspect.currentframe()
