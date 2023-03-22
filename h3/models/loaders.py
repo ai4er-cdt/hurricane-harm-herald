@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import os
 
-import numpy
+import numpy as np
 import pandas as pd
 import torch
+
+from typing import Literal
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
@@ -14,13 +16,13 @@ from h3 import logger
 from h3.dataloading.hurricane_dataset import HurricaneDataset
 from h3.models.balance_process import balance_process
 from h3.utils.directories import get_metadata_pickle_dir, get_processed_data_dir, get_datasets_dir
-from h3.models.balance_process import balance_process
 from h3.utils.dataframe_utils import read_and_merge_pkls, rename_and_drop_duplicated_cols
 
 
 def get_df(balanced_data: bool) -> pd.DataFrame:
 	data_dir = get_datasets_dir()
 	if balanced_data:
+		# This is the balanced_df
 		logger.info("Loading balanced data")
 		ECMWF_filtered_pickle_path = os.path.join(
 			get_metadata_pickle_dir(),
@@ -45,8 +47,6 @@ def get_df(balanced_data: bool) -> pd.DataFrame:
 			df = pd.read_pickle(filtered_pickle_path)
 		else:
 			df = balance_process(data_dir)
-	# This is the balanced_df
-
 	else:
 		logger.info("Loading unbalanced data")
 		# weather
@@ -67,6 +67,7 @@ def get_df(balanced_data: bool) -> pd.DataFrame:
 		EF_df = read_and_merge_pkls(pkl_paths)
 		df = rename_and_drop_duplicated_cols(EF_df)
 
+	# remove unclassified, i.e. class damage == 4
 	df = df[df.damage_class != 4]
 	df["id"] = df.index
 
@@ -75,13 +76,10 @@ def get_df(balanced_data: bool) -> pd.DataFrame:
 
 def train_val_test_df(
 		df: pd.DataFrame,
-		features_to_scale: list[str],
-		balanced_data: bool,
 		split_val_train_test: list,
 		spatial: bool,
 		hurricanes: dict[str, list[str]],
-		augmentations,
-):
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
 	# train_dataset = HurricaneDataset(
 	# 	dataframe=scaled_train_df,
 	# 	img_path=img_path,
@@ -98,13 +96,17 @@ def train_val_test_df(
 		train_event_names = hurricanes["train"]
 		test_event_names = hurricanes["test"]
 		train_df = df[df["disaster_name"].isin(train_event_names)]
-		test_df = df[df["disaster_name"].isin(test_event_names)]
+		test_df = df[df["disaster_name"].isin(test_event_names)]    # TODO: this problematic
 		train_val_val_spatial = split_val_train_test[1] + split_val_train_test[2]
 		train_df, val_df = train_test_split(train_df, test_size=train_val_val_spatial, random_state=1)
 	else:
 		train_df, test_df = train_test_split(df, test_size=train_test_value, random_state=1)
 		train_df, val_df = train_test_split(train_df, test_size=train_val_value, random_state=1)
 
+	return train_df, val_df, test_df
+
+
+def get_class_weights(balanced_data: bool, train_df: pd.DataFrame) -> torch.Tensor | None:
 	if not balanced_data:
 		class_weights = compute_class_weight(
 			class_weight="balanced",
@@ -114,20 +116,29 @@ def train_val_test_df(
 		class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
 	else:
 		class_weights = None
+	return class_weights
 
+
+def scale_df(train_df, val_df, test_df, features_to_scale, scaler) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
 	scaled_train_df = train_df.copy()
 	scaled_val_df = val_df.copy()
+	scaled_test_df = test_df.copy()
 
-	scaler = MinMaxScaler()
 	scaled_train_df[features_to_scale] = scaler.fit_transform(scaled_train_df[features_to_scale])
 	scaled_val_df[features_to_scale] = scaler.transform(val_df[features_to_scale])
-
-	train_dataset = df_to_dataset(df=scaled_train_df, augmentations=augmentations)
-	val_dataset = df_to_dataset(df=scaled_val_df)
-	return train_dataset, val_dataset, class_weights
+	scaled_test_df[features_to_scale] = scaler.transform(test_df[features_to_scale])
+	return scaled_train_df, scaled_val_df, scaled_test_df
 
 
-def df_to_dataset(df: pd.DataFrame, augmentations=None) -> HurricaneDataset:
+def df_to_dataset(
+		df: pd.DataFrame,
+		img_path: str,
+		ef_features: dict,
+		image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"],
+		zoom_levels: list,
+		ram_load: bool = False,
+		augmentations=None
+) -> HurricaneDataset:
 	dataset = HurricaneDataset(
 		dataframe=df,
 		img_path=img_path,
