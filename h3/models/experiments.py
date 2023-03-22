@@ -213,8 +213,8 @@ def run_model(
 	split_val_train_test = split_val_train_test or [0.7, 0.2, 0.1]
 
 	if ckp_name is None:
-		ckp_name = f"{image_embedding_architecture}_{*zoom_levels,}_{'balance' if balanced_data else 'unbalanced'}"
-		# f"{architecture}_{*zoom_levels,}_b{int(balanced)}_s{spatial}_EF{len(features_scale)}"
+		# ckp_name = f"{image_embedding_architecture}_{*zoom_levels,}_{'balance' if balanced_data else 'unbalanced'}"
+		ckp_name = f"{image_embedding_architecture}_{*zoom_levels,}_b{int(balanced_data)}_s{spatial}_EF{len(features_to_scale)}"
 
 	img_path = os.path.join(get_processed_data_dir(), "processed_xbd", "geotiffs_zoom", "images")
 
