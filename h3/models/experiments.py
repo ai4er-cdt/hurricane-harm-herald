@@ -225,33 +225,44 @@ def run_model(
 
 	df = get_df(balanced_data)
 
-	if spatial:
-		train_event_names = hurricanes["train"]
-		test_event_names = hurricanes["test"]
-		train_df = df[df["disaster_name"].isin(train_event_names)]
-		test_df = df[df["disaster_name"].isin(test_event_names)]
-		train_val_val_spatial = split_val_train_test[1] + split_val_train_test[2]
-		train_df, val_df = train_test_split(train_df, test_size=train_val_val_spatial, random_state=1)
-	else:
-		train_df, test_df = train_test_split(df, test_size=train_test_value, random_state=1)
-		train_df, val_df = train_test_split(train_df, test_size=train_val_value, random_state=1)
+	train_df, val_df, test_df = train_val_test_df(
+		df,
+		split_val_train_test=split_val_train_test,
+		spatial=spatial,
+		hurricanes=hurricanes
+	)
 
-	if not balanced_data:
-		class_weights = compute_class_weight(
-			class_weight="balanced",
-			classes=np.unique(train_df["damage_class"].to_numpy()),
-			y=train_df["damage_class"]
-		)
-		class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
-	else:
-		class_weights = None
+	# if spatial:
+	# 	train_event_names = hurricanes["train"]
+	# 	test_event_names = hurricanes["test"]
+	# 	train_df = df[df["disaster_name"].isin(train_event_names)]
+	# 	test_df = df[df["disaster_name"].isin(test_event_names)]
+	# 	train_val_val_spatial = split_val_train_test[1] + split_val_train_test[2]
+	# 	train_df, val_df = train_test_split(train_df, test_size=train_val_val_spatial, random_state=1)
+	# else:
+	# 	train_df, test_df = train_test_split(df, test_size=train_test_value, random_state=1)
+	# 	train_df, val_df = train_test_split(train_df, test_size=train_val_value, random_state=1)
 
-	scaled_train_df = train_df.copy()
-	scaled_val_df = val_df.copy()
+	# if not balanced_data:
+	# 	class_weights = compute_class_weight(
+	# 		class_weight="balanced",
+	# 		classes=np.unique(train_df["damage_class"].to_numpy()),
+	# 		y=train_df["damage_class"]
+	# 	)
+	# 	class_weights = torch.as_tensor(class_weights).type(torch.FloatTensor)
+	# else:
+	# 	class_weights = None
 
+	class_weights = get_class_weights(balanced_data, train_df)
+
+	# scaled_train_df = train_df.copy()
+	# scaled_val_df = val_df.copy()
+	#
+	# scaler = MinMaxScaler()
+	# scaled_train_df[features_to_scale] = scaler.fit_transform(scaled_train_df[features_to_scale])
+	# scaled_val_df[features_to_scale] = scaler.transform(val_df[features_to_scale])
 	scaler = MinMaxScaler()
-	scaled_train_df[features_to_scale] = scaler.fit_transform(scaled_train_df[features_to_scale])
-	scaled_val_df[features_to_scale] = scaler.transform(val_df[features_to_scale])
+	scaled_train_df, scaled_val_df, scaled_test_df = scale_df(train_df, val_df, test_df, features_to_scale, scaler)
 
 	train_dataset = HurricaneDataset(
 		dataframe=scaled_train_df,
