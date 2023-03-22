@@ -106,7 +106,7 @@ def model_run_to_json(start_time: str | None, end_time: str | None, run_paramete
 		"zoom_levels": run_parameters["zoom_levels"],
 		"is_balanced": run_parameters["balanced"],
 		"max_epochs": run_parameters["max_epochs"],
-		"is_augmented": bool(run_parameters["use_augmentation"]),
+		"is_augmented": bool(run_parameters["use_augmentation"]) if run_parameters["use_augmentation"] is not None else None,
 		"ram_load": run_parameters["ram_load"],
 		"is_spatial": run_parameters["spatial"],
 		"hurricanes": run_parameters["hurricanes"],
