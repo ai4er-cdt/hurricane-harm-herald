@@ -265,12 +265,6 @@ def run_model(
 
 	class_weights = get_class_weights(balanced_data, train_df)
 
-	# scaled_train_df = train_df.copy()
-	# scaled_val_df = val_df.copy()
-	#
-	# scaler = MinMaxScaler()
-	# scaled_train_df[features_to_scale] = scaler.fit_transform(scaled_train_df[features_to_scale])
-	# scaled_val_df[features_to_scale] = scaler.transform(val_df[features_to_scale])
 	scaler = MinMaxScaler()
 	scaled_train_df, scaled_val_df, scaled_test_df = scale_df(train_df, val_df, test_df, features_to_scale, scaler)
 
