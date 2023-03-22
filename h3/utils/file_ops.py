@@ -123,7 +123,7 @@ def model_run_to_json(start_time: str | None, end_time: str | None, run_paramete
 		json.dump(models_json, f, indent=2)
 
 
-def get_non_empty_folder(path: str) -> str | None:
+def get_non_empty_subfolder(path: str) -> str | None:
 	"""Returns the name of the non-empty subfolder within the given path.
 
 	Assuming one and only one of the subfolders is non-empty.
