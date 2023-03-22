@@ -117,6 +117,7 @@ def model_run_to_json(start_time: str | None, end_time: str | None, run_paramete
 		"from_checkpoint": run_parameters["from_checkpoint"]
 	}
 
+	logger.info("Writing parameters to json file")
 	with open(model_json_file, "w") as f:
 		models_json[new_id] = new_run_json
 		json.dump(models_json, f)
