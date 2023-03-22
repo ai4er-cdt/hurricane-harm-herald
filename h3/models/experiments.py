@@ -201,6 +201,13 @@ def run_model(
 	start_time = datetime.now().strftime("%Y-%M-%d_%H:%M:%S")
 
 	cuda_device = torch.cuda.is_available()
+	if cuda_device:
+		torch.set_float32_matmul_precision(torch_float32_precision)
+		num_workers = num_worker
+		persistent_w = bool(num_workers)
+	else:
+		num_workers = 0
+		persistent_w = False
 
 	zoom_levels = zoom_levels or ["1"]
 	split_val_train_test = split_val_train_test or [0.7, 0.2, 0.1]
@@ -225,6 +232,10 @@ def run_model(
 		loss_function = "CELoss"
 	else:
 		loss_function = "weighted_CELoss"
+
+	logger.info(f"Loss function is {loss_function}")
+	logger.info(f"Cuda: {cuda_device}")
+	logger.info(f"{num_workers} number of workers")
 
 	df = get_df(balanced_data)
 
@@ -285,16 +296,6 @@ def run_model(
 		zoom_levels=zoom_levels,
 		ram_load=ram_load
 	)
-	if cuda_device:
-		torch.set_float32_matmul_precision(torch_float32_precision)
-		num_workers = num_worker
-		persistent_w = bool(num_workers)
-	else:
-		num_workers = 0
-		persistent_w = False
-
-	logger.info(f"Loss function is {loss_function}")
-	logger.info(f"{num_workers} number of workers")
 
 	early_stop_callback = EarlyStopping(monitor="val/loss", patience=5, mode="min")
 
