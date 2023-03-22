@@ -24,7 +24,7 @@ from sklearn.utils.class_weight import compute_class_weight
 
 from h3 import logger
 from h3.dataprocessing.data_augmentation import DataAugmentation
-from h3.dataloading.hurricanedataset import HurricaneDataset
+from h3.dataloading.hurricane_dataset import HurricaneDataset
 from h3.models.multimodal import OverallModel
 from h3.models.balance_process import balance_process
 from h3.models.loaders import get_df
