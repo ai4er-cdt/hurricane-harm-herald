@@ -71,11 +71,12 @@ class HurricaneDataset(Dataset):
 
     def get_preprocessing(self):
         if self.image_embedding_architecture == "ResNet18":
-            preprocessing = transforms.Compose([
-                    transforms.CenterCrop(224),
-                    transforms.ToTensor(),
-                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                ])
+            # preprocessing = transforms.Compose([
+            #         transforms.CenterCrop(224),
+            #         transforms.ToTensor(),
+            #         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            #     ])
+            preprocessing = TransformResNet()
 
         elif self.image_embedding_architecture == "ViT_L_16":
             preprocessing = ViT_L_16_Weights.IMAGENET1K_V1.transforms()
@@ -86,14 +87,15 @@ class HurricaneDataset(Dataset):
         elif self.image_embedding_architecture == "SatMAE":
             # values from CustomDatasetFromImages()
             # https://github.com/sustainlab-group/SatMAE/blob/main/util/datasets.py
-            preprocessing = transforms.Compose([
-                    transforms.CenterCrop(224),
-                    transforms.ToTensor(),
-                    transforms.Normalize(
-                        mean=[0.4182007312774658, 0.4214799106121063, 0.3991275727748871],
-                        std=[0.28774282336235046, 0.27541765570640564, 0.2764017581939697]
-                    ),
-                ])
+            # preprocessing = transforms.Compose([
+            #         transforms.CenterCrop(224),
+            #         transforms.ToTensor(),
+            #         transforms.Normalize(
+            #             mean=[0.4182007312774658, 0.4214799106121063, 0.3991275727748871],
+            #             std=[0.28774282336235046, 0.27541765570640564, 0.2764017581939697]
+            #         ),
+            #     ])
+            preprocessing = TransformSatMAE()
         else:
             preprocessing = transforms.ToTensor()
         return preprocessing

@@ -5,6 +5,22 @@ import torch
 import random
 
 
+class TransformResNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.crop = transforms.CenterCrop(224)
+        self.norm = transforms.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225]
+        )
+
+    def __call__(self, x):
+        x = self.crop(x)
+        x = x / 255
+        x = self.norm(x)
+        return x
+
+
 class TransformSatMAE(nn.Module):
     def __init__(self):
         super().__init__()
