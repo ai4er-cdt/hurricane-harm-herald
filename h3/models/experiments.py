@@ -300,7 +300,7 @@ def run_model(
 		every_n_epochs=1
 	)
 
-	tensor_logger = TensorBoardLogger("tb_logs", name=f"{image_embedding_architecture}_{*zoom_levels,}")
+	tensor_logger = TensorBoardLogger("tb_logs", name=ckp_name)
 
 	if cuda_device:
 		logger.info("Setting the trainer using GPU")
@@ -329,7 +329,7 @@ def run_model(
 			),
 			train_dataset=train_dataset,
 			val_dataset=train_dataset,
-			test_df=test_df,
+			test_df=scaled_test_df,
 			scaler=scaler,
 			feature_to_scale=features_to_scale,
 			ef_features=ef_features,
@@ -362,6 +362,7 @@ def run_model(
 		weight_decay=0.001,
 		num_workers=num_workers,
 		persistent_w=persistent_w,
+		annealing_t_max=max_epochs
 	)
 
 	trainer.fit(model)
@@ -372,7 +373,7 @@ def run_model(
 	if predict:
 		run_predict(
 			model=model,
-			test_df=test_df,    # TODO: check if this is correct, I think it is
+			test_df=scaled_test_df,    # TODO: check if this is correct, I think it is
 			scaler=scaler,
 			features_to_scale=features_to_scale,
 			ef_features=ef_features,
