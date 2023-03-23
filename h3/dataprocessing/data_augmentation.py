@@ -5,7 +5,23 @@ import torch
 import random
 
 
-class ColourJitter:
+class TransformSatMAE(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.crop = transforms.CenterCrop(224)
+        self.norm = transforms.Normalize(
+            mean=[0.4182007312774658, 0.4214799106121063, 0.3991275727748871],
+            std=[0.28774282336235046, 0.27541765570640564, 0.2764017581939697]
+        )
+
+    def __call__(self, x):
+        x = self.crop(x)
+        x = x / 255
+        x = self.norm(x)
+        return x
+
+
+class ColourJitter(nn.Module):
     """Class for torchvision's Color Jitter transformation for h3's data.
 
     Attributes
@@ -13,6 +29,7 @@ class ColourJitter:
     jitter : torchvision.transformers.transforms.ColorJitter
     """
     def __init__(self):
+        super().__init__()
         self.jitter = transforms.ColorJitter(
             brightness=(0.95, 1),
             contrast=(0.95, 1),
@@ -27,7 +44,7 @@ class ColourJitter:
         return x_mul.int()
 
 
-class GaussianNoise:
+class GaussianNoise(nn.Module):
     """Class for Gaussian Noise for pytorch.
 
     Attributes
@@ -36,6 +53,7 @@ class GaussianNoise:
         Amount of the standard deviation of noise to add as Gaussian Noise.
     """
     def __init__(self, noise_amount):
+        super().__init__()
         self.noise_amount = noise_amount
 
     def __call__(self, x):
@@ -44,7 +62,7 @@ class GaussianNoise:
         return x_clamp.int()
 
 
-class RotationTransform:
+class RotationTransform(nn.Module):
     """Class for Rotation Transform for pytorch that picks a random rotation angle.
 
     Attributes
@@ -54,6 +72,7 @@ class RotationTransform:
         The value is randomly selected.
     """
     def __init__(self, angles):
+        super().__init__()
         self.angles = angles
 
     def __call__(self, x):
