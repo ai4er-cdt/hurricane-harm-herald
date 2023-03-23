@@ -99,8 +99,8 @@ def model_run_to_json(start_time: str | None, end_time: str | None, run_paramete
 		"end_date": end_time,
 		"split_val_train_test": run_parameters["split_val_train_test"],
 		"EF_features": {
-			"nbr": sum(map(len, run_parameters["ef_features"].values())),
-			"values": run_parameters["ef_features"]
+			"nbr": sum(map(len, run_parameters["EF_features"].values())),
+			"values": run_parameters["EF_features"]
 		},
 		"architecture": run_parameters["image_embedding_architecture"],
 		"zoom_levels": run_parameters["zoom_levels"],
