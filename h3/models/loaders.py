@@ -7,14 +7,10 @@ import pandas as pd
 import pickle
 import torch
 
-from typing import Literal
-
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils.class_weight import compute_class_weight
 
 from h3 import logger
-from h3.dataloading.hurricane_dataset import HurricaneDataset
 from h3.models.balance_process import balance_process
 from h3.utils.directories import get_metadata_pickle_dir, get_processed_data_dir, get_datasets_dir, get_pickle_dir
 from h3.utils.dataframe_utils import read_and_merge_pkls, rename_and_drop_duplicated_cols
@@ -38,6 +34,7 @@ def get_df(balanced_data: bool) -> pd.DataFrame:
 		# remove unclassified class
 		ECMWF_balanced_df = ECMWF_balanced_df[ECMWF_balanced_df.damage_class != 4]
 		ECMWF_balanced_df["id"] = ECMWF_balanced_df.index
+		# TODO: the ECMWF is not used
 
 		# this does have the soil and terrain data in it
 		filtered_pickle_path = os.path.join(
@@ -81,15 +78,6 @@ def train_val_test_df(
 		spatial: bool,
 		hurricanes: dict[str, list[str]],
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-	# train_dataset = HurricaneDataset(
-	# 	dataframe=scaled_train_df,
-	# 	img_path=img_path,
-	# 	EF_features=ef_features,
-	# 	image_embedding_architecture=image_embedding_architecture,
-	# 	zoom_levels=zoom_levels,
-	# 	augmentations=augmentations,
-	# 	ram_load=ram_load
-	# )
 	train_test_value = split_val_train_test[2]
 	train_val_value = split_val_train_test[1] / split_val_train_test[0]
 
@@ -115,6 +103,22 @@ def train_val_test_df(
 
 
 def get_class_weights(balanced_data: bool, train_df: pd.DataFrame) -> torch.Tensor | None:
+	"""Return the class weights according if the data is balanced or unbalanced.
+	If the data is unbalanced, returns None.
+
+	Parameters
+	----------
+	balanced_data : bool
+		True if the data is balanced.
+	train_df : pd.DataFrame
+		The train data to get the class weights (if balanced_data is True).
+
+	Returns
+	-------
+	torch.Tensor or None
+		If balanced data is False, returns None.
+		Otherwise, returns a torch.Tensor of the class weights of the balanced data.
+	"""
 	if not balanced_data:
 		class_weights = compute_class_weight(
 			class_weight="balanced",
@@ -127,7 +131,38 @@ def get_class_weights(balanced_data: bool, train_df: pd.DataFrame) -> torch.Tens
 	return class_weights
 
 
-def scale_df(train_df, val_df, test_df, features_to_scale, scaler) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def scale_df(
+		train_df: pd.DataFrame,
+		val_df: pd.DataFrame,
+		test_df: pd.DataFrame,
+		features_to_scale: list[str],
+		scaler,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+	"""Scale the different dataframe according to a scaler.
+
+	Parameters
+	----------
+	train_df : pd.DataFrame
+		Train dataframe to scale.
+		The scaler will be using this dataframe to fit.
+	val_df : pd.DataFrame
+		Validation dataframe to scale.
+	test_df : pd.DataFrame
+		Test dataframe to scale.
+	features_to_scale : list of str
+		The list of features to scale.
+	scaler
+		Scaler to use. Can take any from sklearn.preprocessing.
+
+	Returns
+	-------
+	tuple of three pandas DataFrame.
+		The three dataframe are the scaled train, scaled validation, and scaled test dataframes respectively.
+
+	See Also
+	--------
+	sklearn.preprocessing
+	"""
 	scaled_train_df = train_df.copy()
 	scaled_val_df = val_df.copy()
 	scaled_test_df = test_df.copy()
@@ -138,29 +173,33 @@ def scale_df(train_df, val_df, test_df, features_to_scale, scaler) -> tuple[pd.D
 	return scaled_train_df, scaled_val_df, scaled_test_df
 
 
-def df_to_dataset(
-		df: pd.DataFrame,
-		img_path: str,
-		ef_features: dict,
-		image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"],
-		zoom_levels: list,
-		ram_load: bool = False,
-		augmentations=None
-) -> HurricaneDataset:
-	dataset = HurricaneDataset(
-		dataframe=df,
-		img_path=img_path,
-		EF_features=ef_features,
-		image_embedding_architecture=image_embedding_architecture,
-		zoom_levels=zoom_levels,
-		ram_load=ram_load,
-		augmentations=augmentations
-	)
+def save_test_df(
+		balanced: bool,
+		spatial: bool,
+		hurricanes: dict[str, list[str]],
+		split_val_train_test: list[float],
+		features_to_scale: list,
+		scaler
+) -> None:
+	"""Save test dataframe to pickle file.
 
-	return dataset
-
-
-def save_test_df(balanced, spatial, hurricanes, split_val_train_test, features_to_scale, scaler):
+	Parameters
+	----------
+	balanced : bool
+		If True, uses balanced data.
+	spatial : bool
+		If True, uses spatial data, and using the hurricanes parameter.
+	hurricanes : dict of list of string
+		Dictionary with `train` `test` as key and taking a
+		list of the hurricanes as value.
+	split_val_train_test : list of float
+		list of split for train validation and split, given as float.
+		The values do not need to add up to 1.
+	features_to_scale
+	scaler :
+		Scaler to use for the scaling data.
+		See scale_df.
+	"""
 	df = get_df(balanced)
 	# hurricanes = {
 	# 	"test": ["MICHAEL", "MATTHEW"],
@@ -176,7 +215,9 @@ def save_test_df(balanced, spatial, hurricanes, split_val_train_test, features_t
 	s_string = "spatial" if spatial else "non-spatial"
 	splits = "".join(map(lambda x: str(int(x * 100)), split_val_train_test))
 	name = f"test_df_{b_string}_{s_string}_{splits}.pickle"
+	path = os.path.join(get_pickle_dir(), name)
 
 	_, _, scaled_test_df = scale_df(train_df, val_df, test_df, features_to_scale, scaler)
-	with open(os.path.join(get_pickle_dir(), name), "wb") as handle:
+	with open(path, "wb") as handle:
 		pickle.dump(scaled_test_df, handle)
+	logger.info(f"test_df saved at {path}")
