@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import os
+
 import numpy as np
+import torchvision
 from concurrent.futures import ThreadPoolExecutor
 
 from numba import jit
@@ -14,8 +16,11 @@ from typing import Callable
 
 
 @jit(forceobj=True)
-def open_img(path: str, transform: Callable):
-	img = Image.open(path)
+def open_img(path: str, transform: Callable, device: str = "cpu"):
+	img = torchvision.io.read_image(path)
+	# img = img.to(device)
+	# img = Image.open(path)
+	# img = torchvision.transforms.PILToTensor()(img)
 	img = transform(img)
 	# print(img.shape)
 	return img
