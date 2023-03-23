@@ -274,6 +274,7 @@ def run_model(
 		image_embedding_architecture=image_embedding_architecture,
 		zoom_levels=zoom_levels,
 		augmentations=augmentations,
+		device="cuda" if torch.cuda.is_available() else "cpu",
 		ram_load=ram_load
 	)
 

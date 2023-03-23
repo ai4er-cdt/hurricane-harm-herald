@@ -10,10 +10,11 @@ from torchvision import transforms
 from torchvision.models import ViT_L_16_Weights
 from torchvision.models import Swin_V2_B_Weights
 
-from typing import Literal
+from typing import Literal, Callable
 
 from h3 import logger
 from h3.models.opti_utils import load_full_ram, open_img
+from h3.dataprocessing.data_augmentation import TransformSatMAE, TransformResNet
 
 
 class HurricaneDataset(Dataset):
@@ -40,7 +41,8 @@ class HurricaneDataset(Dataset):
             image_embedding_architecture: Literal["ResNet18", "ViT_L_16", "Swin_V2_B", "SatMAE"],
             augmentations=None,
             zoom_levels: list | None = None,
-            ram_load: bool = False
+            ram_load: bool = False,
+            device: str = "cpu"
     ):
         self.dataframe = dataframe
         self.img_path = img_path
@@ -48,8 +50,10 @@ class HurricaneDataset(Dataset):
         self.zoom_levels = ["1"] if zoom_levels is None else zoom_levels
         self.image_embedding_architecture = image_embedding_architecture
         self.augmentations = augmentations
+        self.device = device
 
         if self.augmentations is not None:
+            # self.transform = transforms.Compose([self.augmentations, self.get_preprocessing()])
             self.transform = transforms.Compose([self.augmentations, self.get_preprocessing()])
         else:
             self.transform = self.get_preprocessing()
@@ -119,7 +123,7 @@ class HurricaneDataset(Dataset):
             for zoom_level in self.zoom_levels:
                 path = os.path.join(self.img_path, "zoom_" + zoom_level, str(image_id) + ".png")
 
-                img = open_img(path, transform=self.transform)
+                img = open_img(path, transform=self.transform, device=self.device)
                 # img = Image.open(path)
                 # img = self.transform(img)
                 # img = np.asarray(img)
