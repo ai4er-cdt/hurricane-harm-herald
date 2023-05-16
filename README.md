@@ -11,6 +11,11 @@ To date hurricane damage prediction largely depends on probabilistic models of t
 containing over 700,000 building annotations and labels. 
 **Hurricane Harm Herald (3H)** uses a novel multimodal machine learning approach to predict the damage extent to buildings in response to forecasted weather features associated with major hurricanes (categories 3 to 5, as classified by the Saffir-Simpson scale). The tool uses openly accessible datasets to produce a building-level damage forecast map for regions of NA presently at risk of hurricanes. It is hoped that this may be made available for community-level decision making to increase the long-term resilience of neighbourhoods, prepare defences in response to forecasts of imminent storms, and provide preliminary direction for rescue workers following events for which damage assessments are not immediately available. The tool may also be useful to inform insurance policy. 
 
+## Video Introduction
+
+Here is a video introducing the project:
+https://www.youtube.com/watch?v=7kXBGYgLYUM&ab_channel=AI4ERUoC
+
 ## Documentation
 
 Functions documentation is available (https://ai4er-cdt.github.io/hurricane-harm-herald/)
