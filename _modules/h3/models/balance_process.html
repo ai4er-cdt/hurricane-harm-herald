@@ -1,0 +1,397 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
+        <title>h3.models.balance_process - Hurricane Harm Herald - H3 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Hurricane Harm Herald - H3 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hurricane Harm Herald - H3 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../h3.html">h3 package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.dataloading.html">h3.dataloading package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.dataprocessing.html">h3.dataprocessing package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.models.html">h3.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.plotting.html">h3.plotting package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.utils.html">h3.utils package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for h3.models.balance_process</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">h3.utils.directories</span> <span class="kn">import</span> <span class="n">get_data_dir</span><span class="p">,</span> <span class="n">get_metadata_pickle_dir</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">h3.constants</span> <span class="kn">import</span> <span class="n">DMG_CLASSES_DICT</span>
+
+
+<div class="viewcode-block" id="check_files_in_list_exist"><a class="viewcode-back" href="../../../h3.models.html#h3.models.balance_process.check_files_in_list_exist">[docs]</a><span class="k">def</span> <span class="nf">check_files_in_list_exist</span><span class="p">(</span><span class="n">file_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;State which files don&#39;t exist and remove from list&quot;&quot;&quot;</span>
+    <span class="n">files_found</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">fl</span> <span class="ow">in</span> <span class="n">file_list</span><span class="p">:</span>
+        <span class="c1"># attempt conversion to Path object if necessary</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Path</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fl</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fl</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">fl</span><span class="si">}</span><span class="s1"> could not be converted to Path object&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fl</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="n">files_found</span> <span class="o">+=</span> <span class="n">fl</span><span class="p">,</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">fl</span><span class="si">}</span><span class="s1"> not found. Removing from list.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">files_found</span></div>
+
+
+<div class="viewcode-block" id="read_and_merge_pkls"><a class="viewcode-back" href="../../../h3.models.html#h3.models.balance_process.read_and_merge_pkls">[docs]</a><span class="k">def</span> <span class="nf">read_and_merge_pkls</span><span class="p">(</span>
+    <span class="n">pkl_paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read in pkl files from list of file paths and merge on index&quot;&quot;&quot;</span>
+    <span class="c1"># check all files exist</span>
+    <span class="n">pkl_paths_present</span> <span class="o">=</span> <span class="n">check_files_in_list_exist</span><span class="p">(</span><span class="n">pkl_paths</span><span class="p">)</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="n">pkl</span><span class="p">)</span> <span class="k">for</span> <span class="n">pkl</span> <span class="ow">in</span> <span class="n">pkl_paths_present</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">df1</span><span class="p">,</span><span class="n">df2</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df1</span><span class="p">,</span><span class="n">df2</span><span class="p">,</span><span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">df_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="drop_cols_containing_lists"><a class="viewcode-back" href="../../../h3.models.html#h3.models.balance_process.drop_cols_containing_lists">[docs]</a><span class="k">def</span> <span class="nf">drop_cols_containing_lists</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;It seemed like the best solution at the time: and to be fair,</span>
+<span class="sd">    I can&#39;t really think of better...</span>
+<span class="sd">    N.B. for speed, only looks at values in first row – if there is a</span>
+<span class="sd">    multi-type column, this would be the least of</span>
+<span class="sd">    our worries...</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="rename_and_drop_duplicated_cols"><a class="viewcode-back" href="../../../h3.models.html#h3.models.balance_process.rename_and_drop_duplicated_cols">[docs]</a><span class="k">def</span> <span class="nf">rename_and_drop_duplicated_cols</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Drop columns which are copies of others and rename the &#39;asdf_x&#39;</span>
+<span class="sd">    headers which would have resulted&quot;&quot;&quot;</span>
+    <span class="c1"># need to ensure no bad types first</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">drop_cols_containing_lists</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="c1"># remove duplicated columns</span>
+    <span class="n">dropped_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># rename columns for clarity (especially those which are shared between dfs). Will be able to remove most with better</span>
+    <span class="c1"># column naming further up the process</span>
+    <span class="n">new_col_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_x&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">dropped_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_x&#39;</span><span class="p">)}</span>
+    <span class="k">return</span> <span class="n">dropped_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">new_col_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="data_loader"><a class="viewcode-back" href="../../../h3.models.html#h3.models.balance_process.data_loader">[docs]</a><span class="k">def</span> <span class="nf">data_loader</span><span class="p">(</span><span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ECMWF</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads NOAA weather, terrain and soil EFS from the pickle file,</span>
+<span class="sd">    merges them and drops the duplicates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_dir : str</span>
+<span class="sd">        Path to the datasets, input either the google drive path or the local</span>
+<span class="sd">        path.</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dataframe</span>
+<span class="sd">        Merged dataframe from all the pickled dataframes with EFs of interest.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># data_dir = get_data_dir()</span>
+   
+    <span class="c1"># ecmwf weather EFs</span>
+    <span class="n">df_ecmwf_xbd_pkl_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span>
+                                         <span class="s2">&quot;EFs/weather_data/ecmwf/xbd_ecmwf_points.pkl&quot;</span><span class="p">)</span>
+    <span class="c1"># NOAA weather EFs</span>
+    <span class="n">df_noaa_xbd_pkl_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span>
+                                        <span class="s2">&quot;EFs/weather_data/xbd_obs_noaa_six_hourly_larger_dataset.pkl&quot;</span><span class="p">)</span>
+    <span class="c1"># terrain efs</span>
+    <span class="n">df_terrain_efs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span>
+                                       <span class="s2">&quot;processed_data/Terrian_EFs.pkl&quot;</span><span class="p">)</span>
+    <span class="c1"># flood, storm surge and soil properties</span>
+    <span class="n">df_topographic_efs_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span>
+                                           <span class="s2">&quot;processed_data/df_points_posthurr_flood_risk_storm_surge_soil_properties.pkl&quot;</span><span class="p">)</span>
+    <span class="c1"># distance to track, interpolated to different resolutions (ADD LATER)</span>
+    <span class="n">df_distance_to_track</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span>
+                                        <span class="s2">&quot;processed_data/shortest_dis2hurricanes_varying_res.pkl&quot;</span><span class="p">)</span>
+
+    <span class="c1"># based on feature importance</span>
+    <span class="k">if</span> <span class="n">ECMWF</span> <span class="o">==</span> <span class="s2">&quot;ECMWF&quot;</span><span class="p">:</span>
+        <span class="n">all_pkl_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">df_ecmwf_xbd_pkl_path</span><span class="p">,</span> <span class="n">df_noaa_xbd_pkl_path</span><span class="p">,</span> 
+                         <span class="n">df_terrain_efs_path</span><span class="p">,</span>
+                         <span class="n">df_topographic_efs_path</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_pkl_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">df_noaa_xbd_pkl_path</span><span class="p">,</span> <span class="n">df_terrain_efs_path</span><span class="p">,</span>
+                         <span class="n">df_topographic_efs_path</span><span class="p">]</span>
+ 
+    <span class="n">all_EF_df</span> <span class="o">=</span> <span class="n">read_and_merge_pkls</span><span class="p">(</span><span class="n">all_pkl_paths</span><span class="p">)</span>
+    <span class="n">all_df_no_dups</span> <span class="o">=</span> <span class="n">rename_and_drop_duplicated_cols</span><span class="p">(</span><span class="n">all_EF_df</span><span class="p">)</span>
+    <span class="c1"># drop r_max_wind as it is a column full of NaNs</span>
+    <span class="n">all_df_no_dups</span> <span class="o">=</span> <span class="n">all_df_no_dups</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r_max_wind&quot;</span><span class="p">])</span>
+
+    <span class="n">map_dictionary</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">DMG_CLASSES_DICT</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">all_df_no_dups</span><span class="p">[</span><span class="s2">&quot;damage_categorical&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_df_no_dups</span><span class="p">[</span><span class="s2">&quot;damage_class&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">map_dictionary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_df_no_dups</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../h3.models.html#h3.models.balance_process.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">ECMWF</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly samples the merged dataframe ]</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_dir : str</span>
+<span class="sd">       Path to directory of all the pickle EF data file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dataframe</span>
+<span class="sd">        EFs dataframe, balanced with value count of the destroyed damage class. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># output_dir = get_metadata_pickle_dir()</span>
+    <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="s2">&quot;processed_data/metadata_pickle&quot;</span><span class="p">)</span>
+    <span class="n">bperf_EF_df_no_dups</span> <span class="o">=</span> <span class="n">data_loader</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">ECMWF</span><span class="p">)</span>
+
+    <span class="n">n_sampled_dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">damage_type</span> <span class="ow">in</span> <span class="n">bperf_EF_df_no_dups</span><span class="o">.</span><span class="n">damage_class</span><span class="o">.</span><span class="n">unique</span><span class="p">():</span>
+        <span class="n">filtered_damage_df</span> <span class="o">=</span> <span class="n">bperf_EF_df_no_dups</span><span class="p">[</span><span class="n">bperf_EF_df_no_dups</span><span class="p">[</span><span class="s2">&quot;damage_class&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="n">damage_type</span><span class="p">)]</span>
+        <span class="n">value_counts</span> <span class="o">=</span> <span class="n">bperf_EF_df_no_dups</span><span class="o">.</span><span class="n">damage_class</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="s1">&#39;damage_class&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;value_count&#39;</span><span class="p">)</span>
+        <span class="c1"># damage class 3 is destroyed and is the baseline</span>
+        <span class="n">class3_value_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value_counts</span><span class="p">[(</span><span class="n">value_counts</span><span class="p">[</span><span class="s1">&#39;damage_class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)][</span><span class="s2">&quot;value_count&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_damage_df</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">class3_value_count</span><span class="p">:</span>
+            <span class="n">random_n_df</span> <span class="o">=</span> <span class="n">filtered_damage_df</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">class3_value_count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">random_n_df</span> <span class="o">=</span> <span class="n">filtered_damage_df</span>
+        <span class="n">n_sampled_dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">random_n_df</span><span class="p">)</span>
+    <span class="n">balanced_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">n_sampled_dfs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ECMWF</span> <span class="o">==</span> <span class="s2">&quot;ECMWF&quot;</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span>
+                                   <span class="s2">&quot;filtered_lnglat_ECMWF_damage.pkl&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span>
+                                   <span class="s2">&quot;filtered_lnglat_pre_pol_post_damage.pkl&quot;</span><span class="p">)</span>
+    <span class="n">balanced_df</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">balanced_df</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">data_dir</span> <span class="o">=</span> <span class="n">get_data_dir</span><span class="p">()</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Owen Allemang, Lisanne Blok, Ruari Marshall-Hawkes, Orlando Timmerman, Peisong Zheng
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    </body>
+</html>

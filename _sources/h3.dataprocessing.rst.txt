@@ -1,0 +1,50 @@
+h3.dataprocessing package
+=========================
+
+.. automodule:: h3.dataprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+h3.dataprocessing.DataAugmentation module
+-----------------------------------------
+
+.. automodule:: h3.dataprocessing.DataAugmentation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataprocessing.crop\_images module
+-------------------------------------
+
+.. automodule:: h3.dataprocessing.crop_images
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataprocessing.crop\_images\_img module
+------------------------------------------
+
+.. automodule:: h3.dataprocessing.crop_images_img
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataprocessing.extract\_metadata module
+------------------------------------------
+
+.. automodule:: h3.dataprocessing.extract_metadata
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.dataprocessing.pre\_processing module
+----------------------------------------
+
+.. automodule:: h3.dataprocessing.pre_processing
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,38 @@
+h3 package
+==========
+
+.. automodule:: h3
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   h3.dataloading
+   h3.dataprocessing
+   h3.models
+   h3.plotting
+   h3.utils
+
+Submodules
+----------
+
+h3.config module
+----------------
+
+.. automodule:: h3.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+h3.constants module
+-------------------
+
+.. automodule:: h3.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:

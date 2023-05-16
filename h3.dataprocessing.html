@@ -1,0 +1,743 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="h3.models package" href="h3.models.html" /><link rel="prev" title="h3.dataloading package" href="h3.dataloading.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
+        <title>h3.dataprocessing package - Hurricane Harm Herald - H3 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Hurricane Harm Herald - H3 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Hurricane Harm Herald - H3 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="h3.html">h3 package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="h3.dataloading.html">h3.dataloading package</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">h3.dataprocessing package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="h3.models.html">h3.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="h3.plotting.html">h3.plotting package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="h3.utils.html">h3.utils package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-h3.dataprocessing">
+<span id="h3-dataprocessing-package"></span><h1>h3.dataprocessing package<a class="headerlink" href="#module-h3.dataprocessing" title="Permalink to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="h3-dataprocessing-dataaugmentation-module">
+<h2>h3.dataprocessing.DataAugmentation module<a class="headerlink" href="#h3-dataprocessing-dataaugmentation-module" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="module-h3.dataprocessing.crop_images">
+<span id="h3-dataprocessing-crop-images-module"></span><h2>h3.dataprocessing.crop_images module<a class="headerlink" href="#module-h3.dataprocessing.crop_images" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images.crop_images">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images.</span></span><span class="sig-name descname"><span class="pre">crop_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images.html#crop_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images.crop_images" title="Permalink to this definition">#</a></dt>
+<dd><p>Crops imagery based on the building polygon and the desired pixel size.
+It can zoom in to certain levels, whilst maintaining the pixel size by
+bilinear interpolation. The building will be centered in the image and all
+buildings that are cut off by the image boundary are not included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>dataset object</em>) – The pre-event imagery that underlays the building polygon. This image
+will be cropped.</p></li>
+<li><p><strong>polygon_df</strong> (<em>object</em>) – The building polygon that needs to be cropped around.</p></li>
+<li><p><strong>zoom_level</strong> (<em>int</em>) – A number that dictates how large the crop_size should be, based on
+required pixel number for the model.</p></li>
+<li><p><strong>pixel_num</strong> (<em>int</em>) – Value of the sides of the squared cropped image as input for the model.</p></li>
+<li><p><strong>im_size</strong> (<em>int</em>) – Value of the sides of the squared input image.</p></li>
+<li><p><strong>output_path</strong> (<em>str</em>) – Path used to save the zoomed cropped images.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns whether this building polygon is red flagged and should be
+ignored, based on whether the building polygon lies on the edge of
+the image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images.extract_coords">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images.</span></span><span class="sig-name descname"><span class="pre">extract_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images.html#extract_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images.extract_coords" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images.image_processing">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images.</span></span><span class="sig-name descname"><span class="pre">image_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images.html#image_processing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images.image_processing" title="Permalink to this definition">#</a></dt>
+<dd><p>Loads images and crops them based on the required zoom levels
+and the required imagery input pixel size for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zoom_levels</strong> (<em>list</em>) – list containing all required zoom levels as integers.</p></li>
+<li><p><strong>pixel_num</strong> (<em>int</em>) – Value of the sides of the squared cropped image as input for the model.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images.main">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images.main" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images.mask_to_bb">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images.</span></span><span class="sig-name descname"><span class="pre">mask_to_bb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images.html#mask_to_bb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images.mask_to_bb" title="Permalink to this definition">#</a></dt>
+<dd><p>Takes a filled building mask and converts it into a
+rectangular bounding box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Y</strong> (<em>numpy array</em>) – The filled polgyon mask from the polygon_mask function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of the rectangular bounding box as a mask.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images.polygon_mask">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images.</span></span><span class="sig-name descname"><span class="pre">polygon_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images.html#polygon_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images.polygon_mask" title="Permalink to this definition">#</a></dt>
+<dd><p>Fills up a polygon to create a mask of the building.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>dataset object</em>) – pre-event image file aligning with the building polygon.</p></li>
+<li><p><strong>polygon</strong> (<em>object</em>) – polygon containing the outline of the building.</p></li>
+<li><p><strong>im_size</strong> (<em>int</em>) – Value of the sides of the squared input image.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>filled mask of the building.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-h3.dataprocessing.crop_images_img">
+<span id="h3-dataprocessing-crop-images-img-module"></span><h2>h3.dataprocessing.crop_images_img module<a class="headerlink" href="#module-h3.dataprocessing.crop_images_img" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.crop_images">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">crop_images</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_metadata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#crop_images"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.crop_images" title="Permalink to this definition">#</a></dt>
+<dd><p>Crops imagery based on the building polygon and the desired pixel size.
+It can zoom in to certain levels, whilst maintaining the pixel size by
+bilinear interpolation. The building will be centered in the image and all
+buildings that are cut off by the image boundary are not included.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_array</strong> (<em>ndarray</em>) – The pre-event image array given from rasterio.DatasetReader.read() that underlays the building polygon.
+This image will be cropped.</p></li>
+<li><p><strong>img_metadata</strong> (<em>dict</em>) – The dictionary of the image metadata. See rasterio.DatasetReader.meta.</p></li>
+<li><p><strong>polygon_df</strong> (<em>object</em>) – The building polygon that needs to be cropped around.</p></li>
+<li><p><strong>zoom_level</strong> (<em>int</em>) – A number that dictates how large the crop_size should be, based on
+required pixel number for the model.</p></li>
+<li><p><strong>pixel_num</strong> (<em>int</em>) – Value of the sides of the squared cropped image as input for the model.</p></li>
+<li><p><strong>im_size</strong> (<em>int</em>) – Value of the sides of the squared input image.</p></li>
+<li><p><strong>output_path</strong> (<em>str</em>) – Path used to save the zoomed cropped images.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Returns whether this building polygon is red flagged and should be
+ignored, based on whether the building polygon lies on the edge of
+the image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.extract_coords">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">extract_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#extract_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.extract_coords" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.image_processing">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">image_processing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#image_processing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.image_processing" title="Permalink to this definition">#</a></dt>
+<dd><p>Loads images and crops them based on the required zoom levels
+and the required imagery input pixel size for the model.
+:param zoom_levels: list containing all required zoom levels as integers.
+:type zoom_levels: list
+:param pixel_num: Value of the sides of the squared cropped image as input for the model.
+:type pixel_num: int</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.main">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.main" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.mask_to_bb">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">mask_to_bb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#mask_to_bb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.mask_to_bb" title="Permalink to this definition">#</a></dt>
+<dd><p>Takes a filled building mask and converts it into a
+rectangular bounding box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Y</strong> (<em>numpy array</em>) – The filled polgyon mask from the polygon_mask function.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of the rectangular bounding box as a mask.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.polygon_mask">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">polygon_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">im_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#polygon_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.polygon_mask" title="Permalink to this definition">#</a></dt>
+<dd><p>Fills up a polygon to create a mask of the building.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>dataset object</em>) – pre-event image file aligning with the building polygon.</p></li>
+<li><p><strong>polygon</strong> (<em>object</em>) – polygon containing the outline of the building.</p></li>
+<li><p><strong>im_size</strong> (<em>int</em>) – Value of the sides of the squared input image.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>filled mask of the building.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.crop_images_img.save_image">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.crop_images_img.</span></span><span class="sig-name descname"><span class="pre">save_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resized_img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img_metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/crop_images_img.html#save_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.crop_images_img.save_image" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-h3.dataprocessing.extract_metadata">
+<span id="h3-dataprocessing-extract-metadata-module"></span><h2>h3.dataprocessing.extract_metadata module<a class="headerlink" href="#module-h3.dataprocessing.extract_metadata" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.extract_damage_allfiles_ensemble">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">extract_damage_allfiles_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#extract_damage_allfiles_ensemble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.extract_damage_allfiles_ensemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Filters all pre and post label files for hurricanes, extracts the metadata
+from the post and pre json files. Takes damage information from post and
+adds that to the pre-event metadata dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filepaths_dict</strong> (<em>dict</em>) – .json files in xBD data folder to filter organised by their folder.
+These files are a value for the holdout, tier1, tier3 and test folder
+as a key.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>crs<span class="classifier">str</span></dt><dd><p>coordinate reference system to put as geometry in geodataframe.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geodataframes with a summary of metadata for all
+pre-event hurricane events with post-event labels.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>geodataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.extract_damage_allfiles_separate">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">extract_damage_allfiles_separate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'pre'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'post'</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#extract_damage_allfiles_separate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.extract_damage_allfiles_separate" title="Permalink to this definition">#</a></dt>
+<dd><p>Filters all label files for hurricanes, extracts the metadata,
+concatenates all files for post and pre images separately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory_files</strong> (<em>dict</em>) – .json files in xBD data folder to filter organised by their folder.
+These files are a value for the holdout, tier1, tier3 and test folder
+as a key.</p></li>
+<li><p><strong>crs</strong> (<em>str</em>) – coordinate reference system to put as geometry in geodataframe.</p></li>
+<li><p><strong>event</strong> (<em>str</em>) – post or pre event json files to filter out.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>two geodataframes with a summary of metadata for all
+hurricane events with labels.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>geodataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.extract_metadata">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">extract_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_link</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CLASSES_DICT</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#extract_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.extract_metadata" title="Permalink to this definition">#</a></dt>
+<dd><p>Extracts location in xy and long-lat format, gives damage name, class and
+date.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>json_link</strong> (<em>path</em>) – path to json file containing location and metadata.</p></li>
+<li><p><strong>classes_dict</strong> (<em>dict</em>) – dictionary mapping between damage classes (str) and
+damage numbers (int).</p></li>
+<li><p><strong>crs</strong> (<em>str</em>) – coordinate reference system to put as geometry in geodataframe.</p></li>
+<li><p><strong>event_type</strong> (<em>str</em>) – post or pre event json files to filter out.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>contains polygons of json file, corresponding metadata.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Geodataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.extract_point">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">extract_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#extract_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.extract_point" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract coordinate information from polygon and convert to a centroid
+point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>building</strong> (<em>object</em>) – polygon information in shapely coordinates.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>centroid point of polygon.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.extract_polygon">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">extract_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#extract_polygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.extract_polygon" title="Permalink to this definition">#</a></dt>
+<dd><p>Extract polygon coordinate reference system information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>building</strong> (<em>object</em>) – polygon shapely coordinates.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>polygon with spatial coordinate information.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.filter_files">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">filter_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#filter_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.filter_files" title="Permalink to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Filter all json label files and returns a list of post-event files for</dt><dd><p>hurricanes.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>files</strong> (<em>list</em>) – list of json files in the label directory</p></li>
+<li><p><strong>filepath</strong> (<em>str</em>) – path to file, assisting in search criteria process</p></li>
+<li><p><strong>search_criteria</strong> (<em>str</em>) – filter out hurricanes, post-event imagery in json format.
+i.e. input <cite>hurricane*pre*json</cite>, supports glob wildcard <cite>*</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of filtered files for corresponding criteria.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.load_and_save_df">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">load_and_save_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepaths_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reload_pickle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#load_and_save_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.load_and_save_df" title="Permalink to this definition">#</a></dt>
+<dd><p>Loads the json label files for all hurricanes in the “hold” section of the
+xBD data, extracts the points and polygons in both xy coordinates,
+referring to the corresponding imagery file, and the longitude and
+latitude.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepaths_dict</strong> (<em>dict</em>) – pathnames in a dictionary for the holdout, tier1, tier3 and test
+folder.</p></li>
+<li><p><strong>output_dir</strong> (<em>str</em>) – </p></li>
+<li><p><strong>reload_pickle</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True recreate the pickle files as if they did not exist. The default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>all metadata and locations in a geodataframe that is
+saved in the data/datasets/EFs directory. Choose to return the gdf
+with long-lat coordinate system and pre polygons with post damage
+as this is most useful for choosing the EFs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Geodataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.main">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.main" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.extract_metadata.overlapping_polygons">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.extract_metadata.</span></span><span class="sig-name descname"><span class="pre">overlapping_polygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/extract_metadata.html#overlapping_polygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.extract_metadata.overlapping_polygons" title="Permalink to this definition">#</a></dt>
+<dd><p>Checks if polygons from pre- and post-event imagery overlap.
+If they do, the damage class from post-event dataframe can be allocated
+to the pre-event polygon.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geoms</strong> (<em>series</em>) – post-event geodataframe geometry column containing the polygon</p></li>
+<li><p><strong>p</strong> (<em>object</em>) – pre-event polygon extracted from geodataframe</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>column in post-event dataframe containing which row number the
+post-event polygon matches with in the pre-event dataframe.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>series</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-h3.dataprocessing.pre_processing">
+<span id="h3-dataprocessing-pre-processing-module"></span><h2>h3.dataprocessing.pre_processing module<a class="headerlink" href="#module-h3.dataprocessing.pre_processing" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.pre_processing.image_loading">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.pre_processing.</span></span><span class="sig-name descname"><span class="pre">image_loading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygons_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoom_levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zoomdir_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/pre_processing.html#image_loading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.pre_processing.image_loading" title="Permalink to this definition">#</a></dt>
+<dd><p>Loads images and crops them based on the required zoom levels
+and the required imagery input pixel size for the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>polygons_df</strong> (<em>geopandas dataframe</em>) – Pandas dataframe containing metadata information about the pre-event
+polygoms, combined with the damage class from the post-event data.
+The reference system is “xy” referring to the corresponding image file.</p></li>
+<li><p><strong>zoom_levels</strong> (<em>list</em>) – list containing all required zoom levels as integers.</p></li>
+<li><p><strong>pixel_num</strong> (<em>int</em>) – Value of the sides of the squared cropped image as input for the model.</p></li>
+<li><p><strong>zoomdir_dict</strong> (<em>dict</em>) – Dictionary containing all filepaths for the zoom directories with the
+values of the zoom level.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="h3.dataprocessing.pre_processing.main">
+<span class="sig-prename descclassname"><span class="pre">h3.dataprocessing.pre_processing.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/h3/dataprocessing/pre_processing.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#h3.dataprocessing.pre_processing.main" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="h3.models.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">h3.models package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="h3.dataloading.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">h3.dataloading package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Owen Allemang, Lisanne Blok, Ruari Marshall-Hawkes, Orlando Timmerman, Peisong Zheng
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">h3.dataprocessing package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#h3-dataprocessing-dataaugmentation-module">h3.dataprocessing.DataAugmentation module</a></li>
+<li><a class="reference internal" href="#module-h3.dataprocessing.crop_images">h3.dataprocessing.crop_images module</a><ul>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images.crop_images"><code class="docutils literal notranslate"><span class="pre">crop_images()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images.extract_coords"><code class="docutils literal notranslate"><span class="pre">extract_coords()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images.image_processing"><code class="docutils literal notranslate"><span class="pre">image_processing()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images.mask_to_bb"><code class="docutils literal notranslate"><span class="pre">mask_to_bb()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images.polygon_mask"><code class="docutils literal notranslate"><span class="pre">polygon_mask()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-h3.dataprocessing.crop_images_img">h3.dataprocessing.crop_images_img module</a><ul>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.crop_images"><code class="docutils literal notranslate"><span class="pre">crop_images()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.extract_coords"><code class="docutils literal notranslate"><span class="pre">extract_coords()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.image_processing"><code class="docutils literal notranslate"><span class="pre">image_processing()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.mask_to_bb"><code class="docutils literal notranslate"><span class="pre">mask_to_bb()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.polygon_mask"><code class="docutils literal notranslate"><span class="pre">polygon_mask()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.crop_images_img.save_image"><code class="docutils literal notranslate"><span class="pre">save_image()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-h3.dataprocessing.extract_metadata">h3.dataprocessing.extract_metadata module</a><ul>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.extract_damage_allfiles_ensemble"><code class="docutils literal notranslate"><span class="pre">extract_damage_allfiles_ensemble()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.extract_damage_allfiles_separate"><code class="docutils literal notranslate"><span class="pre">extract_damage_allfiles_separate()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.extract_metadata"><code class="docutils literal notranslate"><span class="pre">extract_metadata()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.extract_point"><code class="docutils literal notranslate"><span class="pre">extract_point()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.extract_polygon"><code class="docutils literal notranslate"><span class="pre">extract_polygon()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.filter_files"><code class="docutils literal notranslate"><span class="pre">filter_files()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.load_and_save_df"><code class="docutils literal notranslate"><span class="pre">load_and_save_df()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.extract_metadata.overlapping_polygons"><code class="docutils literal notranslate"><span class="pre">overlapping_polygons()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-h3.dataprocessing.pre_processing">h3.dataprocessing.pre_processing module</a><ul>
+<li><a class="reference internal" href="#h3.dataprocessing.pre_processing.image_loading"><code class="docutils literal notranslate"><span class="pre">image_loading()</span></code></a></li>
+<li><a class="reference internal" href="#h3.dataprocessing.pre_processing.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

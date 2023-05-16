@@ -1,0 +1,817 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
+        <title>h3.models.multimodal - Hurricane Harm Herald - H3 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Hurricane Harm Herald - H3 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hurricane Harm Herald - H3 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../h3.html">h3 package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.dataloading.html">h3.dataloading package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.dataprocessing.html">h3.dataprocessing package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.models.html">h3.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.plotting.html">h3.plotting package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.utils.html">h3.utils package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for h3.models.multimodal</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">pytorch_lightning</span> <span class="k">as</span> <span class="nn">pl</span>
+<span class="kn">import</span> <span class="nn">torchvision.models</span> <span class="k">as</span> <span class="nn">models</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span>
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">transforms</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torchmetrics</span> <span class="kn">import</span> <span class="n">Accuracy</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">ViT_L_16_Weights</span><span class="p">,</span> <span class="n">vit_l_16</span>
+<span class="kn">from</span> <span class="nn">torchvision.models</span> <span class="kn">import</span> <span class="n">swin_v2_b</span><span class="p">,</span> <span class="n">Swin_V2_B_Weights</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">h3.models.SatMAE.utils</span>
+
+<span class="sd">&quot;&quot;&quot;initialize the image embedding block&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;in GaLeNet Fig.1 this is the CLIP box&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ImageEncoder"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.ImageEncoder">[docs]</a><span class="k">class</span> <span class="nc">ImageEncoder</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_embedding_architecture</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;ResNet18&quot;</span><span class="p">:</span>
+			<span class="c1"># tell pytorch to use the ResNet18 architecture</span>
+
+			<span class="n">backbone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet18</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s2">&quot;DEFAULT&quot;</span><span class="p">)</span>
+
+			<span class="c1"># drop final layer since non-SSL trained model</span>
+			<span class="c1"># with the below ResNet, num_image_encoder_features == 512</span>
+			<span class="n">layers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">backbone</span><span class="o">.</span><span class="n">children</span><span class="p">())[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;ViT_L_16&quot;</span><span class="p">:</span>
+			<span class="c1"># with the below ViT_L_16, num_image_encoder_features == 1024</span>
+			<span class="n">backbone</span> <span class="o">=</span> <span class="n">vit_l_16</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">ViT_L_16_Weights</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">)</span>
+			<span class="n">layers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">backbone</span><span class="o">.</span><span class="n">children</span><span class="p">())[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">backbone</span>
+
+		<span class="k">elif</span> <span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;Swin_V2_B&quot;</span><span class="p">:</span>
+			<span class="c1"># with the below Swin_V2_B, num_image_encoder_features == 1024</span>
+			<span class="n">backbone</span> <span class="o">=</span> <span class="n">swin_v2_b</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">Swin_V2_B_Weights</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">)</span>
+			<span class="n">layers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">backbone</span><span class="o">.</span><span class="n">children</span><span class="p">())[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">layers</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;SatMAE&quot;</span><span class="p">:</span>
+			<span class="c1"># with the below SatMAE, num_image_encoder_features == 1024</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">h3</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">SatMAE</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_model</span><span class="p">()</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">image_embedding_architecture</span> <span class="o">=</span> <span class="n">image_embedding_architecture</span>
+
+<div class="viewcode-block" id="ImageEncoder.forward"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.ImageEncoder.forward">[docs]</a>	<span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+		<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;ResNet18&quot;</span><span class="p">:</span>
+				<span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;ViT_L_16&quot;</span><span class="p">:</span>
+				<span class="c1"># the following code is taken from https://discuss.pytorch.org/t/feature-extraction-in-torchvision-models-vit-b-16/148029/2</span>
+
+				<span class="c1"># This is the whole encoder sequence</span>
+				<span class="n">encoder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+				<span class="c1"># This is how the model preprocess the image.</span>
+				<span class="c1"># The output shape is the one desired</span>
+				<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_process_input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+				<span class="n">n</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+				<span class="n">batch_class_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">class_token</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+				<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">batch_class_token</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+				<span class="n">x</span> <span class="o">=</span> <span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+				<span class="c1"># Classifier &quot;token&quot; as used by standard language architectures</span>
+				<span class="n">embedding</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;Swin_V2_B&quot;</span><span class="p">:</span>
+				<span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+			<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;SatMAE&quot;</span><span class="p">:</span>
+				<span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_extractor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">embedding</span></div></div>
+
+
+<span class="sd">&quot;&quot;&quot;initalize the generic encoder block&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;in GaLeNet Fig.1 this is all of the small grey Encoder Blocks&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="GenericEncoder"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.GenericEncoder">[docs]</a><span class="k">class</span> <span class="nc">GenericEncoder</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_input_features</span><span class="p">,</span> <span class="n">num_output_features</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_input_features</span><span class="p">,</span> <span class="n">num_output_features</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">batchnorm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">(</span><span class="n">num_output_features</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout_rate</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">SiLU</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GenericEncoder.forward"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.GenericEncoder.forward">[docs]</a>	<span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batchnorm</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<span class="sd">&quot;&quot;&quot;initalize the SoftMax classification layer to predict damage class&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ClassificationLayer"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.ClassificationLayer">[docs]</a><span class="k">class</span> <span class="nc">ClassificationLayer</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_input_features</span><span class="p">,</span> <span class="n">num_output_classes</span><span class="p">,</span> <span class="n">output_activation</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">output_activation</span> <span class="o">==</span> <span class="s2">&quot;sigmoid&quot;</span><span class="p">:</span>  <span class="c1"># use Sigmoid for binary classification</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_input_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">output_activation</span> <span class="o">==</span> <span class="s2">&quot;softmax&quot;</span><span class="p">:</span>  <span class="c1"># softmax for multiclass classification</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_input_features</span><span class="p">,</span> <span class="n">num_output_classes</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">output_activation</span> <span class="o">==</span> <span class="s2">&quot;relu&quot;</span><span class="p">:</span>
+<span class="w">			</span><span class="sd">&quot;&quot;&quot;relu could be used if we treat damage classes as a regression</span>
+<span class="sd">			problem. this is unbounded though so can produce values &gt; 4.&quot;&quot;&quot;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_input_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+		<span class="k">elif</span> <span class="n">output_activation</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_input_features</span><span class="p">,</span> <span class="n">num_output_classes</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClassificationLayer.forward"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.ClassificationLayer.forward">[docs]</a>	<span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<span class="sd">&quot;&quot;&quot;initalize the overall architecture, i.e. the combination of encoder blocks&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="OverallModel"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel">[docs]</a><span class="k">class</span> <span class="nc">OverallModel</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">	</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Description of what this class does here</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+<span class="sd">	training_dataset : torch.utils.data.Dataset</span>
+<span class="sd">		Contains the data used for training</span>
+
+<span class="sd">	validation_dataset : torch.utils.data.Dataset</span>
+<span class="sd">		Contains the data used for training</span>
+
+<span class="sd">	image_embedding_architecture : str</span>
+<span class="sd">		Determines the image embedding architecture used. Possible values are:</span>
+<span class="sd">			- &#39;ResNet18&#39;</span>
+<span class="sd">			- &#39;ViT_L_16&#39;</span>
+<span class="sd">			- &#39;Swin_V2_B&#39;</span>
+
+<span class="sd">	num_input_channels : int</span>
+<span class="sd">		The number of channels in the input images.</span>
+
+<span class="sd">	EF_features : dict(String: List(String))</span>
+<span class="sd">		A dictionary mapping from type of EF to a list of strings of names of the EFs.</span>
+<span class="sd">		E.g., {&quot;weather&quot;: [&quot;precip&quot;, &quot;wind_speed&quot;], &quot;soil&quot;: [&quot;clay&quot;, &quot;sand&quot;]}</span>
+
+<span class="sd">	dropout_rate : float</span>
+<span class="sd">		The dropout probability</span>
+
+<span class="sd">	image_encoder_lr : float</span>
+<span class="sd">		The learning rate for the image encoder. If 0, then image encoder weights are frozen.</span>
+
+<span class="sd">	general_lr : float</span>
+<span class="sd">		The learning rate for all other parts of the model.</span>
+
+<span class="sd">	batch_size : int</span>
+<span class="sd">		The batch size used during training and validation steps.</span>
+
+<span class="sd">	weight_decay : float</span>
+<span class="sd">		Adam weight decay (L2 penalty)</span>
+
+<span class="sd">	lr_scheduler_patience : int</span>
+<span class="sd">		The number of epochs of validation loss plateau before lr is decreased.</span>
+
+<span class="sd">	num_image_feature_encoder_features : int</span>
+<span class="sd">		The number of features output from the encoder that operates on the</span>
+<span class="sd">		features produced by the image encoder</span>
+
+<span class="sd">	num_output_classes : int</span>
+<span class="sd">		The number of output classes. Set to 1 for regression.</span>
+
+<span class="sd">	zoom_levels : List[str]</span>
+<span class="sd">		A list containing the different image zoom levels.</span>
+
+<span class="sd">	class_weights: torch.FloatTensor</span>
+<span class="sd">		A tensor containing a weights to be applied to each class in the</span>
+<span class="sd">		cross entropy loss function.</span>
+
+<span class="sd">	image_only_model: Boolean</span>
+<span class="sd">		If true, then the model behaves as if there were no EFs, and only the</span>
+<span class="sd">		images are used to make predictions.</span>
+
+<span class="sd">	loss_function_str : str</span>
+<span class="sd">		Determines the loss function used. Possible values are:</span>
+<span class="sd">			- &#39;BCELoss&#39; : Binary Cross Entropy Loss, for binary classification</span>
+<span class="sd">			- &#39;CELoss&#39; : Cross Entropy Loss, for multiclass classification</span>
+<span class="sd">			- &#39;MSE&#39; : Mean Squared Error, for regression</span>
+
+<span class="sd">	output_activation : str</span>
+<span class="sd">		Determines the output activation function used. Possible values are:</span>
+<span class="sd">			- &#39;sigmoid&#39; : Sigmoid, for binary classification</span>
+<span class="sd">			- &#39;softmax&#39; : Softmax, for multiclass classification</span>
+<span class="sd">			- &#39;relu&#39; : ReLU, for regression</span>
+
+
+<span class="sd">	Attributes</span>
+<span class="sd">	----------</span>
+<span class="sd">	Describe the attributes here, e.g. image_encoder, classification, augment</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">training_dataset</span><span class="p">,</span>
+			<span class="n">validation_dataset</span><span class="p">,</span>
+			<span class="n">image_embedding_architecture</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ResNet18&quot;</span><span class="p">,</span>
+			<span class="n">dropout_rate</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+			<span class="n">general_lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span>
+			<span class="n">image_encoder_lr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+			<span class="n">weight_decay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+			<span class="n">lr_scheduler_patience</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+			<span class="n">num_input_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+			<span class="n">EF_features</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+			<span class="n">num_concat_encoder_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+			<span class="n">num_image_feature_encoder_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">56</span><span class="p">,</span>
+			<span class="n">num_output_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+			<span class="n">zoom_levels</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+			<span class="n">class_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+			<span class="n">image_only_model</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+			<span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+			<span class="n">persistent_w</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+			<span class="n">loss_function_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;CELoss&quot;</span><span class="p">,</span>  <span class="c1"># maybe use focal loss for unbalanced multiclass as in GaLeNet</span>
+			<span class="n">output_activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># CELoss expects unnormalized logits</span>
+
+	<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">image_embedding_architecture</span> <span class="o">==</span> <span class="s2">&quot;ResNet18&quot;</span><span class="p">:</span>
+			<span class="n">num_image_encoder_features</span> <span class="o">=</span> <span class="mi">512</span>
+		<span class="k">else</span><span class="p">:</span>  <span class="c1"># every other case should be a ViT which outputs 1024 features</span>
+			<span class="n">num_image_encoder_features</span> <span class="o">=</span> <span class="mi">1024</span>
+
+		<span class="n">zoom_levels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">zoom_levels</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">zoom_levels</span>
+
+		<span class="c1"># total number of EFs present in the EF_features dictionary</span>
+		<span class="n">total_num_EFs</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">EF_features</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+		<span class="c1"># the image encoding architecture (e.g. ResNet)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">image_encoder</span> <span class="o">=</span> <span class="n">ImageEncoder</span><span class="p">(</span>
+			<span class="n">image_embedding_architecture</span>
+		<span class="p">)</span>
+
+		<span class="c1"># need nn.ModuleList() to create a variable number of encoders depending</span>
+		<span class="c1"># on the zoom levels supplied</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">image_feature_encoders</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">zoom_levels</span><span class="p">:</span>
+			<span class="c1"># the encoding block for image features (produces Ai1 as in the diagram)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">image_feature_encoders</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GenericEncoder</span><span class="p">(</span>
+				<span class="n">num_image_encoder_features</span><span class="p">,</span> <span class="n">num_image_feature_encoder_features</span><span class="p">,</span> <span class="n">dropout_rate</span>
+			<span class="p">))</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">image_feature_classifiers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">zoom_levels</span><span class="p">:</span>
+			<span class="c1"># the classification block for each embedded zoomed image</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">image_feature_classifiers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ClassificationLayer</span><span class="p">(</span>
+				<span class="n">num_image_feature_encoder_features</span><span class="p">,</span> <span class="n">num_output_classes</span><span class="p">,</span> <span class="n">output_activation</span>
+			<span class="p">))</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">image_only_model</span><span class="p">:</span>
+			<span class="c1"># each EF specified in the EF_features dictionary gets a different</span>
+			<span class="c1"># encoding block.</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">ef_encoders</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">()</span>
+
+			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">EF_features</span><span class="p">:</span>
+				<span class="n">num_EFs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">EF_features</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>  <span class="c1"># num EFs in modality</span>
+
+				<span class="bp">self</span><span class="o">.</span><span class="n">ef_encoders</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+					<span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">GenericEncoder</span><span class="p">(</span><span class="n">num_EFs</span><span class="p">,</span> <span class="n">num_EFs</span><span class="p">,</span> <span class="n">dropout_rate</span><span class="p">)}</span>
+				<span class="p">)</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">image_only_model</span><span class="p">:</span>
+			<span class="c1"># the encoder that takes as input the encoded image features + encoded EFs</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">concat_encoder</span> <span class="o">=</span> <span class="n">GenericEncoder</span><span class="p">(</span>
+				<span class="p">(</span><span class="n">num_image_feature_encoder_features</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">zoom_levels</span><span class="p">))</span> <span class="o">+</span> <span class="n">total_num_EFs</span><span class="p">,</span> <span class="n">num_concat_encoder_features</span><span class="p">,</span>
+				<span class="n">dropout_rate</span>
+			<span class="p">)</span>
+
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># the encoder that takes as input the encoded image features</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">concat_encoder</span> <span class="o">=</span> <span class="n">GenericEncoder</span><span class="p">(</span>
+				<span class="p">(</span><span class="n">num_image_feature_encoder_features</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">zoom_levels</span><span class="p">)),</span> <span class="n">num_concat_encoder_features</span><span class="p">,</span> <span class="n">dropout_rate</span>
+			<span class="p">)</span>
+
+		<span class="c1"># the classification layer used with the concatenated embedded features</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">concat_classification</span> <span class="o">=</span> <span class="n">ClassificationLayer</span><span class="p">(</span>
+			<span class="n">num_concat_encoder_features</span><span class="p">,</span>
+			<span class="n">num_output_classes</span><span class="p">,</span>
+			<span class="n">output_activation</span>
+		<span class="p">)</span>
+
+		<span class="c1"># &quot;&quot;&quot;below, num_input_features should be some parameter that contains the number of weather related features&quot;&quot;&quot;</span>
+		<span class="c1"># self.weather_encoder = GenericEncoder(</span>
+		<span class="c1">#     num_input_features, num_output_features, dropout_rate</span>
+		<span class="c1"># )</span>
+
+		<span class="c1"># &quot;&quot;&quot;below, num_input_features should be some parameter that contains the number of DEM related features&quot;&quot;&quot;</span>
+		<span class="c1"># self.dem_encoder = GenericEncoder(</span>
+		<span class="c1">#     num_input_features, num_output_features, dropout_rate</span>
+		<span class="c1"># )</span>
+
+		<span class="c1"># &quot;&quot;&quot;there will be one storm surge feature. how, if at all, should this be encoded?&quot;&quot;&quot;</span>
+		<span class="c1"># self.storm_surge_encoder = GenericEncoder(</span>
+		<span class="c1">#     num_input_features, num_output_features, dropout_rate</span>
+		<span class="c1"># )</span>
+
+		<span class="c1"># &quot;&quot;&quot;... more EF encoders&quot;&quot;&quot;</span>
+
+		<span class="k">if</span> <span class="n">image_encoder_lr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">image_encoder</span><span class="o">.</span><span class="n">freeze</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">loss_function_str</span> <span class="o">==</span> <span class="s2">&quot;BCELoss&quot;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCELoss</span><span class="p">()</span>
+
+		<span class="k">elif</span> <span class="n">loss_function_str</span> <span class="o">==</span> <span class="s2">&quot;CELoss&quot;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+		<span class="k">elif</span> <span class="n">loss_function_str</span> <span class="o">==</span> <span class="s2">&quot;MSE&quot;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+
+		<span class="k">elif</span> <span class="n">loss_function_str</span> <span class="o">==</span> <span class="s2">&quot;weighted_CELoss&quot;</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">weight</span><span class="o">=</span><span class="n">class_weights</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">image_encoder_lr</span> <span class="o">=</span> <span class="n">image_encoder_lr</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span> <span class="o">=</span> <span class="n">general_lr</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">lr_scheduler_patience</span> <span class="o">=</span> <span class="n">lr_scheduler_patience</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">zoom_levels</span> <span class="o">=</span> <span class="n">zoom_levels</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span> <span class="o">=</span> <span class="n">weight_decay</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">image_only_model</span> <span class="o">=</span> <span class="n">image_only_model</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">EF_features</span> <span class="o">=</span> <span class="n">EF_features</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">persistent_w</span> <span class="o">=</span> <span class="n">persistent_w</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span> <span class="o">=</span> <span class="n">training_dataset</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">validation_dataset</span> <span class="o">=</span> <span class="n">validation_dataset</span>
+
+		<span class="c1"># balanced accuracy (i think)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span> <span class="o">=</span> <span class="n">Accuracy</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="s1">&#39;multiclass&#39;</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s1">&#39;macro&#39;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_output_classes</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">save_hyperparameters</span><span class="p">(</span><span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;training_dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;validation_dataset&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="OverallModel.forward"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel.forward">[docs]</a>	<span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;for each zoom level Z, do image_Z_embedding = self.image_encoder(inputs[&quot;image_Z&quot;], image_embedding_architecture)&quot;&quot;&quot;</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;for each zoom level Z, do image_Z_embedding = self.GenericEncoder(image_Z_embedding, num_input_features, num_output_features)&quot;&quot;&quot;</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;for each type of EF, do EF_embedding = self.image_encoder(inputs[&quot;EF&quot;])&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;all related EFs (e.g. all the weather EFs) should be in a</span>
+<span class="sd">		single vector and pushed through a single embedding block.&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;there should be a different embedding block for each type of EF&quot;&quot;&quot;</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;concat_embedding = concat all EF_embeddings and all image_Z_embeddings&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;concat_embedding = GenericEncoder(concat_embedding)&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;concat_prediction = self.ClassificationLayer(concat_prediction)&quot;&quot;&quot;</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;for each zoom level Z, do Z_prediction = self.ClassificationLayer(image_Z_embedding)&quot;&quot;&quot;</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;return the predictions from each zoom level individually and also the </span>
+<span class="sd">		predciction from the concat_embedding&quot;&quot;&quot;</span>
+
+		<span class="c1"># return Z1_prediction, Z2_prediction, ..., concat_prediction</span>
+
+		<span class="c1"># a list of tensors to be concatenated</span>
+		<span class="n">embeddings_to_concat</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c1"># for each zoom level, put the image embedding tensor into the list</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zoom_levels</span><span class="p">)):</span>
+			<span class="n">zoom_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom_levels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">image_zoom_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_encoder</span><span class="p">(</span><span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;img_zoom_&quot;</span> <span class="o">+</span> <span class="n">zoom_level</span><span class="p">])</span>
+			<span class="n">image_zoom_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_feature_encoders</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">image_zoom_embedding</span><span class="p">)</span>
+			<span class="n">embeddings_to_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_zoom_embedding</span><span class="p">)</span>
+
+		<span class="c1"># a list of the predictions made from each embedded zoom level</span>
+		<span class="n">image_feature_predictions</span> <span class="o">=</span> <span class="p">[]</span>
+
+		<span class="c1"># for each embedded zoom level, predict the output class</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">embeddings_to_concat</span><span class="p">)):</span>
+			<span class="n">image_feature_predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_feature_classifiers</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">embeddings_to_concat</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_only_model</span><span class="p">:</span>
+			<span class="c1"># put the embedded EFs into the the list</span>
+			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">EF_features</span><span class="p">:</span>
+				<span class="n">embeddings_to_concat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ef_encoders</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+
+		<span class="c1"># concats the EF and zoomed image embeddings. first dim is batch dimension, so concat along dim = 1</span>
+		<span class="n">concat_embedding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">embeddings_to_concat</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">concat_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_encoder</span><span class="p">(</span><span class="n">concat_embedding</span><span class="p">)</span>
+
+		<span class="n">concat_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_classification</span><span class="p">(</span><span class="n">concat_embedding</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">concat_predictions</span><span class="p">,</span> <span class="n">image_feature_predictions</span></div>
+
+	<span class="k">def</span> <span class="nf">_compute_losses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concat_predictions</span><span class="p">,</span> <span class="n">image_feature_predictions</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+		<span class="c1"># def _compute_losses(self, Z1_prediction, Z2_prediction, ..., concat_prediction, y):</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Z1_loss = focal_loss(Z1_prediction, y)&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;Z2_loss = focal_loss(Z2_prediction, y)&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;...&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;concat_loss = focal_loss(concat_loss, y)&quot;&quot;&quot;</span>
+
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;loss = sum(Z1_loss to Z4_loss) + concat_loss&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;each of the individual loss functions is a torchvision.ops.focal_loss, as in GaLeNet&quot;&quot;&quot;</span>
+<span class="w">		</span><span class="sd">&quot;&quot;&quot;the L_i&#39;s correspond to different zoom levels, so only use one L_i to start with&quot;&quot;&quot;</span>
+
+		<span class="c1"># display(predictions.shape)</span>
+		<span class="c1"># display(y.shape)</span>
+		<span class="c1"># display(y.flatten().shape)</span>
+
+		<span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">concat_predictions</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+		<span class="c1"># as in GaLeNet, combine losses from concat embedding and each of the</span>
+		<span class="c1"># zoomed image embeddings</span>
+		<span class="k">for</span> <span class="n">image_feature_prediction</span> <span class="ow">in</span> <span class="n">image_feature_predictions</span><span class="p">:</span>
+			<span class="n">loss</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_function</span><span class="p">(</span><span class="n">image_feature_prediction</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+		<span class="k">return</span> <span class="n">loss</span>
+
+<div class="viewcode-block" id="OverallModel.configure_optimizers"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel.configure_optimizers">[docs]</a>	<span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+		<span class="c1"># this code allows different learning rates for the different blocks</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_only_model</span><span class="p">:</span>
+			<span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_encoder_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_classification</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ef_encoders</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_feature_classifiers</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_feature_encoders</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># this else just removes ef_encoders</span>
+			<span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_encoder_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_classification</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">concat_encoder</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_feature_classifiers</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+				<span class="p">{</span>
+					<span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_feature_encoders</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span>
+					<span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">general_lr</span><span class="p">,</span>
+					<span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span><span class="p">,</span>
+				<span class="p">},</span>
+			<span class="p">]</span>
+
+		<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+		<span class="n">lr_scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">CosineAnnealingLR</span><span class="p">(</span>
+			<span class="n">optimizer</span><span class="p">,</span>
+			<span class="n">T_max</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+			<span class="n">eta_min</span><span class="o">=</span><span class="mf">1e-4</span>
+		<span class="p">)</span>
+		<span class="k">return</span> <span class="p">{</span>
+			<span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">,</span>
+			<span class="s2">&quot;lr_scheduler&quot;</span><span class="p">:</span> <span class="n">lr_scheduler</span><span class="p">,</span>
+			<span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="s2">&quot;val/loss&quot;</span><span class="p">,</span>
+		<span class="p">}</span></div>
+
+<div class="viewcode-block" id="OverallModel.training_step"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel.training_step">[docs]</a>	<span class="k">def</span> <span class="nf">training_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+
+		<span class="n">concat_predictions</span><span class="p">,</span> <span class="n">image_feature_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_losses</span><span class="p">(</span><span class="n">concat_predictions</span><span class="p">,</span> <span class="n">image_feature_predictions</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+		<span class="n">acc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">concat_predictions</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+		<span class="c1"># belwo is for multizoom loss</span>
+		<span class="c1"># Z1_prediction, Z2_prediction, ..., concat_prediction = self.forward(x)</span>
+		<span class="c1"># loss = self._compute_losses(Z1_prediction, Z2_prediction, ..., concat_prediction, y).mean() # maybe normalize the loss?</span>
+
+		<span class="n">train_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>  <span class="c1"># what does all_gather do?</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;train/loss&quot;</span><span class="p">,</span> <span class="n">train_loss</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;train accuracy&quot;</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">train_loss</span></div>
+
+<div class="viewcode-block" id="OverallModel.validation_step"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel.validation_step">[docs]</a>	<span class="k">def</span> <span class="nf">validation_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+
+		<span class="n">concat_predictions</span><span class="p">,</span> <span class="n">image_feature_predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+		<span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_losses</span><span class="p">(</span><span class="n">concat_predictions</span><span class="p">,</span> <span class="n">image_feature_predictions</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+		<span class="n">acc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">concat_predictions</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+		<span class="c1"># below code is for multi-zoom processing</span>
+		<span class="c1"># Z05_prediction, Z1_prediction, Z2_prediction, ..., concat_prediction = self.forward(x)</span>
+		<span class="c1"># loss = self._compute_losses(Z1_prediction, Z2_prediction, ..., concat_prediction, y).mean()</span>
+
+		<span class="n">val_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>  <span class="c1"># what does all_gather do?</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;val/loss&quot;</span><span class="p">,</span> <span class="n">val_loss</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;val accuracy&quot;</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">val_loss</span></div>
+
+<div class="viewcode-block" id="OverallModel.train_dataloader"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel.train_dataloader">[docs]</a>	<span class="k">def</span> <span class="nf">train_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span><span class="p">,</span>
+			<span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+			<span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+			<span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+			<span class="n">persistent_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_w</span><span class="p">,</span>
+			<span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+		<span class="p">)</span>
+		<span class="k">return</span> <span class="n">loader</span></div>
+
+<div class="viewcode-block" id="OverallModel.val_dataloader"><a class="viewcode-back" href="../../../h3.models.html#h3.models.multimodal.OverallModel.val_dataloader">[docs]</a>	<span class="k">def</span> <span class="nf">val_dataloader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">validation_dataset</span><span class="p">,</span>
+			<span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+			<span class="n">num_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">num_workers</span><span class="p">,</span>
+			<span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+			<span class="n">persistent_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">persistent_w</span><span class="p">,</span>
+		<span class="p">)</span>
+		<span class="k">return</span> <span class="n">loader</span></div></div>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Owen Allemang, Lisanne Blok, Ruari Marshall-Hawkes, Orlando Timmerman, Peisong Zheng
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    </body>
+</html>

@@ -1,0 +1,18 @@
+h3.plotting package
+===================
+
+.. automodule:: h3.plotting
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+h3.plotting.terrain\_plots module
+---------------------------------
+
+.. automodule:: h3.plotting.terrain_plots
+   :members:
+   :undoc-members:
+   :show-inheritance:

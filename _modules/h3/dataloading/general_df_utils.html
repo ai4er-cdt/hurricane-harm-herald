@@ -1,0 +1,682 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <!-- Generated with Sphinx 6.2.1 and Furo 2023.03.27 -->
+        <title>h3.dataloading.general_df_utils - Hurricane Harm Herald - H3 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=fad236701ea90a88636c2a8c73b44ae642ed2a53" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Hurricane Harm Herald - H3 0.1.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  
+  <span class="sidebar-brand-text">Hurricane Harm Herald - H3 0.1.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../h3.html">h3 package</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.dataloading.html">h3.dataloading package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.dataprocessing.html">h3.dataprocessing package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.models.html">h3.models package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.plotting.html">h3.plotting package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../h3.utils.html">h3.utils package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for h3.dataloading.general_df_utils</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">geopy</span>
+<span class="kn">import</span> <span class="nn">shapely</span>
+<span class="kn">from</span> <span class="nn">h3</span> <span class="kn">import</span> <span class="n">utils</span>
+
+
+<div class="viewcode-block" id="standardise_df"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.standardise_df">[docs]</a><span class="k">def</span> <span class="nf">standardise_df</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">date_cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">new_point_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;geometry&#39;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply various formatting functions to make any df behave as you&#39;d expect.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        any pandas df</span>
+<span class="sd">    date_cols : list[str], optional</span>
+<span class="sd">        list of column names containing date values. Default is None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        reformatted pd.DataFrame object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># makeall headers lower case</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="c1"># remove any whitespace from headers</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+    <span class="c1"># if any columns with dates provided</span>
+    <span class="k">if</span> <span class="n">date_cols</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">date_cols</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_cols</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;geometry&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="c1"># if geometry column not containing shapely Point objects</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">Point</span><span class="p">:</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">geometry_ops</span><span class="o">.</span><span class="n">convert_point_string_to_point</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="c1"># generate lat-lon columns from any Point objects</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">generate_lat_lon_from_points_cols</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;geometry&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="c1"># make geometry column of shapely Point objects</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">points_from_df_lat_lon_cols</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">point_col_name</span><span class="o">=</span><span class="n">new_point_col_name</span><span class="p">)</span>
+    <span class="c1"># common variation</span>
+    <span class="k">elif</span> <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;long&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long&#39;</span><span class="p">:</span> <span class="s1">&#39;lon&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">points_from_df_lat_lon_cols</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">point_col_name</span><span class="o">=</span><span class="n">new_point_col_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="points_from_df_lat_lon_cols"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.points_from_df_lat_lon_cols">[docs]</a><span class="k">def</span> <span class="nf">points_from_df_lat_lon_cols</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">point_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;geometry&#39;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;TODO: docstring&quot;&quot;&quot;</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">point_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="exclude_df_rows_symmetrically_around_value"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.exclude_df_rows_symmetrically_around_value">[docs]</a><span class="k">def</span> <span class="nf">exclude_df_rows_symmetrically_around_value</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">col_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">poi</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">],</span>
+    <span class="n">buffer_val</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a pd.DataFrame which excludes rows outside a range of +/- 1 buffer.</span>
+<span class="sd">    Buffer can be floats objects, or can specify a period of time. Handy e.g.</span>
+<span class="sd">    for excluding stations for which there is no weather data within the period</span>
+<span class="sd">    of interest.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        pd.DataFrame containing values to potentially exclude</span>
+<span class="sd">    col_names : list[str]</span>
+<span class="sd">        list of strings specifying the names of the columns of interest</span>
+<span class="sd">    poi : [ list[float], list[pd.Timestamp] ]</span>
+<span class="sd">        points of interest (value about which any exclusion will be centred).</span>
+<span class="sd">        One value for each relevant column.</span>
+<span class="sd">    buffer : [ list[float], list[tuple[float,str]] ]</span>
+<span class="sd">        distance from poi to be excluded. In the case that poi is a Timestamp</span>
+<span class="sd">        object, a string specifying the unit of time is necessary e.g. &#39;h&#39; for</span>
+<span class="sd">        hours (either as a tuple or list). See</span>
+<span class="sd">        https://pandas.pydata.org/docs/reference/api/pandas.Timedelta.html for</span>
+<span class="sd">        more info. One value for each relevant column.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame excluding values outside of provided ranges</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check lists same lengths</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">simple_functions</span><span class="o">.</span><span class="n">checklistLengthsEqual</span><span class="p">([</span><span class="n">col_names</span><span class="p">,</span> <span class="n">poi</span><span class="p">,</span> <span class="n">buffer_val</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">col_names</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">poi</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
+            <span class="c1"># specify the buffer as a Timestamp object (separating time and unit)</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">buffer_val</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">buffer_val</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1"># restrict to only observations within the range</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">between</span><span class="p">(</span><span class="n">poi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">buffer</span><span class="p">,</span> <span class="n">poi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">buffer</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="exclude_df_rows_by_range"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.exclude_df_rows_by_range">[docs]</a><span class="k">def</span> <span class="nf">exclude_df_rows_by_range</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">col_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">value_bounds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">buffer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return pd.DataFrame composed of only rows containing only values in</span>
+<span class="sd">    columns listed in col_names within the range of value_bounds +/- optional</span>
+<span class="sd">    buffer amount. Handy for restricting large dataframes based on date ranges</span>
+<span class="sd">    (must specify bounds as pd.Timestamp objects), or lat/lon ranges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        df to limit</span>
+<span class="sd">    col_names : list[str]</span>
+<span class="sd">        e.g. [&#39;col1&#39;, ..., &#39;colN&#39;]</span>
+<span class="sd">        list of column names to be restricted by their relevant...</span>
+<span class="sd">    value_bounds : list[ [tuple[float], list[float]] ]</span>
+<span class="sd">        e.g. [ (start_val1,end_val1), ..., (start_valN,end_valN) ]</span>
+<span class="sd">        list of tuples (or lists) specifying minimum and maximum values to allow</span>
+<span class="sd">    buffer : [ list[float], list[tuple[float,str]] ] = 0</span>
+<span class="sd">        add buffer on either side of value_bounds. Defaults to no buffer. Useful</span>
+<span class="sd">        for specifying weather station observations must exist some time before</span>
+<span class="sd">        and after the event of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    restricted pd.DataFrame object (sub-set of original df)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check lists same lengths</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">simple_functions</span><span class="o">.</span><span class="n">checklistLengthsEqual</span><span class="p">([</span><span class="n">col_names</span><span class="p">,</span> <span class="n">value_bounds</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">col_names</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">:</span>
+            <span class="c1"># specify the buffer as a Timestamp object (separating time and unit)</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">between</span><span class="p">(</span>
+            <span class="nb">min</span><span class="p">(</span><span class="n">value_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">value_bounds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="n">buffer</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="concat_df_cols"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.concat_df_cols">[docs]</a><span class="k">def</span> <span class="nf">concat_df_cols</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">concatted_col_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">cols_to_concat</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">delimiter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Concatenate columns in a pd.DataFrame into a new column of strings linked</span>
+<span class="sd">    by &#39;delimiter&#39;.capitalize()</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        df containing columns to concatenate</span>
+<span class="sd">    concatted_col_name : str</span>
+<span class="sd">        name of new concatenated column</span>
+<span class="sd">    cols_to_concat : list[str]</span>
+<span class="sd">        names of columns to concatenate (in desired order)</span>
+<span class="sd">    delimiter : str, optional</span>
+<span class="sd">        character to insert in between column values. Defaults to empty string</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        with additional concatted column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">concatted_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">cols_to_concat</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="n">delimiter</span><span class="o">.</span><span class="n">join</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="generate_lat_lon_from_points_cols"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.generate_lat_lon_from_points_cols">[docs]</a><span class="k">def</span> <span class="nf">generate_lat_lon_from_points_cols</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">points_cols</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a column(s) of lat and lon from column(s) of shapely.Point</span>
+<span class="sd">    objects. Column(s) added to current df being processed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df: pd.DataFrame</span>
+<span class="sd">        pd.DataFrame containing column(s) of shapely.Point objects</span>
+<span class="sd">    points_cols: list[str]</span>
+<span class="sd">        names of columns to convert to lat/lon. Chosen not to find the columns as</span>
+<span class="sd">        default (by dtype) since might only want to convert one.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        containing new lat and lon columns</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">points_cols</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points_cols</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lon_col_name</span> <span class="o">=</span> <span class="s1">&#39;lon&#39;</span>
+            <span class="n">lat_col_name</span> <span class="o">=</span> <span class="s1">&#39;lat&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lon_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;lon</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">lat_col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;lat</span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="n">df</span><span class="p">[</span><span class="n">lon_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">lat_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="calc_distance_between_df_cols"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.calc_distance_between_df_cols">[docs]</a><span class="k">def</span> <span class="nf">calc_distance_between_df_cols</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">cols_compare</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">new_col_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;distance&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the geodesic distance between sets of lat/lon values.</span>
+<span class="sd">    See https://geopy.readthedocs.io/en/stable/#module-geopy.distance for more info.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df: pd.DataFrame</span>
+<span class="sd">        df containing two pairs of lat/lon values</span>
+<span class="sd">    cols_compare: list[[tuple[str]] or list[list[str]]</span>
+<span class="sd">        list of columns of lat/lon values. Inputted as pairs as a tuple or list</span>
+<span class="sd">    new_col_name: str, optional</span>
+<span class="sd">        The default is &#39;distance&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        copy of df with an extra &#39;distance&#39; column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols_compare</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Cannot compare more or fewer than two sets of lat/lon values at a time&#39;</span><span class="p">)</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="n">new_col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geopy</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">geodesic</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cols_compare</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[</span><span class="n">cols_compare</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]]),</span>
+            <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">cols_compare</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span> <span class="n">x</span><span class="p">[</span><span class="n">cols_compare</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]]))</span><span class="o">.</span><span class="n">km</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="find_index_closest_point_in_col"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.find_index_closest_point_in_col">[docs]</a><span class="k">def</span> <span class="nf">find_index_closest_point_in_col</span><span class="p">(</span>
+    <span class="n">poi</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span><span class="p">,</span>
+    <span class="n">points_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">points_df_geom_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">which_closest</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the df index of the closest point object to poi in the df object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    poi : shapely.Point</span>
+<span class="sd">        point of interest (shapely.Point object)</span>
+<span class="sd">    points_df : pd.DataFrame</span>
+<span class="sd">        dataframe containing a column of shapely.Point objects</span>
+<span class="sd">    points_df_geom_col : str</span>
+<span class="sd">        name of column of shapely.Point objects</span>
+<span class="sd">    which_closest : int = 1</span>
+<span class="sd">        if 1 (default), find closest. For any other N, find the Nth closest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int object relating to index of points_df df</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">points_df</span><span class="p">[</span><span class="n">points_df_geom_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">poi</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">distances</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">distances</span><span class="p">[</span><span class="n">distances</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">which_closest</span><span class="p">]]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="calculate_first_last_dates_from_df"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.calculate_first_last_dates_from_df">[docs]</a><span class="k">def</span> <span class="nf">calculate_first_last_dates_from_df</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">time_buffer</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">],</span>
+    <span class="n">date_col_name</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the first and last dates from a df, with a time buffer before</span>
+<span class="sd">    and after.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        should contain at least one datetime column. If multiple datetime</span>
+<span class="sd">        columns, column to be used should be specified. Will default to first</span>
+<span class="sd">        occurence of such a column</span>
+<span class="sd">    time_buffer : tuple[float,str] defaults to [0,&#39;h&#39;] (no buffer)</span>
+<span class="sd">        extra time to remove from first occurence and add to last occurence.</span>
+<span class="sd">        A string specifying the unit of time is necessary e.g. &#39;h&#39; for</span>
+<span class="sd">        hours (either as a tuple or list). See</span>
+<span class="sd">        https://pandas.pydata.org/docs/reference/api/pandas.Timedelta.html for</span>
+<span class="sd">        more info.</span>
+<span class="sd">    date_col_name : list[str] defaults to None</span>
+<span class="sd">        name of column containing datetime objects to be processed</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple[pd.Timestamp]</span>
+<span class="sd">        detailing start and end time/date</span>
+
+<span class="sd">    N.B. currently discarding any timezone information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if no date_column_name provided</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">date_col_name</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># try to find first occurence of a coolumn containing dates</span>
+            <span class="n">date_col</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64_any_dtype</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No column containing datetime64 objects found&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># check if column provided contains datetime objects</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64_any_dtype</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">date_col_name</span><span class="p">]):</span>
+            <span class="n">date_col</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_col_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Column provided as date_col_name does not contain datetime objects&#39;</span><span class="p">)</span>
+
+    <span class="c1"># if date column type has a timezone detailed</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64tz_dtype</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]):</span>
+        <span class="c1"># convert the &#39;dates&#39; column to naive timestamps</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">tz_localize</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># generate time buffer</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">time_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># find minimum and maximum date values</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">delta</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">delta</span>
+
+    <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="calc_means_df_cols"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.calc_means_df_cols">[docs]</a><span class="k">def</span> <span class="nf">calc_means_df_cols</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">col_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return mean values of prescribed columns in df</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">    col_names : list[str]</span>
+<span class="sd">        list of columns to calculate mean</span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[float] of mean value of each column</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">means</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">col_names</span><span class="p">:</span>
+        <span class="n">means</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">means</span></div>
+
+
+<div class="viewcode-block" id="limit_df_spatial_range"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.limit_df_spatial_range">[docs]</a><span class="k">def</span> <span class="nf">limit_df_spatial_range</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">centre_coords</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">min_number</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">distance_buffer</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Restrict df to within +/- a lat-lon distance, or to a min_number number</span>
+<span class="sd">    of rows.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pd.DataFrame</span>
+<span class="sd">        df containing &#39;lat&#39; and &#39;lon&#39; columns</span>
+<span class="sd">    centre_coords : list[float] or tuple[float]</span>
+<span class="sd">        geographical centre about which to restrict df</span>
+<span class="sd">    min_number : int = None</span>
+<span class="sd">        minimum number of rows in df to be returned</span>
+<span class="sd">    distance_buffer : float = None</span>
+<span class="sd">        distance from geographical centre within which points in df should be</span>
+<span class="sd">        returned</span>
+<span class="sd">    verbose : bool = False (don&#39;t show message re expansion of distance_buffer)</span>
+<span class="sd">        choose whether or not to show that distance_buffer was expanded</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        spatially limited df</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">([</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Columns by name of lat and lon not found in df&#39;</span><span class="p">)</span>
+
+    <span class="c1"># if choosing to find closest N points at any distance away</span>
+    <span class="k">if</span> <span class="n">distance_buffer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># set arbitrarily small distance buffer</span>
+        <span class="n">distance_buffer</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">df_spatial_lim</span> <span class="o">=</span> <span class="n">exclude_df_rows_symmetrically_around_value</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">],</span> <span class="n">centre_coords</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">distance_buffer</span><span class="p">,</span> <span class="n">distance_buffer</span><span class="p">])</span>
+        <span class="c1"># expand distance buffer until minimum number reached</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">df_spatial_lim</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">min_number</span><span class="p">:</span>
+            <span class="n">distance_buffer</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">df_spatial_lim</span> <span class="o">=</span> <span class="n">exclude_df_rows_symmetrically_around_value</span><span class="p">(</span>
+                <span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">],</span> <span class="n">centre_coords</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">distance_buffer</span><span class="p">,</span> <span class="n">distance_buffer</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Spatial search expanded to +/- </span><span class="si">{</span><span class="n">distance_buffer</span><span class="si">}</span><span class="s1"> degrees&#39;</span><span class="p">)</span>
+    <span class="c1"># if choosing to find closest stations only up to a certain distance</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df_spatial_lim</span> <span class="o">=</span> <span class="n">exclude_df_rows_symmetrically_around_value</span><span class="p">(</span>
+            <span class="n">df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">],</span> <span class="n">centre_coords</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">distance_buffer</span><span class="p">,</span> <span class="n">distance_buffer</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df_spatial_lim</span></div>
+
+
+<div class="viewcode-block" id="station_availability"><a class="viewcode-back" href="../../../h3.dataloading.html#h3.dataloading.general_df_utils.station_availability">[docs]</a><span class="k">def</span> <span class="nf">station_availability</span><span class="p">(</span>
+    <span class="n">df_stations</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">df_noaa_weather_event</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">time_buffer</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">],</span>
+    <span class="n">available</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter dataframe by time to return only stations with observation present.</span>
+<span class="sd">    Defaults to available</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">calculate_first_last_dates_from_df</span><span class="p">(</span>
+        <span class="n">df_noaa_weather_event</span><span class="p">,</span> <span class="n">time_buffer</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">available</span><span class="p">:</span>
+        <span class="c1"># return available stations</span>
+        <span class="n">df_station_time_lim</span> <span class="o">=</span> <span class="n">df_stations</span><span class="p">[</span>
+            <span class="p">((</span><span class="n">df_stations</span><span class="p">[</span><span class="s1">&#39;begin&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_stations</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">end</span><span class="p">))]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># limit stations df to those operational within +/- 1 time_buffer</span>
+        <span class="c1"># either side of event</span>
+        <span class="n">df_station_time_lim</span> <span class="o">=</span> <span class="n">df_stations</span><span class="p">[</span>
+            <span class="o">~</span><span class="p">((</span><span class="n">df_stations</span><span class="p">[</span><span class="s1">&#39;begin&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_stations</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">end</span><span class="p">))]</span>
+
+    <span class="k">return</span> <span class="n">df_station_time_lim</span></div>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2023, Owen Allemang, Lisanne Blok, Ruari Marshall-Hawkes, Orlando Timmerman, Peisong Zheng
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    </body>
+</html>
